@@ -1,59 +1,76 @@
 <meta charset="utf-8" />
 <title>胡志明市行程 8/5–8/15</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#171614; --paper:#F7F6F1; --paper-raised:#FFFFFF; --paper-sunk:#EDECE5;
-    --accent:#B4351F;
-    --line:rgba(23,22,20,0.16); --line-strong:#171614; --line-soft:rgba(23,22,20,0.10);
-    --done-ink:rgba(23,22,20,0.52); --shadow:rgba(23,22,20,0.08);
+    --ink:#3A2E22; --paper:#FFFBF2; --paper-raised:#FFFFFF; --paper-sunk:#FFF3DE;
+    --orange:#E8752A; --orange-soft:#FBD9BC; --blue:#3672B0; --blue-soft:#CFE0F2;
+    --accent:#E8752A;
+    --line:rgba(58,46,34,0.16); --line-strong:#3A2E22; --line-soft:rgba(58,46,34,0.12);
+    --done-ink:rgba(58,46,34,0.5); --shadow:rgba(58,46,34,0.16);
+    --notebook-line:rgba(58,46,34,0.07); --margin-line:rgba(232,117,42,0.28);
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --ink:#EDEAE3; --paper:#141311; --paper-raised:#1B1A17; --paper-sunk:#0F0E0C;
-      --accent:#E06A4B;
-      --line:rgba(237,234,227,0.18); --line-strong:#EDEAE3; --line-soft:rgba(237,234,227,0.10);
-      --done-ink:rgba(237,234,227,0.55); --shadow:rgba(0,0,0,0.4);
+      --ink:#F3E9DC; --paper:#211A13; --paper-raised:#2B231A; --paper-sunk:#1A140E;
+      --orange:#F0965A; --orange-soft:#4A3420; --blue:#7FB0E0; --blue-soft:#233D57;
+      --accent:#F0965A;
+      --line:rgba(243,233,220,0.18); --line-strong:#F3E9DC; --line-soft:rgba(243,233,220,0.12);
+      --done-ink:rgba(243,233,220,0.55); --shadow:rgba(0,0,0,0.4);
+      --notebook-line:rgba(243,233,220,0.06); --margin-line:rgba(240,150,90,0.22);
     }
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
     background:var(--paper);color:var(--ink);
+    background-image:
+      repeating-linear-gradient(var(--paper) 0px, var(--paper) 27px, var(--notebook-line) 28px),
+      linear-gradient(90deg, transparent 34px, var(--margin-line) 35px, var(--margin-line) 36px, transparent 37px);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Noto Sans TC",sans-serif;
     -webkit-font-smoothing:antialiased;
     padding-bottom:calc(70px + env(safe-area-inset-bottom));
   }
   a{color:inherit;text-decoration:none;}
   button{font:inherit;}
-  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  :focus-visible{outline:2px solid var(--orange);outline-offset:2px;}
   .icon{width:16px;height:16px;flex:0 0 auto;display:inline-block;vertical-align:-3px;}
+  .doodle{position:absolute;pointer-events:none;}
 
   header.top{
     position:sticky;top:0;z-index:15;background:var(--paper);
-    padding:18px 16px 12px;border-bottom:1px solid var(--line-strong);
+    padding:18px 16px 12px;border-bottom:2px dashed var(--line);
+    overflow:visible;
   }
-  .eyebrow{font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink);font-weight:700;border-bottom:2px solid var(--accent);padding-bottom:3px;display:inline-block;}
-  .langbtn{border:1px solid var(--line-strong);background:transparent;color:var(--ink);font-size:0.68rem;letter-spacing:0.08em;padding:5px 10px;cursor:pointer;min-width:38px;min-height:32px;}
-  .langbtn:active{background:var(--ink);color:var(--paper-raised);}
-  h1{font-family:"Noto Serif TC",Georgia,serif;font-weight:700;font-size:1.4rem;margin:10px 0 4px;text-wrap:balance;letter-spacing:0.01em;}
+  .eyebrow{
+    font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:#fff;font-weight:700;
+    background:var(--orange);padding:3px 10px;display:inline-block;border-radius:3px;
+    transform:rotate(-2deg);box-shadow:0 2px 0 rgba(58,46,34,0.15);
+  }
+  .langbtn{border:1.5px solid var(--blue);background:var(--blue-soft);color:var(--blue);font-weight:700;border-radius:100px;font-size:0.68rem;letter-spacing:0.04em;padding:5px 12px;cursor:pointer;min-width:38px;min-height:32px;transform:rotate(2deg);}
+  .langbtn:active{background:var(--blue);color:#fff;}
+  h1{font-family:"Klee One",-apple-system,sans-serif;font-weight:600;font-size:1.5rem;margin:12px 0 4px;text-wrap:balance;transform:rotate(-0.6deg);}
+  h1 .lt{display:inline-block;}
   .daterange{font-size:0.78rem;color:var(--done-ink);font-family:ui-monospace,"SF Mono",Menlo,monospace;}
   .tripmeta{display:flex;gap:14px;margin-top:10px;font-size:0.74rem;color:var(--done-ink);flex-wrap:wrap;align-items:center;}
   .tripmeta span{display:inline-flex;align-items:center;gap:5px;}
   .tripmeta b{color:var(--ink);}
 
-  .daychips{display:flex;gap:5px;overflow-x:auto;padding:12px 2px 2px;margin:2px -2px -2px;scrollbar-width:none;}
+  .daychips{display:flex;gap:6px;overflow-x:auto;padding:12px 2px 2px;margin:2px -2px -2px;scrollbar-width:none;}
   .daychips::-webkit-scrollbar{display:none;}
   .daychip{
     flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:1px;
-    padding:5px 10px;border-radius:0;border:1px solid var(--line);background:transparent;
+    padding:5px 11px;border-radius:100px;border:1.5px solid var(--line);background:var(--paper-raised);
     color:var(--ink);cursor:pointer;min-width:38px;
   }
   .daychip .n{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:0.72rem;font-weight:700;}
   .daychip .d{font-size:0.6rem;color:var(--done-ink);}
-  .daychip.wedding{border-color:var(--accent);color:var(--accent);}
-  .daychip.today{background:var(--ink);border-color:var(--ink);color:var(--paper-raised);}
-  .daychip.today .d{color:var(--paper-raised);opacity:0.85;}
+  .daychip.wedding{border-color:var(--blue);color:var(--blue);background:var(--blue-soft);}
+  .daychip.today{background:var(--orange);border-color:var(--orange);color:#fff;}
+  .daychip.today .d{color:#fff;opacity:0.9;}
   .daychip.active{box-shadow:0 0 0 2px var(--ink) inset;}
 
   .wrap{max-width:640px;margin:0 auto;padding:14px 16px 24px;}
@@ -62,41 +79,48 @@
 
   /* ---- day cards ---- */
   .day-card{
-    background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:0;
-    padding:14px 16px;margin-bottom:14px;
-    border-top:2px solid var(--line-strong);
+    position:relative;background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:12px;
+    padding:16px 16px 14px;margin-bottom:22px;
+    box-shadow:0 6px 16px var(--shadow);
     scroll-margin-top:172px;
   }
-  .day-card.wedding{border-top-color:var(--accent);}
-  .day-card.today{border-top-color:var(--accent);}
+  .day-card:nth-child(odd){transform:rotate(-0.5deg);}
+  .day-card:nth-child(even){transform:rotate(0.5deg);}
+  .day-card::before{
+    content:"";position:absolute;top:-10px;left:24px;width:52px;height:20px;
+    background:var(--orange-soft);opacity:0.85;border-radius:2px;transform:rotate(-3deg);
+    box-shadow:0 2px 4px rgba(58,46,34,0.12);
+  }
+  .day-card.wedding::before{background:var(--blue-soft);transform:rotate(3deg);}
+  .day-card.today::before{background:var(--orange);opacity:1;}
   .day-head{display:flex;align-items:baseline;gap:8px;margin-bottom:2px;flex-wrap:wrap;}
-  .day-num{font-family:"Noto Serif TC",Georgia,serif;font-size:1.1rem;font-weight:700;}
+  .day-num{font-family:"Klee One",sans-serif;font-size:1.15rem;font-weight:600;color:var(--orange);}
   .day-date{font-size:0.76rem;color:var(--done-ink);font-family:ui-monospace,"SF Mono",Menlo,monospace;}
-  .day-badge{margin-left:auto;font-size:0.64rem;letter-spacing:0.06em;padding:2px 8px;border-radius:0;border:1px solid var(--accent);color:var(--accent);white-space:nowrap;}
-  .day-badge:not(.wedding){background:var(--ink);border-color:var(--ink);color:var(--paper-raised);}
-  .day-progress{font-size:0.7rem;color:var(--accent);font-family:ui-monospace,"SF Mono",Menlo,monospace;white-space:nowrap;}
+  .day-badge{margin-left:auto;font-size:0.64rem;letter-spacing:0.04em;padding:3px 10px;border-radius:100px;background:var(--blue);color:#fff;white-space:nowrap;font-weight:700;}
+  .day-badge:not(.wedding){background:var(--orange);}
+  .day-progress{font-size:0.7rem;color:var(--blue);font-family:ui-monospace,"SF Mono",Menlo,monospace;white-space:nowrap;font-weight:700;}
   .day-title{font-size:0.82rem;color:var(--done-ink);margin:2px 0 10px;}
 
   .timeline{display:flex;flex-direction:column;gap:0;}
-  .titem{display:flex;gap:8px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line-soft);}
+  .titem{display:flex;gap:8px;align-items:flex-start;padding:9px 0;border-top:1px dashed var(--line-soft);}
   .titem:first-child{border-top:none;}
   .titem.done .tplace{color:var(--done-ink);text-decoration:line-through;}
   .tcheck{flex:0 0 auto;width:38px;height:38px;margin:-9px -4px -9px -9px;border-radius:50%;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
-  .tcheck-ring{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;color:var(--paper-raised);font-size:0.62rem;}
-  .titem.done .tcheck-ring{background:var(--ink);}
-  .ttime{flex:0 0 52px;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:0.76rem;color:var(--accent);padding-top:2px;font-weight:700;}
+  .tcheck-ring{width:18px;height:18px;border-radius:50%;border:2px solid var(--orange);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.62rem;}
+  .titem.done .tcheck-ring{background:var(--orange);}
+  .ttime{flex:0 0 52px;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:0.76rem;color:var(--blue);padding-top:2px;font-weight:700;}
   .tbody{flex:1;min-width:0;}
   .tplace{font-weight:700;font-size:0.9rem;text-wrap:balance;}
   .tnote{font-size:0.78rem;color:var(--done-ink);margin-top:2px;}
   .tnav{
     display:inline-flex;align-items:center;gap:4px;margin:6px -8px -8px 0;
-    font-size:0.72rem;letter-spacing:0.03em;padding:11px 12px;border:1px solid var(--ink);color:var(--ink);border-radius:0;
-    min-height:38px;
+    font-size:0.72rem;letter-spacing:0.02em;padding:11px 14px;border:1.5px solid var(--blue);color:var(--blue);border-radius:100px;
+    min-height:38px;font-weight:700;
   }
-  .tnav:active{background:var(--ink);color:var(--paper-raised);}
+  .tnav:active{background:var(--blue);color:#fff;}
 
   /* ---- transport view ---- */
-  .flight-card{background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:0;padding:14px 16px;margin-bottom:14px;}
+  .flight-card{position:relative;background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:12px;padding:16px;margin-bottom:22px;box-shadow:0 6px 16px var(--shadow);transform:rotate(-0.4deg);}
   .flight-row{display:flex;align-items:center;gap:10px;margin:8px 0;}
   .flight-pt{text-align:center;flex:0 0 auto;}
   .flight-code{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-weight:700;font-size:1.1rem;}
@@ -104,54 +128,67 @@
   .flight-line{flex:1;height:1px;background:var(--line);position:relative;}
   .flight-line::after{content:"✈";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:0.8rem;background:var(--paper-raised);padding:0 4px;}
   .flight-info{font-size:0.76rem;color:var(--done-ink);margin-top:6px;}
-  .section-h{font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif;font-weight:700;font-size:0.86rem;letter-spacing:0.08em;text-transform:uppercase;margin:20px 0 10px;border-bottom:2px solid var(--line-strong);padding-bottom:6px;}
-  .note-card{background:var(--paper-sunk);border-radius:0;border:1px solid var(--line-soft);padding:12px 14px;font-size:0.82rem;line-height:1.6;margin-bottom:12px;}
-  .note-card b{color:var(--ink);}
+  .section-h{font-family:"Klee One",sans-serif;font-weight:600;font-size:0.95rem;margin:22px 0 10px;color:var(--orange);position:relative;display:inline-block;padding-bottom:4px;}
+  .section-h::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--orange-soft);border-radius:2px;z-index:-1;}
+  .note-card{position:relative;background:var(--paper-sunk);border-radius:10px;border:1px dashed var(--line);padding:12px 14px;font-size:0.82rem;line-height:1.6;margin-bottom:12px;transform:rotate(0.3deg);}
+  .note-card b{color:var(--orange);}
 
   /* ---- accommodation ---- */
-  .info-card{background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:0;padding:16px;margin-bottom:14px;}
-  .info-card h3{font-family:"Noto Serif TC",Georgia,serif;margin:0 0 6px;font-size:1rem;}
+  .info-card{background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:12px;padding:16px;margin-bottom:22px;box-shadow:0 6px 16px var(--shadow);}
+  .info-card:nth-child(even){transform:rotate(0.4deg);}
+  .info-card:nth-child(odd){transform:rotate(-0.4deg);}
+  .info-card h3{font-family:"Klee One",sans-serif;font-weight:600;margin:0 0 6px;font-size:1.05rem;color:var(--blue);}
   .info-card p{font-size:0.84rem;color:var(--done-ink);margin:4px 0;line-height:1.6;}
-  .fill-in{border-bottom:1px dashed var(--accent);color:var(--accent);}
+  .fill-in{border-bottom:1px dashed var(--orange);color:var(--orange);}
 
   /* ---- packing ---- */
   .pack-group{margin-bottom:18px;}
-  .pack-group h3{font-family:"Noto Serif TC",Georgia,serif;font-size:0.95rem;margin:0 0 8px;color:var(--ink);}
-  .pack-item{display:flex;align-items:center;gap:10px;padding:9px 4px;border-top:1px solid var(--line-soft);}
+  .pack-group h3{font-family:"Klee One",sans-serif;font-weight:600;font-size:1rem;margin:0 0 8px;color:var(--orange);}
+  .pack-item{display:flex;align-items:center;gap:10px;padding:9px 4px;border-top:1px dashed var(--line-soft);}
   .pack-item:first-child{border-top:none;}
   .pack-check{
     flex:0 0 auto;width:38px;height:38px;margin:-8px;border-radius:50%;border:none;background:transparent;
     display:flex;align-items:center;justify-content:center;cursor:pointer;
   }
-  .pack-check-ring{width:20px;height:20px;border-radius:2px;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;color:var(--paper-raised);font-size:0.7rem;}
-  .pack-item.done .pack-check-ring{background:var(--ink);}
+  .pack-check-ring{width:20px;height:20px;border-radius:6px;border:2px solid var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.7rem;}
+  .pack-item.done .pack-check-ring{background:var(--blue);}
   .pack-label{font-size:0.86rem;}
   .pack-item.done .pack-label{color:var(--done-ink);text-decoration:line-through;}
-  .pack-progress{font-size:0.76rem;color:var(--accent);font-family:ui-monospace,"SF Mono",Menlo,monospace;margin-bottom:14px;}
+  .pack-progress{font-size:0.76rem;color:var(--orange);font-family:ui-monospace,"SF Mono",Menlo,monospace;margin-bottom:14px;font-weight:700;}
 
   /* ---- budget ---- */
-  .budget-table{width:100%;border-collapse:collapse;font-size:0.84rem;margin-bottom:16px;}
-  .budget-table th{text-align:left;font-size:0.7rem;color:var(--done-ink);text-transform:uppercase;letter-spacing:0.06em;padding-bottom:6px;border-bottom:2px solid var(--line-strong);}
-  .budget-table td{padding:9px 4px;border-top:1px solid var(--line-soft);}
+  .budget-table{width:100%;border-collapse:collapse;font-size:0.84rem;margin-bottom:16px;background:var(--paper-raised);border-radius:12px;overflow:hidden;box-shadow:0 6px 16px var(--shadow);}
+  .budget-table th{text-align:left;font-size:0.7rem;color:var(--done-ink);text-transform:uppercase;letter-spacing:0.06em;padding:10px 12px 8px;border-bottom:2px solid var(--line);background:var(--orange-soft);}
+  .budget-table td{padding:9px 12px;border-top:1px dashed var(--line-soft);}
   .budget-table td:last-child,.budget-table th:last-child{text-align:right;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-variant-numeric:tabular-nums;white-space:nowrap;}
-  .budget-total{font-weight:700;background:var(--paper-sunk);}
-  .budget-total td{border-top:2px solid var(--line-strong);}
+  .budget-total{font-weight:700;background:var(--blue-soft);}
+  .budget-total td{border-top:2px solid var(--line);}
 
   /* ---- bottom nav ---- */
   nav.bottom{
     position:fixed;left:0;right:0;bottom:0;z-index:20;
-    background:var(--paper-raised);border-top:1px solid var(--line-strong);
+    background:var(--paper-raised);border-top:2px dashed var(--line);
     display:flex;padding-bottom:env(safe-area-inset-bottom);
   }
   .navbtn{
     flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-    padding:9px 2px 8px;background:none;border:none;border-top:2px solid transparent;color:var(--done-ink);cursor:pointer;
+    padding:9px 2px 8px;background:none;border:none;color:var(--done-ink);cursor:pointer;position:relative;
   }
-  .navbtn.active{color:var(--ink);border-top-color:var(--accent);margin-top:-2px;}
+  .navbtn.active{color:var(--orange);}
+  .navbtn.active::before{
+    content:"";position:absolute;top:2px;left:50%;transform:translateX(-50%);
+    width:26px;height:26px;border-radius:50%;background:var(--orange-soft);z-index:-1;
+  }
   .navbtn svg{width:21px;height:21px;}
   .navbtn span{font-size:0.64rem;letter-spacing:0.02em;}
 
   @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+  /* Klee One 的越南文附加符號（ồ/ế/ữ 等）會斷開顯示，越南文一律改用系統字體 */
+  .lang-vi h1, .lang-vi .day-num, .lang-vi .section-h, .lang-vi .info-card h3, .lang-vi .pack-group h3{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;
+    font-weight:800;
+  }
 </style>
 
 <header class="top">
@@ -667,6 +704,7 @@
     document.getElementById("navBudget").textContent = t("navBudget");
     langBtn.textContent = lang === "vi" ? "中文" : "VI";
     langBtn.setAttribute("aria-label", lang === "vi" ? "Chuyển sang tiếng Trung" : "切換到越南文");
+    document.body.classList.toggle("lang-vi", lang === "vi");
   }
   applyStaticLang();
   langBtn.addEventListener("click", function(){
