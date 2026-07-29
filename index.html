@@ -1,0 +1,449 @@
+<meta charset="utf-8" />
+<title>胡志明市行程 8/5–8/15</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<style>
+  :root{
+    --ink:#182620; --paper:#E7E3D2; --paper-raised:#F4F1E4; --paper-sunk:#DEDAC7;
+    --jade:#1F6F5C; --jade-ink:#12463A; --brass:#B9812C;
+    --rose:#B9506B; --rose-soft:#F3DCE2;
+    --line:rgba(24,38,32,0.18); --line-soft:rgba(24,38,32,0.10);
+    --done-ink:rgba(24,38,32,0.64); --shadow:rgba(24,38,32,0.10);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ink:#EAE6D8; --paper:#101B17; --paper-raised:#16221D; --paper-sunk:#0C1512;
+      --jade:#57C7A6; --jade-ink:#DFF7EE; --brass:#E4AC55;
+      --rose:#E48CA3; --rose-soft:#3A222A;
+      --line:rgba(234,230,216,0.18); --line-soft:rgba(234,230,216,0.10);
+      --done-ink:rgba(234,230,216,0.62); --shadow:rgba(0,0,0,0.4);
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Noto Sans TC",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:calc(70px + env(safe-area-inset-bottom));
+  }
+  a{color:inherit;text-decoration:none;}
+  button{font:inherit;}
+  :focus-visible{outline:2px solid var(--jade);outline-offset:2px;}
+  .icon{width:16px;height:16px;flex:0 0 auto;display:inline-block;vertical-align:-3px;}
+
+  header.top{
+    position:sticky;top:0;z-index:15;background:var(--paper);
+    padding:16px 16px 12px;border-bottom:1px solid var(--line);
+  }
+  .eyebrow{font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--brass);font-weight:700;}
+  h1{font-family:Georgia,"Iowan Old Style","Noto Serif TC",serif;font-size:1.35rem;margin:2px 0 4px;text-wrap:balance;}
+  .daterange{font-size:0.8rem;color:var(--done-ink);font-family:ui-monospace,"SF Mono",Menlo,monospace;}
+  .tripmeta{display:flex;gap:14px;margin-top:10px;font-size:0.74rem;color:var(--done-ink);flex-wrap:wrap;}
+  .tripmeta b{color:var(--ink);}
+
+  .wrap{max-width:640px;margin:0 auto;padding:14px 16px 24px;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* ---- day cards ---- */
+  .day-card{
+    background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:10px;
+    padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 3px var(--shadow);
+  }
+  .day-card.wedding{border-color:var(--rose);background:linear-gradient(135deg,var(--rose-soft),var(--paper-raised) 60%);}
+  .day-head{display:flex;align-items:baseline;gap:8px;margin-bottom:2px;flex-wrap:wrap;}
+  .day-num{font-family:Georgia,"Iowan Old Style","Noto Serif TC",serif;font-size:1.05rem;font-weight:700;}
+  .day-date{font-size:0.76rem;color:var(--done-ink);font-family:ui-monospace,"SF Mono",Menlo,monospace;}
+  .day-badge{margin-left:auto;font-size:0.66rem;padding:3px 9px;border-radius:100px;background:var(--jade);color:var(--paper-raised);white-space:nowrap;}
+  .day-badge.wedding{background:var(--rose);}
+  .day-title{font-size:0.82rem;color:var(--done-ink);margin:2px 0 10px;}
+
+  .timeline{display:flex;flex-direction:column;gap:0;}
+  .titem{display:flex;gap:10px;padding:9px 0;border-top:1px dashed var(--line-soft);}
+  .titem:first-child{border-top:none;}
+  .ttime{flex:0 0 52px;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:0.76rem;color:var(--brass);padding-top:2px;font-weight:700;}
+  .tbody{flex:1;min-width:0;}
+  .tplace{font-weight:700;font-size:0.9rem;text-wrap:balance;}
+  .tnote{font-size:0.78rem;color:var(--done-ink);margin-top:2px;}
+  .tnav{
+    display:inline-flex;align-items:center;gap:4px;margin-top:6px;
+    font-size:0.72rem;padding:4px 9px;border:1px solid var(--brass);color:var(--brass);border-radius:100px;
+  }
+  .tnav:active{background:var(--brass);color:var(--paper-raised);}
+
+  /* ---- transport view ---- */
+  .flight-card{background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
+  .flight-row{display:flex;align-items:center;gap:10px;margin:8px 0;}
+  .flight-pt{text-align:center;flex:0 0 auto;}
+  .flight-code{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-weight:700;font-size:1.1rem;}
+  .flight-time{font-size:0.76rem;color:var(--done-ink);}
+  .flight-line{flex:1;height:1px;background:var(--line);position:relative;}
+  .flight-line::after{content:"✈";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:0.8rem;background:var(--paper-raised);padding:0 4px;}
+  .flight-info{font-size:0.76rem;color:var(--done-ink);margin-top:6px;}
+  .section-h{font-family:Georgia,"Iowan Old Style","Noto Serif TC",serif;font-size:1rem;margin:20px 0 10px;border-bottom:2px solid var(--ink);padding-bottom:6px;}
+  .note-card{background:var(--paper-sunk);border-radius:8px;padding:12px 14px;font-size:0.82rem;line-height:1.6;margin-bottom:12px;}
+  .note-card b{color:var(--jade-ink);}
+
+  /* ---- accommodation ---- */
+  .info-card{background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:10px;padding:16px;margin-bottom:14px;}
+  .info-card h3{font-family:Georgia,"Iowan Old Style","Noto Serif TC",serif;margin:0 0 6px;font-size:1rem;}
+  .info-card p{font-size:0.84rem;color:var(--done-ink);margin:4px 0;line-height:1.6;}
+  .fill-in{border-bottom:1px dashed var(--brass);color:var(--brass);}
+
+  /* ---- packing ---- */
+  .pack-group{margin-bottom:18px;}
+  .pack-group h3{font-family:Georgia,"Iowan Old Style","Noto Serif TC",serif;font-size:0.95rem;margin:0 0 8px;color:var(--jade-ink);}
+  .pack-item{display:flex;align-items:center;gap:10px;padding:9px 4px;border-top:1px solid var(--line-soft);}
+  .pack-item:first-child{border-top:none;}
+  .pack-check{
+    flex:0 0 auto;width:38px;height:38px;margin:-8px;border-radius:50%;border:none;background:transparent;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+  }
+  .pack-check-ring{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--jade);display:flex;align-items:center;justify-content:center;color:var(--paper-raised);font-size:0.7rem;}
+  .pack-item.done .pack-check-ring{background:var(--jade);}
+  .pack-label{font-size:0.86rem;}
+  .pack-item.done .pack-label{color:var(--done-ink);text-decoration:line-through;}
+  .pack-progress{font-size:0.76rem;color:var(--jade);font-family:ui-monospace,"SF Mono",Menlo,monospace;margin-bottom:14px;}
+
+  /* ---- budget ---- */
+  .budget-table{width:100%;border-collapse:collapse;font-size:0.84rem;margin-bottom:16px;}
+  .budget-table th{text-align:left;font-size:0.7rem;color:var(--done-ink);text-transform:uppercase;letter-spacing:0.04em;padding-bottom:6px;border-bottom:2px solid var(--ink);}
+  .budget-table td{padding:9px 4px;border-top:1px solid var(--line-soft);}
+  .budget-table td:last-child,.budget-table th:last-child{text-align:right;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .budget-total{font-weight:700;background:var(--paper-sunk);}
+  .budget-total td{border-top:2px solid var(--ink);}
+
+  /* ---- bottom nav ---- */
+  nav.bottom{
+    position:fixed;left:0;right:0;bottom:0;z-index:20;
+    background:var(--paper-raised);border-top:1px solid var(--line);
+    display:flex;padding-bottom:env(safe-area-inset-bottom);
+    box-shadow:0 -2px 10px var(--shadow);
+  }
+  .navbtn{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:9px 2px 8px;background:none;border:none;color:var(--done-ink);cursor:pointer;
+  }
+  .navbtn.active{color:var(--jade);}
+  .navbtn svg{width:21px;height:21px;}
+  .navbtn span{font-size:0.64rem;}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+
+<header class="top">
+  <div class="eyebrow">Ho Chi Minh City</div>
+  <h1>胡志明市之旅</h1>
+  <div class="daterange">2026/08/05 – 2026/08/15・10 天 9 夜</div>
+  <div class="tripmeta">
+    <span>✈ <b>BR381 / BR382</b></span>
+    <span>🎉 <b>8/9 妹妹婚禮</b></span>
+    <span>🏠 <b>住親戚家</b></span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="view active" id="view-days">
+    <div id="daysContainer"></div>
+  </div>
+
+  <div class="view" id="view-transport">
+    <div class="flight-card">
+      <div class="section-h" style="margin-top:0;">去程 8/5（三）</div>
+      <div class="flight-row">
+        <div class="flight-pt"><div class="flight-code">TPE</div><div class="flight-time">19:35</div></div>
+        <div class="flight-line"></div>
+        <div class="flight-pt"><div class="flight-code">SGN</div><div class="flight-time">22:00</div></div>
+      </div>
+      <div class="flight-info">長榮航空 BR381・經濟艙・A330-300・含餐點</div>
+    </div>
+    <div class="flight-card">
+      <div class="section-h" style="margin-top:0;">回程 8/15（六）</div>
+      <div class="flight-row">
+        <div class="flight-pt"><div class="flight-code">SGN</div><div class="flight-time">01:50</div></div>
+        <div class="flight-line"></div>
+        <div class="flight-pt"><div class="flight-code">TPE</div><div class="flight-time">06:15</div></div>
+      </div>
+      <div class="flight-info">長榮航空 BR382・經濟艙・A330-300・含餐點</div>
+      <a class="tnav" style="margin-top:10px;" href="https://www.google.com/maps/dir/?api=1&destination=10.8188,106.6520" target="_blank" rel="noopener noreferrer">
+        <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 2v13M10 15l-4-4M10 15l4-4"/><path d="M4 18h12"/></svg>
+        導航到新山一機場
+      </a>
+    </div>
+
+    <div class="section-h">市區交通</div>
+    <div class="note-card">
+      這趟主要靠 <b>舅舅開車</b> 或 <b>舅媽騎車</b> 接送,沒有另外抓大眾運輸或包車費用。<br>
+      每天出發前記得跟舅舅／舅媽對一下當天路線,尖峰時段(約 7–9 點、17–19 點)車流較多,抓寬鬆一點的時間。
+    </div>
+  </div>
+
+  <div class="view" id="view-stay">
+    <div class="info-card">
+      <h3>住宿</h3>
+      <p>整趟旅程住在親戚家,沒有另外訂飯店。</p>
+      <p>地址：<span class="fill-in">（請自行填入親戚家地址，方便跟司機/計程車說）</span></p>
+    </div>
+    <div class="info-card">
+      <h3>實用資訊</h3>
+      <p><b>簽證</b>：台灣護照無免簽,需事先申請電子簽證(e-Visa)，evisa.gov.vn</p>
+      <p><b>網路</b>：機場或當地購買 eSIM／SIM 卡，或開通台灣電信漫遊</p>
+      <p><b>換匯</b>：機場匯率較差，市區金飾店匯率通常較好，也可提款卡直接領越南盾</p>
+      <p><b>電壓</b>：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意</p>
+      <p><b>緊急聯絡</b>：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用</p>
+    </div>
+  </div>
+
+  <div class="view" id="view-pack">
+    <div class="pack-progress" id="packProgress">0 / 0 已打包</div>
+    <div id="packContainer"></div>
+  </div>
+
+  <div class="view" id="view-budget">
+    <table class="budget-table">
+      <thead><tr><th>項目</th><th>估計（VND）</th></tr></thead>
+      <tbody id="budgetBody"></tbody>
+      <tfoot><tr class="budget-total"><td>總計（不含禮金）</td><td id="budgetTotal"></td></tr></tfoot>
+    </table>
+    <div class="note-card">
+      沒有設定預算上限，以上金額僅供抓花費節奏參考。婚禮禮金依習俗另計，機票已購買不列入。
+    </div>
+  </div>
+
+</div>
+
+<nav class="bottom">
+  <button class="navbtn active" data-view="days">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+    <span>每日行程</span>
+  </button>
+  <button class="navbtn" data-view="transport">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 17h14M6 17v-5l2-5h8l2 5v5M4 17h1M19 17h1"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/></svg>
+    <span>交通</span>
+  </button>
+  <button class="navbtn" data-view="stay">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>
+    <span>住宿</span>
+  </button>
+  <button class="navbtn" data-view="pack">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="8" width="14" height="12" rx="2"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+    <span>行李</span>
+  </button>
+  <button class="navbtn" data-view="budget">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="16" cy="14" r="1.4"/></svg>
+    <span>預算</span>
+  </button>
+</nav>
+
+<script>
+(function(){
+  function nav(lat, lng){ return "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng; }
+  function navQ(q){ return "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(q); }
+
+  var DAYS = [
+    { num:1, date:"8/5（三）", title:"抵達", items:[
+      {time:"19:35", place:"桃園機場 T2 起飛", note:"長榮 BR381", link:null},
+      {time:"22:00", place:"抵達新山一機場 T2", note:"入境、提領行李", link:nav(10.8188,106.6520)},
+      {time:"22:30", place:"接機、返回親戚家", note:"舅舅/舅媽接機", link:null}
+    ]},
+    { num:2, date:"8/6（四）", title:"Xuân Hòa + Phạm Ngũ Lão 小街區", items:[
+      {time:"上午", place:"OHQUAO – The Local Edit", note:"選物店", link:navQ("OHQUAO The Local Edit Ho Chi Minh")},
+      {time:"", place:"Kisserine House", note:"禮服店", link:nav(10.7842992,106.6929711)},
+      {time:"", place:"ngâm CAFE", note:"咖啡，可頌好吃、可頌抹茶牛奶", link:nav(10.7864405,106.6861926)},
+      {time:"中午", place:"Nhà Tú – Việt Nam Restaurant", note:"越南料理午餐", link:navQ("Nha Tu Viet Nam Restaurant Ho Chi Minh")},
+      {time:"下午", place:"The 350F", note:"提拉米蘇", link:nav(10.7707123,106.6925886)},
+      {time:"", place:"Ka's clothing / Maztermind / Tick And Pick", note:"逛街", link:nav(10.7714774,106.6942158)},
+      {time:"", place:"Bánh Mì Huynh Hoa", note:"法棍老店，買著走", link:nav(10.7715226,106.6923968)},
+      {time:"傍晚", place:"Cà phê Linh", note:"鹽咖啡", link:nav(10.7713482,106.6964333)}
+    ]},
+    { num:3, date:"8/7（五）", title:"ThiBa Space 一帶 + Bến Thành／Q1 老城", items:[
+      {time:"上午", place:"Saigon Eco Craft / em.G clothé / HUONG Boutique", note:"逛街", link:nav(10.7764233,106.7019916)},
+      {time:"中午", place:"Hoa Túc Saigon", note:"蛋炸蝦春捲、蟹肉炒飯", link:nav(10.7785004,106.7037745)},
+      {time:"下午", place:"Bánh Canh Cua Út Thảo / Nicotin Cafe II", note:"小吃、日式老屋咖啡", link:nav(10.774102,106.7040848)},
+      {time:"傍晚", place:"Vesta Lifestyle & Gifts / Little HaNoi Egg Coffee", note:"Bến Thành 老城，雞蛋咖啡", link:nav(10.7694043,106.6960112)},
+      {time:"晚上", place:"Morra Perfume Experience Center", note:"客製香水，可刻字送禮", link:navQ("Morra Perfume Experience Center Ho Chi Minh")}
+    ]},
+    { num:4, date:"8/8（六）", title:"偏北老洋樓 + 人文大學", items:[
+      {time:"上午", place:"胡志明市國家大學社會科學與人文大學", note:"校園走走拍照", link:nav(10.7858607,106.7027086)},
+      {time:"", place:"JUBIN Studio", note:"好看洋裝，離大學很近", link:nav(10.7898032,106.6997679)},
+      {time:"下午", place:"Beanthere Cafe – Hồ Hảo Hớn", note:"老洋樓咖啡廳，放鬆", link:nav(10.7620124,106.6923935)},
+      {time:"晚上", place:"早點回家休息", note:"明天婚禮，準備服裝", link:null}
+    ]},
+    { num:5, date:"8/9（日）", title:"🎉 妹妹婚禮", wedding:true, items:[
+      {time:"全天", place:"婚禮相關行程", note:"依實際流程調整", link:null}
+    ]},
+    { num:6, date:"8/10（一）", title:"Bình Thạnh + Phú Nhuận／Đặng Tất", items:[
+      {time:"上午", place:"Nhâm Coffee", note:"法棍配奶油＋越南咖啡牛奶", link:nav(10.8007538,106.7067888)},
+      {time:"下午", place:"L'ESPOIR", note:"簡約長期主義女裝、禮服", link:nav(10.7911752,106.6698677)},
+      {time:"", place:"Veene Land", note:"手作店", link:nav(10.7929366,106.6880189)}
+    ]},
+    { num:7, date:"8/11（二）", title:"Thảo Điền 麵包甜點日", items:[
+      {time:"上午", place:"L'ESPOIR 旗艦店", note:"服飾門市", link:navQ("L'ESPOIR flagship store Thao Dien Ho Chi Minh")},
+      {time:"", place:"Banan Patisserie", note:"布丁", link:nav(10.8042109,106.7344061)},
+      {time:"下午", place:"Micro Boulangerie", note:"紅豆奶油法國麵包", link:nav(10.8054795,106.729937)},
+      {time:"", place:"Breadventure", note:"奶油法國麵包", link:nav(10.803713,106.728971)}
+    ]},
+    { num:8, date:"8/12（三）", title:"孫德勝大學 + 自由活動", items:[
+      {time:"上午", place:"孫德勝大學", note:"校園走走，位置較南單獨排一趟", link:nav(10.7319314,106.6993418)},
+      {time:"下午", place:"家族聚會／自由活動", note:"留給親戚時間", link:null}
+    ]},
+    { num:9, date:"8/13（四）", title:"補漏＋家族時間", items:[
+      {time:"全天", place:"回補前幾天沒逛完的點", note:"陪伴親戚、伴手禮採買", link:null},
+      {time:"", place:"LIBÉ（如順路）", note:"只有官網 libeworkshop.com，沒查到門市地址", link:null}
+    ]},
+    { num:10, date:"8/14（五）", title:"最後一天＋前往機場", items:[
+      {time:"白天", place:"收拾行李、最後採買、跟親戚道別", note:"", link:null},
+      {time:"22:30", place:"前往新山一機場", note:"國際線建議提早 3 小時", link:nav(10.8188,106.6520)},
+      {time:"8/15 01:50", place:"BR382 起飛", note:"", link:null},
+      {time:"8/15 06:15", place:"抵達桃園機場 T2", note:"", link:null}
+    ]}
+  ];
+
+  var daysContainer = document.getElementById("daysContainer");
+  DAYS.forEach(function(day){
+    var card = document.createElement("div");
+    card.className = "day-card" + (day.wedding ? " wedding" : "");
+    var head = document.createElement("div");
+    head.className = "day-head";
+    head.innerHTML =
+      '<span class="day-num">Day ' + day.num + '</span>' +
+      '<span class="day-date">' + day.date + '</span>' +
+      (day.wedding ? '<span class="day-badge wedding">婚禮</span>' : '');
+    card.appendChild(head);
+    var title = document.createElement("div");
+    title.className = "day-title";
+    title.textContent = day.title;
+    card.appendChild(title);
+
+    var tl = document.createElement("div");
+    tl.className = "timeline";
+    day.items.forEach(function(it){
+      var row = document.createElement("div");
+      row.className = "titem";
+      var time = document.createElement("div");
+      time.className = "ttime";
+      time.textContent = it.time || "";
+      var body = document.createElement("div");
+      body.className = "tbody";
+      var pl = document.createElement("div");
+      pl.className = "tplace";
+      pl.textContent = it.place;
+      body.appendChild(pl);
+      if(it.note){
+        var nt = document.createElement("div");
+        nt.className = "tnote";
+        nt.textContent = it.note;
+        body.appendChild(nt);
+      }
+      if(it.link){
+        var a = document.createElement("a");
+        a.className = "tnav";
+        a.href = it.link;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.innerHTML = '<svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M10 3l6 14-6-3-6 3z"/></svg> 導航';
+        body.appendChild(a);
+      }
+      row.appendChild(time);
+      row.appendChild(body);
+      tl.appendChild(row);
+    });
+    card.appendChild(tl);
+    daysContainer.appendChild(card);
+  });
+
+  /* ---------------- PACKING ---------------- */
+  var PACKING = [
+    { group:"證件與金錢", items:["護照正本＋e-Visa 證明（紙本＋電子備份）","信用卡","少量美金／越南盾現金"] },
+    { group:"衣物", items:["輕便透氣衣物（8月胡志明市 28–35°C）","雨具（雨季）","婚禮正式服裝＋鞋","防曬、遮陽帽"] },
+    { group:"個人用品", items:["防蚊液","常備藥","個人保養品","轉接頭／充電線","eSIM 或當地 SIM 卡"] },
+    { group:"其他", items:["空行李袋空間（伴手禮、購物戰利品）","旅平險保單／證明"] }
+  ];
+  var PACK_KEY = "hcmc-trip-packing-v1";
+  var packState = {};
+  try{ packState = JSON.parse(localStorage.getItem(PACK_KEY) || "{}"); }catch(e){}
+  function savePack(){ localStorage.setItem(PACK_KEY, JSON.stringify(packState)); }
+
+  var packContainer = document.getElementById("packContainer");
+  var packProgress = document.getElementById("packProgress");
+  var totalPackItems = 0;
+  function updatePackProgress(){
+    var done = Object.keys(packState).filter(function(k){return packState[k];}).length;
+    packProgress.textContent = done + " / " + totalPackItems + " 已打包";
+  }
+  PACKING.forEach(function(group, gi){
+    var gEl = document.createElement("div");
+    gEl.className = "pack-group";
+    var h3 = document.createElement("h3");
+    h3.textContent = group.group;
+    gEl.appendChild(h3);
+    group.items.forEach(function(label, ii){
+      totalPackItems++;
+      var id = "p" + gi + "_" + ii;
+      var row = document.createElement("div");
+      row.className = "pack-item" + (packState[id] ? " done" : "");
+      var btn = document.createElement("button");
+      btn.className = "pack-check";
+      btn.setAttribute("aria-label", "標記已打包：" + label);
+      btn.setAttribute("aria-pressed", packState[id] ? "true" : "false");
+      var ring = document.createElement("span");
+      ring.className = "pack-check-ring";
+      ring.textContent = packState[id] ? "✓" : "";
+      btn.appendChild(ring);
+      btn.addEventListener("click", function(){
+        packState[id] = !packState[id];
+        savePack();
+        row.classList.toggle("done", !!packState[id]);
+        btn.setAttribute("aria-pressed", packState[id] ? "true" : "false");
+        ring.textContent = packState[id] ? "✓" : "";
+        updatePackProgress();
+      });
+      var lbl = document.createElement("span");
+      lbl.className = "pack-label";
+      lbl.textContent = label;
+      row.appendChild(btn);
+      row.appendChild(lbl);
+      gEl.appendChild(row);
+    });
+    packContainer.appendChild(gEl);
+  });
+  updatePackProgress();
+
+  /* ---------------- BUDGET ---------------- */
+  var BUDGET = [
+    ["每日餐飲＋咖啡＋購物（9天）", "3,500,000 – 6,500,000"],
+    ["婚禮禮金", "依習俗，另計"],
+    ["eSIM／保險等雜支", "500,000 – 1,000,000"]
+  ];
+  var budgetBody = document.getElementById("budgetBody");
+  BUDGET.forEach(function(row){
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td>" + row[0] + "</td><td>" + row[1] + "</td>";
+    budgetBody.appendChild(tr);
+  });
+  document.getElementById("budgetTotal").textContent = "約 4,000,000 – 7,500,000";
+
+  /* ---------------- BOTTOM NAV ---------------- */
+  var navBtns = document.querySelectorAll(".navbtn");
+  var views = {
+    days: document.getElementById("view-days"),
+    transport: document.getElementById("view-transport"),
+    stay: document.getElementById("view-stay"),
+    pack: document.getElementById("view-pack"),
+    budget: document.getElementById("view-budget")
+  };
+  function activateView(name, pushHash){
+    if(!views[name]) name = "days";
+    navBtns.forEach(function(b){ b.classList.toggle("active", b.dataset.view === name); });
+    Object.keys(views).forEach(function(k){ views[k].classList.toggle("active", k === name); });
+    window.scrollTo(0,0);
+    if(pushHash !== false) history.replaceState(null, "", "#" + name);
+  }
+  navBtns.forEach(function(b){
+    b.addEventListener("click", function(){ activateView(b.dataset.view); });
+  });
+  var initial = (location.hash || "").replace("#","");
+  if(views[initial] && initial !== "days") activateView(initial, false);
+})();
+</script>
