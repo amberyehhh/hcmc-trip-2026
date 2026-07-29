@@ -1,7 +1,6 @@
 <meta charset="utf-8" />
 <title>胡志明市行程 8/5–8/15</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="robots" content="noindex, nofollow" />
 <style>
   :root{
     --ink:#182620; --paper:#E7E3D2; --paper-raised:#F4F1E4; --paper-sunk:#DEDAC7;
@@ -39,8 +38,23 @@
   .eyebrow{font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--brass);font-weight:700;}
   h1{font-family:Georgia,"Iowan Old Style","Noto Serif TC",serif;font-size:1.35rem;margin:2px 0 4px;text-wrap:balance;}
   .daterange{font-size:0.8rem;color:var(--done-ink);font-family:ui-monospace,"SF Mono",Menlo,monospace;}
-  .tripmeta{display:flex;gap:14px;margin-top:10px;font-size:0.74rem;color:var(--done-ink);flex-wrap:wrap;}
+  .tripmeta{display:flex;gap:14px;margin-top:10px;font-size:0.74rem;color:var(--done-ink);flex-wrap:wrap;align-items:center;}
+  .tripmeta span{display:inline-flex;align-items:center;gap:5px;}
   .tripmeta b{color:var(--ink);}
+
+  .daychips{display:flex;gap:6px;overflow-x:auto;padding:10px 2px 2px;margin:2px -2px -2px;scrollbar-width:none;}
+  .daychips::-webkit-scrollbar{display:none;}
+  .daychip{
+    flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:1px;
+    padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:transparent;
+    color:var(--ink);cursor:pointer;min-width:38px;
+  }
+  .daychip .n{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:0.72rem;font-weight:700;}
+  .daychip .d{font-size:0.6rem;color:var(--done-ink);}
+  .daychip.wedding{border-color:var(--rose);color:var(--rose);}
+  .daychip.today{background:var(--jade);border-color:var(--jade);color:var(--paper-raised);}
+  .daychip.today .d{color:var(--paper-raised);opacity:0.85;}
+  .daychip.active{box-shadow:0 0 0 2px var(--jade) inset;}
 
   .wrap{max-width:640px;margin:0 auto;padding:14px 16px 24px;}
   .view{display:none;}
@@ -50,25 +64,34 @@
   .day-card{
     background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:10px;
     padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 3px var(--shadow);
+    border-left:3px solid transparent;
+    scroll-margin-top:172px;
   }
   .day-card.wedding{border-color:var(--rose);background:linear-gradient(135deg,var(--rose-soft),var(--paper-raised) 60%);}
+  .day-card.today{border-left-color:var(--jade);}
   .day-head{display:flex;align-items:baseline;gap:8px;margin-bottom:2px;flex-wrap:wrap;}
   .day-num{font-family:Georgia,"Iowan Old Style","Noto Serif TC",serif;font-size:1.05rem;font-weight:700;}
   .day-date{font-size:0.76rem;color:var(--done-ink);font-family:ui-monospace,"SF Mono",Menlo,monospace;}
   .day-badge{margin-left:auto;font-size:0.66rem;padding:3px 9px;border-radius:100px;background:var(--jade);color:var(--paper-raised);white-space:nowrap;}
   .day-badge.wedding{background:var(--rose);}
+  .day-progress{font-size:0.7rem;color:var(--jade);font-family:ui-monospace,"SF Mono",Menlo,monospace;white-space:nowrap;}
   .day-title{font-size:0.82rem;color:var(--done-ink);margin:2px 0 10px;}
 
   .timeline{display:flex;flex-direction:column;gap:0;}
-  .titem{display:flex;gap:10px;padding:9px 0;border-top:1px dashed var(--line-soft);}
+  .titem{display:flex;gap:8px;align-items:flex-start;padding:9px 0;border-top:1px dashed var(--line-soft);}
   .titem:first-child{border-top:none;}
+  .titem.done .tplace{color:var(--done-ink);text-decoration:line-through;}
+  .tcheck{flex:0 0 auto;width:38px;height:38px;margin:-9px -4px -9px -9px;border-radius:50%;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+  .tcheck-ring{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--jade);display:flex;align-items:center;justify-content:center;color:var(--paper-raised);font-size:0.62rem;}
+  .titem.done .tcheck-ring{background:var(--jade);}
   .ttime{flex:0 0 52px;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:0.76rem;color:var(--brass);padding-top:2px;font-weight:700;}
   .tbody{flex:1;min-width:0;}
   .tplace{font-weight:700;font-size:0.9rem;text-wrap:balance;}
   .tnote{font-size:0.78rem;color:var(--done-ink);margin-top:2px;}
   .tnav{
-    display:inline-flex;align-items:center;gap:4px;margin-top:6px;
-    font-size:0.72rem;padding:4px 9px;border:1px solid var(--brass);color:var(--brass);border-radius:100px;
+    display:inline-flex;align-items:center;gap:4px;margin:6px -8px -8px 0;
+    font-size:0.72rem;padding:11px 12px;border:1px solid var(--brass);color:var(--brass);border-radius:100px;
+    min-height:38px;
   }
   .tnav:active{background:var(--brass);color:var(--paper-raised);}
 
@@ -137,10 +160,11 @@
   <h1>胡志明市之旅</h1>
   <div class="daterange">2026/08/05 – 2026/08/15・10 天 9 夜</div>
   <div class="tripmeta">
-    <span>✈ <b>BR381 / BR382</b></span>
-    <span>🎉 <b>8/9 妹妹婚禮</b></span>
-    <span>🏠 <b>住親戚家</b></span>
+    <span><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12l16-6-4 16-3-6-6-3z"/></svg> <b>BR381 / BR382</b></span>
+    <span><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3l1.8 4.2L16 9l-4.2 1.8L10 15l-1.8-4.2L4 9l4.2-1.8z"/></svg> <b>8/9 妹妹婚禮</b></span>
+    <span><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l7-6 7 6"/><path d="M5 9v8h10V9"/></svg> <b>住親戚家</b></span>
   </div>
+  <div class="daychips" id="dayChips"></div>
 </header>
 
 <div class="wrap">
@@ -243,12 +267,12 @@
   function navQ(q){ return "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(q); }
 
   var DAYS = [
-    { num:1, date:"8/5（三）", title:"抵達", items:[
+    { num:1, date:"8/5（三）", dateISO:"2026-08-05", title:"抵達", items:[
       {time:"19:35", place:"桃園機場 T2 起飛", note:"長榮 BR381", link:null},
       {time:"22:00", place:"抵達新山一機場 T2", note:"入境、提領行李", link:nav(10.8188,106.6520)},
       {time:"22:30", place:"接機、返回親戚家", note:"舅舅/舅媽接機", link:null}
     ]},
-    { num:2, date:"8/6（四）", title:"Xuân Hòa + Phạm Ngũ Lão 小街區", items:[
+    { num:2, date:"8/6（四）", dateISO:"2026-08-06", title:"Xuân Hòa + Phạm Ngũ Lão 小街區", items:[
       {time:"上午", place:"OHQUAO – The Local Edit", note:"選物店", link:navQ("OHQUAO The Local Edit Ho Chi Minh")},
       {time:"", place:"Kisserine House", note:"禮服店", link:nav(10.7842992,106.6929711)},
       {time:"", place:"ngâm CAFE", note:"咖啡，可頌好吃、可頌抹茶牛奶", link:nav(10.7864405,106.6861926)},
@@ -258,42 +282,42 @@
       {time:"", place:"Bánh Mì Huynh Hoa", note:"法棍老店，買著走", link:nav(10.7715226,106.6923968)},
       {time:"傍晚", place:"Cà phê Linh", note:"鹽咖啡", link:nav(10.7713482,106.6964333)}
     ]},
-    { num:3, date:"8/7（五）", title:"ThiBa Space 一帶 + Bến Thành／Q1 老城", items:[
+    { num:3, date:"8/7（五）", dateISO:"2026-08-07", title:"ThiBa Space 一帶 + Bến Thành／Q1 老城", items:[
       {time:"上午", place:"Saigon Eco Craft / em.G clothé / HUONG Boutique", note:"逛街", link:nav(10.7764233,106.7019916)},
       {time:"中午", place:"Hoa Túc Saigon", note:"蛋炸蝦春捲、蟹肉炒飯", link:nav(10.7785004,106.7037745)},
       {time:"下午", place:"Bánh Canh Cua Út Thảo / Nicotin Cafe II", note:"小吃、日式老屋咖啡", link:nav(10.774102,106.7040848)},
       {time:"傍晚", place:"Vesta Lifestyle & Gifts / Little HaNoi Egg Coffee", note:"Bến Thành 老城，雞蛋咖啡", link:nav(10.7694043,106.6960112)},
       {time:"晚上", place:"Morra Perfume Experience Center", note:"客製香水，可刻字送禮", link:navQ("Morra Perfume Experience Center Ho Chi Minh")}
     ]},
-    { num:4, date:"8/8（六）", title:"偏北老洋樓 + 人文大學", items:[
+    { num:4, date:"8/8（六）", dateISO:"2026-08-08", title:"偏北老洋樓 + 人文大學", items:[
       {time:"上午", place:"胡志明市國家大學社會科學與人文大學", note:"校園走走拍照", link:nav(10.7858607,106.7027086)},
       {time:"", place:"JUBIN Studio", note:"好看洋裝，離大學很近", link:nav(10.7898032,106.6997679)},
       {time:"下午", place:"Beanthere Cafe – Hồ Hảo Hớn", note:"老洋樓咖啡廳，放鬆", link:nav(10.7620124,106.6923935)},
       {time:"晚上", place:"早點回家休息", note:"明天婚禮，準備服裝", link:null}
     ]},
-    { num:5, date:"8/9（日）", title:"🎉 妹妹婚禮", wedding:true, items:[
+    { num:5, date:"8/9（日）", dateISO:"2026-08-09", title:"妹妹婚禮", wedding:true, items:[
       {time:"全天", place:"婚禮相關行程", note:"依實際流程調整", link:null}
     ]},
-    { num:6, date:"8/10（一）", title:"Bình Thạnh + Phú Nhuận／Đặng Tất", items:[
+    { num:6, date:"8/10（一）", dateISO:"2026-08-10", title:"Bình Thạnh + Phú Nhuận／Đặng Tất", items:[
       {time:"上午", place:"Nhâm Coffee", note:"法棍配奶油＋越南咖啡牛奶", link:nav(10.8007538,106.7067888)},
       {time:"下午", place:"L'ESPOIR", note:"簡約長期主義女裝、禮服", link:nav(10.7911752,106.6698677)},
       {time:"", place:"Veene Land", note:"手作店", link:nav(10.7929366,106.6880189)}
     ]},
-    { num:7, date:"8/11（二）", title:"Thảo Điền 麵包甜點日", items:[
+    { num:7, date:"8/11（二）", dateISO:"2026-08-11", title:"Thảo Điền 麵包甜點日", items:[
       {time:"上午", place:"L'ESPOIR 旗艦店", note:"服飾門市", link:navQ("L'ESPOIR flagship store Thao Dien Ho Chi Minh")},
       {time:"", place:"Banan Patisserie", note:"布丁", link:nav(10.8042109,106.7344061)},
       {time:"下午", place:"Micro Boulangerie", note:"紅豆奶油法國麵包", link:nav(10.8054795,106.729937)},
       {time:"", place:"Breadventure", note:"奶油法國麵包", link:nav(10.803713,106.728971)}
     ]},
-    { num:8, date:"8/12（三）", title:"孫德勝大學 + 自由活動", items:[
+    { num:8, date:"8/12（三）", dateISO:"2026-08-12", title:"孫德勝大學 + 自由活動", items:[
       {time:"上午", place:"孫德勝大學", note:"校園走走，位置較南單獨排一趟", link:nav(10.7319314,106.6993418)},
       {time:"下午", place:"家族聚會／自由活動", note:"留給親戚時間", link:null}
     ]},
-    { num:9, date:"8/13（四）", title:"補漏＋家族時間", items:[
+    { num:9, date:"8/13（四）", dateISO:"2026-08-13", title:"補漏＋家族時間", items:[
       {time:"全天", place:"回補前幾天沒逛完的點", note:"陪伴親戚、伴手禮採買", link:null},
       {time:"", place:"LIBÉ（如順路）", note:"只有官網 libeworkshop.com，沒查到門市地址", link:null}
     ]},
-    { num:10, date:"8/14（五）", title:"最後一天＋前往機場", items:[
+    { num:10, date:"8/14（五）", dateISO:"2026-08-14", title:"最後一天＋前往機場", items:[
       {time:"白天", place:"收拾行李、最後採買、跟親戚道別", note:"", link:null},
       {time:"22:30", place:"前往新山一機場", note:"國際線建議提早 3 小時", link:nav(10.8188,106.6520)},
       {time:"8/15 01:50", place:"BR382 起飛", note:"", link:null},
@@ -301,16 +325,41 @@
     ]}
   ];
 
+  var ITEM_KEY = "hcmc-trip-items-v1";
+  var itemState = {};
+  try{ itemState = JSON.parse(localStorage.getItem(ITEM_KEY) || "{}"); }catch(e){}
+  function saveItems(){ localStorage.setItem(ITEM_KEY, JSON.stringify(itemState)); }
+
+  function todayISO(){
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  var TODAY = todayISO();
+
   var daysContainer = document.getElementById("daysContainer");
+  var dayChipsEl = document.getElementById("dayChips");
+  var dayProgressEls = {};
+
+  function updateDayProgress(day){
+    var doneCount = day.items.filter(function(it, i){ return itemState["d" + day.num + "_" + i]; }).length;
+    if(dayProgressEls[day.num]) dayProgressEls[day.num].textContent = doneCount + "/" + day.items.length;
+  }
+
   DAYS.forEach(function(day){
+    var isToday = day.dateISO === TODAY;
     var card = document.createElement("div");
-    card.className = "day-card" + (day.wedding ? " wedding" : "");
+    card.className = "day-card" + (day.wedding ? " wedding" : "") + (isToday ? " today" : "");
+    card.id = "day-" + day.num;
     var head = document.createElement("div");
     head.className = "day-head";
     head.innerHTML =
       '<span class="day-num">Day ' + day.num + '</span>' +
       '<span class="day-date">' + day.date + '</span>' +
-      (day.wedding ? '<span class="day-badge wedding">婚禮</span>' : '');
+      (day.wedding ? '<span class="day-badge wedding">婚禮</span>' : (isToday ? '<span class="day-badge">今天</span>' : ''));
+    var progress = document.createElement("span");
+    progress.className = "day-progress";
+    head.appendChild(progress);
+    dayProgressEls[day.num] = progress;
     card.appendChild(head);
     var title = document.createElement("div");
     title.className = "day-title";
@@ -319,9 +368,28 @@
 
     var tl = document.createElement("div");
     tl.className = "timeline";
-    day.items.forEach(function(it){
+    day.items.forEach(function(it, idx){
+      var itemId = "d" + day.num + "_" + idx;
       var row = document.createElement("div");
-      row.className = "titem";
+      row.className = "titem" + (itemState[itemId] ? " done" : "");
+
+      var check = document.createElement("button");
+      check.className = "tcheck";
+      check.setAttribute("aria-label", "標記已完成：" + it.place);
+      check.setAttribute("aria-pressed", itemState[itemId] ? "true" : "false");
+      var ring = document.createElement("span");
+      ring.className = "tcheck-ring";
+      ring.textContent = itemState[itemId] ? "✓" : "";
+      check.appendChild(ring);
+      check.addEventListener("click", function(){
+        itemState[itemId] = !itemState[itemId];
+        saveItems();
+        row.classList.toggle("done", !!itemState[itemId]);
+        check.setAttribute("aria-pressed", itemState[itemId] ? "true" : "false");
+        ring.textContent = itemState[itemId] ? "✓" : "";
+        updateDayProgress(day);
+      });
+
       var time = document.createElement("div");
       time.className = "ttime";
       time.textContent = it.time || "";
@@ -346,13 +414,30 @@
         a.innerHTML = '<svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M10 3l6 14-6-3-6 3z"/></svg> 導航';
         body.appendChild(a);
       }
+      row.appendChild(check);
       row.appendChild(time);
       row.appendChild(body);
       tl.appendChild(row);
     });
     card.appendChild(tl);
     daysContainer.appendChild(card);
+    updateDayProgress(day);
+
+    var chip = document.createElement("button");
+    chip.className = "daychip" + (day.wedding ? " wedding" : "") + (isToday ? " today" : "");
+    chip.innerHTML = '<span class="n">Day ' + day.num + '</span><span class="d">' + day.date.replace(/（.*/,"") + '</span>';
+    chip.addEventListener("click", function(){
+      document.getElementById("day-" + day.num).scrollIntoView({behavior:"auto", block:"start"});
+    });
+    dayChipsEl.appendChild(chip);
   });
+
+  var todayDay = DAYS.filter(function(d){ return d.dateISO === TODAY; })[0];
+  if(todayDay){
+    requestAnimationFrame(function(){
+      document.getElementById("day-" + todayDay.num).scrollIntoView({behavior:"auto", block:"start"});
+    });
+  }
 
   /* ---------------- PACKING ---------------- */
   var PACKING = [
