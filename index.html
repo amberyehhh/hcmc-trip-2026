@@ -156,13 +156,16 @@
 </style>
 
 <header class="top">
-  <div class="eyebrow">Ho Chi Minh City</div>
-  <h1>胡志明市之旅</h1>
-  <div class="daterange">2026/08/05 – 2026/08/15・10 天 9 夜</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+    <div class="eyebrow">Ho Chi Minh City</div>
+    <button class="langbtn" id="langBtn">VI</button>
+  </div>
+  <h1 id="pageTitle">胡志明市之旅</h1>
+  <div class="daterange" id="dateRange">2026/08/05 – 2026/08/15・10 天 9 夜</div>
   <div class="tripmeta">
     <span><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12l16-6-4 16-3-6-6-3z"/></svg> <b>BR381 / BR382</b></span>
-    <span><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3l1.8 4.2L16 9l-4.2 1.8L10 15l-1.8-4.2L4 9l4.2-1.8z"/></svg> <b>8/9 妹妹婚禮</b></span>
-    <span><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l7-6 7 6"/><path d="M5 9v8h10V9"/></svg> <b>住親戚家</b></span>
+    <span><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3l1.8 4.2L16 9l-4.2 1.8L10 15l-1.8-4.2L4 9l4.2-1.8z"/></svg> <b id="weddingMeta">8/9 妹妹婚禮</b></span>
+    <span><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l7-6 7 6"/><path d="M5 9v8h10V9"/></svg> <b id="stayMeta">住親戚家</b></span>
   </div>
   <div class="daychips" id="dayChips"></div>
 </header>
@@ -175,30 +178,30 @@
 
   <div class="view" id="view-transport">
     <div class="flight-card">
-      <div class="section-h" style="margin-top:0;">去程 8/5（三）</div>
+      <div class="section-h" style="margin-top:0;" id="outboundLabel">去程 8/5（三）</div>
       <div class="flight-row">
         <div class="flight-pt"><div class="flight-code">TPE</div><div class="flight-time">19:35</div></div>
         <div class="flight-line"></div>
         <div class="flight-pt"><div class="flight-code">SGN</div><div class="flight-time">22:00</div></div>
       </div>
-      <div class="flight-info">長榮航空 BR381・經濟艙・A330-300・含餐點</div>
+      <div class="flight-info" id="flightInfo1">長榮航空 BR381・經濟艙・A330-300・含餐點</div>
     </div>
     <div class="flight-card">
-      <div class="section-h" style="margin-top:0;">回程 8/15（六）</div>
+      <div class="section-h" style="margin-top:0;" id="returnLabel">回程 8/15（六）</div>
       <div class="flight-row">
         <div class="flight-pt"><div class="flight-code">SGN</div><div class="flight-time">01:50</div></div>
         <div class="flight-line"></div>
         <div class="flight-pt"><div class="flight-code">TPE</div><div class="flight-time">06:15</div></div>
       </div>
-      <div class="flight-info">長榮航空 BR382・經濟艙・A330-300・含餐點</div>
+      <div class="flight-info" id="flightInfo2">長榮航空 BR382・經濟艙・A330-300・含餐點</div>
       <a class="tnav" style="margin-top:10px;" href="https://www.google.com/maps/dir/?api=1&destination=10.8188,106.6520" target="_blank" rel="noopener noreferrer">
         <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 2v13M10 15l-4-4M10 15l4-4"/><path d="M4 18h12"/></svg>
-        導航到新山一機場
+        <span id="navAirportLabel">導航到新山一機場</span>
       </a>
     </div>
 
-    <div class="section-h">市區交通</div>
-    <div class="note-card">
+    <div class="section-h" id="cityTransportLabel">市區交通</div>
+    <div class="note-card" id="cityTransportNote">
       這趟主要靠 <b>舅舅開車</b> 或 <b>舅媽騎車</b> 接送,沒有另外抓大眾運輸或包車費用。<br>
       每天出發前記得跟舅舅／舅媽對一下當天路線,尖峰時段(約 7–9 點、17–19 點)車流較多,抓寬鬆一點的時間。
     </div>
@@ -206,32 +209,32 @@
 
   <div class="view" id="view-stay">
     <div class="info-card">
-      <h3>住宿</h3>
-      <p>整趟旅程住在親戚家,沒有另外訂飯店。</p>
-      <p>地址：<span class="fill-in">（請自行填入親戚家地址，方便跟司機/計程車說）</span></p>
+      <h3 id="stayTitle">住宿</h3>
+      <p id="stayP1">整趟旅程住在親戚家,沒有另外訂飯店。</p>
+      <p><span id="addressLabel">地址：</span><span class="fill-in" id="addressFillIn">（請自行填入親戚家地址，方便跟司機/計程車說）</span></p>
     </div>
     <div class="info-card">
-      <h3>實用資訊</h3>
-      <p><b>簽證</b>：台灣護照無免簽,需事先申請電子簽證(e-Visa)，evisa.gov.vn</p>
-      <p><b>網路</b>：機場或當地購買 eSIM／SIM 卡，或開通台灣電信漫遊</p>
-      <p><b>換匯</b>：機場匯率較差，市區金飾店匯率通常較好，也可提款卡直接領越南盾</p>
-      <p><b>電壓</b>：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意</p>
-      <p><b>緊急聯絡</b>：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用</p>
+      <h3 id="usefulInfoTitle">實用資訊</h3>
+      <p><b id="visaLabel">簽證</b><span id="visaText">：台灣護照無免簽,需事先申請電子簽證(e-Visa)，evisa.gov.vn</span></p>
+      <p><b id="wifiLabel">網路</b><span id="wifiText">：機場或當地購買 eSIM／SIM 卡，或開通台灣電信漫遊</span></p>
+      <p><b id="exchangeLabel">換匯</b><span id="exchangeText">：機場匯率較差，市區金飾店匯率通常較好，也可提款卡直接領越南盾</span></p>
+      <p><b id="voltageLabel">電壓</b><span id="voltageText">：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意</span></p>
+      <p><b id="emergencyLabel">緊急聯絡</b><span id="emergencyText">：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用</span></p>
     </div>
   </div>
 
   <div class="view" id="view-pack">
-    <div class="pack-progress" id="packProgress">0 / 0 已打包</div>
+    <div class="pack-progress" id="packProgress">0 / 0</div>
     <div id="packContainer"></div>
   </div>
 
   <div class="view" id="view-budget">
     <table class="budget-table">
-      <thead><tr><th>項目</th><th>估計（VND）</th></tr></thead>
+      <thead><tr><th id="budgetColItem">項目</th><th id="budgetColEst">估計（VND）</th></tr></thead>
       <tbody id="budgetBody"></tbody>
-      <tfoot><tr class="budget-total"><td>總計（不含禮金）</td><td id="budgetTotal"></td></tr></tfoot>
+      <tfoot><tr class="budget-total"><td id="budgetTotalLabel">總計（不含禮金）</td><td id="budgetTotal"></td></tr></tfoot>
     </table>
-    <div class="note-card">
+    <div class="note-card" id="budgetNote">
       沒有設定預算上限，以上金額僅供抓花費節奏參考。婚禮禮金依習俗另計，機票已購買不列入。
     </div>
   </div>
@@ -241,23 +244,23 @@
 <nav class="bottom">
   <button class="navbtn active" data-view="days">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-    <span>每日行程</span>
+    <span id="navDays">每日行程</span>
   </button>
   <button class="navbtn" data-view="transport">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 17h14M6 17v-5l2-5h8l2 5v5M4 17h1M19 17h1"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/></svg>
-    <span>交通</span>
+    <span id="navTransport">交通</span>
   </button>
   <button class="navbtn" data-view="stay">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>
-    <span>住宿</span>
+    <span id="navStay">住宿</span>
   </button>
   <button class="navbtn" data-view="pack">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="8" width="14" height="12" rx="2"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-    <span>行李</span>
+    <span id="navPack">行李</span>
   </button>
   <button class="navbtn" data-view="budget">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="16" cy="14" r="1.4"/></svg>
-    <span>預算</span>
+    <span id="navBudget">預算</span>
   </button>
 </nav>
 
@@ -267,63 +270,126 @@
   function navQ(q){ return "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(q); }
 
   var DAYS = [
-    { num:1, date:"8/5（三）", dateISO:"2026-08-05", title:"抵達", items:[
-      {time:"19:35", place:"桃園機場 T2 起飛", note:"長榮 BR381", link:null},
-      {time:"22:00", place:"抵達新山一機場 T2", note:"入境、提領行李", link:nav(10.8188,106.6520)},
-      {time:"22:30", place:"接機、返回親戚家", note:"舅舅/舅媽接機", link:null}
+    { num:1, date:"8/5（三）", dateISO:"2026-08-05", title:"抵達", titleVi:"Đến nơi", items:[
+      {time:"19:35", place:"桃園機場 T2 起飛", placeVi:"Khởi hành sân bay Đào Viên T2", note:"長榮 BR381", noteVi:"EVA Air BR381", link:null},
+      {time:"22:00", place:"抵達新山一機場 T2", placeVi:"Đến sân bay Tân Sơn Nhất T2", note:"入境、提領行李", noteVi:"Nhập cảnh, lấy hành lý", link:nav(10.8188,106.6520)},
+      {time:"22:30", place:"接機、返回親戚家", placeVi:"Đón sân bay, về nhà người thân", note:"舅舅/舅媽接機", noteVi:"Cậu/mợ đón sân bay", link:null}
     ]},
-    { num:2, date:"8/6（四）", dateISO:"2026-08-06", title:"Xuân Hòa + Phạm Ngũ Lão 小街區", items:[
-      {time:"上午", place:"OHQUAO – The Local Edit", note:"選物店", link:navQ("OHQUAO The Local Edit Ho Chi Minh")},
-      {time:"", place:"Kisserine House", note:"禮服店", link:nav(10.7842992,106.6929711)},
-      {time:"", place:"ngâm CAFE", note:"咖啡，可頌好吃、可頌抹茶牛奶", link:nav(10.7864405,106.6861926)},
-      {time:"中午", place:"Nhà Tú – Việt Nam Restaurant", note:"越南料理午餐", link:navQ("Nha Tu Viet Nam Restaurant Ho Chi Minh")},
-      {time:"下午", place:"The 350F", note:"提拉米蘇", link:nav(10.7707123,106.6925886)},
-      {time:"", place:"Ka's clothing / Maztermind / Tick And Pick", note:"逛街", link:nav(10.7714774,106.6942158)},
-      {time:"", place:"Bánh Mì Huynh Hoa", note:"法棍老店，買著走", link:nav(10.7715226,106.6923968)},
-      {time:"傍晚", place:"Cà phê Linh", note:"鹽咖啡", link:nav(10.7713482,106.6964333)}
+    { num:2, date:"8/6（四）", dateISO:"2026-08-06", title:"Xuân Hòa + Phạm Ngũ Lão 小街區", titleVi:"Xuân Hòa + Khu phố nhỏ Phạm Ngũ Lão", items:[
+      {time:"上午", place:"OHQUAO – The Local Edit", note:"選物店", noteVi:"Cửa hàng đồ tuyển chọn", link:navQ("OHQUAO The Local Edit Ho Chi Minh")},
+      {time:"", place:"Kisserine House", note:"禮服店", noteVi:"Tiệm váy dạ hội", link:nav(10.7842992,106.6929711)},
+      {time:"", place:"ngâm CAFE", note:"咖啡，可頌好吃、可頌抹茶牛奶", noteVi:"Cà phê, croissant ngon, croissant matcha sữa ngon", link:nav(10.7864405,106.6861926)},
+      {time:"中午", place:"Nhà Tú – Việt Nam Restaurant", note:"越南料理午餐", noteVi:"Ăn trưa món Việt", link:navQ("Nha Tu Viet Nam Restaurant Ho Chi Minh")},
+      {time:"下午", place:"The 350F", note:"提拉米蘇", noteVi:"Tiramisu", link:nav(10.7707123,106.6925886)},
+      {time:"", place:"Ka's clothing / Maztermind / Tick And Pick", note:"逛街", noteVi:"Đi mua sắm", link:nav(10.7714774,106.6942158)},
+      {time:"", place:"Bánh Mì Huynh Hoa", note:"法棍老店，買著走", noteVi:"Tiệm bánh mì lâu đời, mua mang đi", link:nav(10.7715226,106.6923968)},
+      {time:"傍晚", place:"Cà phê Linh", note:"鹽咖啡", noteVi:"Cà phê muối", link:nav(10.7713482,106.6964333)}
     ]},
-    { num:3, date:"8/7（五）", dateISO:"2026-08-07", title:"ThiBa Space 一帶 + Bến Thành／Q1 老城", items:[
-      {time:"上午", place:"Saigon Eco Craft / em.G clothé / HUONG Boutique", note:"逛街", link:nav(10.7764233,106.7019916)},
-      {time:"中午", place:"Hoa Túc Saigon", note:"蛋炸蝦春捲、蟹肉炒飯", link:nav(10.7785004,106.7037745)},
-      {time:"下午", place:"Bánh Canh Cua Út Thảo / Nicotin Cafe II", note:"小吃、日式老屋咖啡", link:nav(10.774102,106.7040848)},
-      {time:"傍晚", place:"Vesta Lifestyle & Gifts / Little HaNoi Egg Coffee", note:"Bến Thành 老城，雞蛋咖啡", link:nav(10.7694043,106.6960112)},
-      {time:"晚上", place:"Morra Perfume Experience Center", note:"客製香水，可刻字送禮", link:navQ("Morra Perfume Experience Center Ho Chi Minh")}
+    { num:3, date:"8/7（五）", dateISO:"2026-08-07", title:"ThiBa Space 一帶 + Bến Thành／Q1 老城", titleVi:"Khu vực ThiBa Space + Bến Thành／Phố cổ Quận 1", items:[
+      {time:"上午", place:"Saigon Eco Craft / em.G clothé / HUONG Boutique", note:"逛街", noteVi:"Đi mua sắm", link:nav(10.7764233,106.7019916)},
+      {time:"中午", place:"Hoa Túc Saigon", note:"蛋炸蝦春捲、蟹肉炒飯", noteVi:"Chả giò tôm trứng, cơm chiên cua", link:nav(10.7785004,106.7037745)},
+      {time:"下午", place:"Bánh Canh Cua Út Thảo / Nicotin Cafe II", note:"小吃、日式老屋咖啡", noteVi:"Món ăn vặt, cà phê nhà cổ kiểu Nhật", link:nav(10.774102,106.7040848)},
+      {time:"傍晚", place:"Vesta Lifestyle & Gifts / Little HaNoi Egg Coffee", note:"Bến Thành 老城，雞蛋咖啡", noteVi:"Phố cổ Bến Thành, cà phê trứng", link:nav(10.7694043,106.6960112)},
+      {time:"晚上", place:"Morra Perfume Experience Center", note:"客製香水，可刻字送禮", noteVi:"Nước hoa theo yêu cầu, khắc chữ làm quà", link:navQ("Morra Perfume Experience Center Ho Chi Minh")}
     ]},
-    { num:4, date:"8/8（六）", dateISO:"2026-08-08", title:"偏北老洋樓 + 人文大學", items:[
-      {time:"上午", place:"胡志明市國家大學社會科學與人文大學", note:"校園走走拍照", link:nav(10.7858607,106.7027086)},
-      {time:"", place:"JUBIN Studio", note:"好看洋裝，離大學很近", link:nav(10.7898032,106.6997679)},
-      {time:"下午", place:"Beanthere Cafe – Hồ Hảo Hớn", note:"老洋樓咖啡廳，放鬆", link:nav(10.7620124,106.6923935)},
-      {time:"晚上", place:"早點回家休息", note:"明天婚禮，準備服裝", link:null}
+    { num:4, date:"8/8（六）", dateISO:"2026-08-08", title:"偏北老洋樓 + 人文大學", titleVi:"Biệt thự cổ phía Bắc + Đại học Nhân văn", items:[
+      {time:"上午", place:"胡志明市國家大學社會科學與人文大學", placeVi:"Đại học Khoa học Xã hội và Nhân văn TP.HCM", note:"校園走走拍照", noteVi:"Dạo quanh khuôn viên, chụp ảnh", link:nav(10.7858607,106.7027086)},
+      {time:"", place:"JUBIN Studio", note:"好看洋裝，離大學很近", noteVi:"Váy đầm đẹp, gần trường đại học", link:nav(10.7898032,106.6997679)},
+      {time:"下午", place:"Beanthere Cafe – Hồ Hảo Hớn", note:"老洋樓咖啡廳，放鬆", noteVi:"Quán cà phê biệt thự cổ, thư giãn", link:nav(10.7620124,106.6923935)},
+      {time:"晚上", place:"早點回家休息", placeVi:"Về nhà nghỉ sớm", note:"明天婚禮，準備服裝", noteVi:"Ngày mai đám cưới, chuẩn bị trang phục", link:null}
     ]},
-    { num:5, date:"8/9（日）", dateISO:"2026-08-09", title:"妹妹婚禮", wedding:true, items:[
-      {time:"全天", place:"婚禮相關行程", note:"依實際流程調整", link:null}
+    { num:5, date:"8/9（日）", dateISO:"2026-08-09", title:"妹妹婚禮", titleVi:"Đám cưới em gái", wedding:true, items:[
+      {time:"全天", place:"婚禮相關行程", placeVi:"Các hoạt động đám cưới", note:"依實際流程調整", noteVi:"Điều chỉnh theo thực tế", link:null}
     ]},
     { num:6, date:"8/10（一）", dateISO:"2026-08-10", title:"Bình Thạnh + Phú Nhuận／Đặng Tất", items:[
-      {time:"上午", place:"Nhâm Coffee", note:"法棍配奶油＋越南咖啡牛奶", link:nav(10.8007538,106.7067888)},
-      {time:"下午", place:"L'ESPOIR", note:"簡約長期主義女裝、禮服", link:nav(10.7911752,106.6698677)},
-      {time:"", place:"Veene Land", note:"手作店", link:nav(10.7929366,106.6880189)}
+      {time:"上午", place:"Nhâm Coffee", note:"法棍配奶油＋越南咖啡牛奶", noteVi:"Bánh mì bơ + cà phê sữa đá", link:nav(10.8007538,106.7067888)},
+      {time:"下午", place:"L'ESPOIR", note:"簡約長期主義女裝、禮服", noteVi:"Thời trang nữ tối giản bền vững, váy dạ hội", link:nav(10.7911752,106.6698677)},
+      {time:"", place:"Veene Land", note:"手作店", noteVi:"Đồ thủ công", link:nav(10.7929366,106.6880189)}
     ]},
-    { num:7, date:"8/11（二）", dateISO:"2026-08-11", title:"Thảo Điền 麵包甜點日", items:[
-      {time:"上午", place:"L'ESPOIR 旗艦店", note:"服飾門市", link:navQ("L'ESPOIR flagship store Thao Dien Ho Chi Minh")},
-      {time:"", place:"Banan Patisserie", note:"布丁", link:nav(10.8042109,106.7344061)},
-      {time:"下午", place:"Micro Boulangerie", note:"紅豆奶油法國麵包", link:nav(10.8054795,106.729937)},
-      {time:"", place:"Breadventure", note:"奶油法國麵包", link:nav(10.803713,106.728971)}
+    { num:7, date:"8/11（二）", dateISO:"2026-08-11", title:"Thảo Điền 麵包甜點日", titleVi:"Ngày bánh ngọt Thảo Điền", items:[
+      {time:"上午", place:"L'ESPOIR 旗艦店", placeVi:"L'ESPOIR Flagship", note:"服飾門市", noteVi:"Cửa hàng thời trang", link:navQ("L'ESPOIR flagship store Thao Dien Ho Chi Minh")},
+      {time:"", place:"Banan Patisserie", note:"布丁", noteVi:"Bánh flan", link:nav(10.8042109,106.7344061)},
+      {time:"下午", place:"Micro Boulangerie", note:"紅豆奶油法國麵包", noteVi:"Bánh mì Pháp đậu đỏ bơ", link:nav(10.8054795,106.729937)},
+      {time:"", place:"Breadventure", note:"奶油法國麵包", noteVi:"Bánh mì Pháp bơ", link:nav(10.803713,106.728971)}
     ]},
-    { num:8, date:"8/12（三）", dateISO:"2026-08-12", title:"孫德勝大學 + 自由活動", items:[
-      {time:"上午", place:"孫德勝大學", note:"校園走走，位置較南單獨排一趟", link:nav(10.7319314,106.6993418)},
-      {time:"下午", place:"家族聚會／自由活動", note:"留給親戚時間", link:null}
+    { num:8, date:"8/12（三）", dateISO:"2026-08-12", title:"孫德勝大學 + 自由活動", titleVi:"Đại học Tôn Đức Thắng + Thời gian tự do", items:[
+      {time:"上午", place:"孫德勝大學", placeVi:"Đại học Tôn Đức Thắng", note:"校園走走，位置較南單獨排一趟", noteVi:"Dạo quanh khuôn viên, ở xa nên đi riêng", link:nav(10.7319314,106.6993418)},
+      {time:"下午", place:"家族聚會／自由活動", placeVi:"Họp mặt gia đình／Tự do", note:"留給親戚時間", noteVi:"Dành thời gian cho người thân", link:null}
     ]},
-    { num:9, date:"8/13（四）", dateISO:"2026-08-13", title:"補漏＋家族時間", items:[
-      {time:"全天", place:"回補前幾天沒逛完的點", note:"陪伴親戚、伴手禮採買", link:null},
-      {time:"", place:"LIBÉ（如順路）", note:"只有官網 libeworkshop.com，沒查到門市地址", link:null}
+    { num:9, date:"8/13（四）", dateISO:"2026-08-13", title:"補漏＋家族時間", titleVi:"Bù các điểm còn thiếu + Thời gian gia đình", items:[
+      {time:"全天", place:"回補前幾天沒逛完的點", placeVi:"Ghé lại những điểm chưa đi hết", note:"陪伴親戚、伴手禮採買", noteVi:"Ở bên người thân, mua quà lưu niệm", link:null},
+      {time:"", place:"LIBÉ（如順路）", placeVi:"LIBÉ (nếu tiện đường)", note:"只有官網 libeworkshop.com，沒查到門市地址", noteVi:"Chỉ có trang web libeworkshop.com, chưa rõ địa chỉ cửa hàng", link:null}
     ]},
-    { num:10, date:"8/14（五）", dateISO:"2026-08-14", title:"最後一天＋前往機場", items:[
-      {time:"白天", place:"收拾行李、最後採買、跟親戚道別", note:"", link:null},
-      {time:"22:30", place:"前往新山一機場", note:"國際線建議提早 3 小時", link:nav(10.8188,106.6520)},
-      {time:"8/15 01:50", place:"BR382 起飛", note:"", link:null},
-      {time:"8/15 06:15", place:"抵達桃園機場 T2", note:"", link:null}
+    { num:10, date:"8/14（五）", dateISO:"2026-08-14", title:"最後一天＋前往機場", titleVi:"Ngày cuối + Ra sân bay", items:[
+      {time:"白天", place:"收拾行李、最後採買、跟親戚道別", placeVi:"Thu dọn hành lý, mua sắm lần cuối, chào tạm biệt người thân", note:"", link:null},
+      {time:"22:30", place:"前往新山一機場", placeVi:"Ra sân bay Tân Sơn Nhất", note:"國際線建議提早 3 小時", noteVi:"Chuyến quốc tế nên đến sớm 3 tiếng", link:nav(10.8188,106.6520)},
+      {time:"8/15 01:50", place:"BR382 起飛", placeVi:"BR382 khởi hành", note:"", link:null},
+      {time:"8/15 06:15", place:"抵達桃園機場 T2", placeVi:"Đến sân bay Đào Viên T2", note:"", link:null}
     ]}
   ];
+
+  /* ---------------- I18N ---------------- */
+  var LANG_KEY = "hcmc-trip-lang";
+  var lang = localStorage.getItem(LANG_KEY) || "zh";
+  var UI = {
+    zh:{
+      pageTitle:"胡志明市之旅", dateRange:"2026/08/05 – 2026/08/15・10 天 9 夜",
+      weddingMeta:"8/9 妹妹婚禮", stayMeta:"住親戚家",
+      today:"今天", wedding:"婚禮", markCompleted:"標記已完成：", navigate:"導航",
+      outboundLabel:"去程 8/5（三）", returnLabel:"回程 8/15（六）",
+      flightInfo1:"長榮航空 BR381・經濟艙・A330-300・含餐點",
+      flightInfo2:"長榮航空 BR382・經濟艙・A330-300・含餐點",
+      navAirportLabel:"導航到新山一機場",
+      cityTransportLabel:"市區交通",
+      cityTransportNote:"這趟主要靠 <b>舅舅開車</b> 或 <b>舅媽騎車</b> 接送,沒有另外抓大眾運輸或包車費用。<br>每天出發前記得跟舅舅／舅媽對一下當天路線,尖峰時段(約 7–9 點、17–19 點)車流較多,抓寬鬆一點的時間。",
+      stayTitle:"住宿", stayP1:"整趟旅程住在親戚家,沒有另外訂飯店。",
+      addressLabel:"地址：", addressFillIn:"（請自行填入親戚家地址，方便跟司機/計程車說）",
+      usefulInfoTitle:"實用資訊",
+      visaLabel:"簽證", visaText:"：台灣護照無免簽,需事先申請電子簽證(e-Visa)，evisa.gov.vn",
+      wifiLabel:"網路", wifiText:"：機場或當地購買 eSIM／SIM 卡，或開通台灣電信漫遊",
+      exchangeLabel:"換匯", exchangeText:"：機場匯率較差，市區金飾店匯率通常較好，也可提款卡直接領越南盾",
+      voltageLabel:"電壓", voltageText:"：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意",
+      emergencyLabel:"緊急聯絡", emergencyText:"：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用",
+      packed:"已打包",
+      budgetColItem:"項目", budgetColEst:"估計（VND）", budgetTotalLabel:"總計（不含禮金）",
+      budgetNote:"沒有設定預算上限，以上金額僅供抓花費節奏參考。婚禮禮金依習俗另計，機票已購買不列入。",
+      budgetTotalVal:"約 4,000,000 – 7,500,000",
+      navDays:"每日行程", navTransport:"交通", navStay:"住宿", navPack:"行李", navBudget:"預算"
+    },
+    vi:{
+      pageTitle:"Chuyến đi TP. Hồ Chí Minh", dateRange:"2026/08/05 – 2026/08/15・10 ngày 9 đêm",
+      weddingMeta:"8/9 Đám cưới em gái", stayMeta:"Ở nhà người thân",
+      today:"Hôm nay", wedding:"Đám cưới", markCompleted:"Đánh dấu đã xong：", navigate:"Chỉ đường",
+      outboundLabel:"Chuyến đi 5/8 (Thứ Tư)", returnLabel:"Chuyến về 15/8 (Thứ Bảy)",
+      flightInfo1:"EVA Air BR381・Hạng phổ thông・A330-300・Có suất ăn",
+      flightInfo2:"EVA Air BR382・Hạng phổ thông・A330-300・Có suất ăn",
+      navAirportLabel:"Chỉ đường đến sân bay Tân Sơn Nhất",
+      cityTransportLabel:"Di chuyển trong thành phố",
+      cityTransportNote:"Chuyến này chủ yếu nhờ <b>cậu lái xe</b> hoặc <b>mợ chở xe máy</b>, không tính chi phí xe công cộng hay thuê xe riêng.<br>Trước khi đi mỗi ngày nhớ trao đổi lộ trình với cậu／mợ, giờ cao điểm (khoảng 7–9h, 17–19h) đông xe hơn, nên chừa thêm thời gian.",
+      stayTitle:"Chỗ ở", stayP1:"Cả chuyến đi ở nhà người thân, không đặt khách sạn.",
+      addressLabel:"Địa chỉ：", addressFillIn:"（Vui lòng tự điền địa chỉ nhà người thân để tiện nói với tài xế/taxi）",
+      usefulInfoTitle:"Thông tin hữu ích",
+      visaLabel:"Visa", visaText:"：Hộ chiếu Đài Loan không được miễn visa, cần xin e-Visa trước tại evisa.gov.vn",
+      wifiLabel:"Mạng", wifiText:"：Mua eSIM／SIM tại sân bay hoặc địa phương, hoặc dùng roaming nhà mạng Đài Loan",
+      exchangeLabel:"Đổi tiền", exchangeText:"：Tỷ giá ở sân bay kém hơn, tiệm vàng trong thành phố thường tốt hơn, cũng có thể rút VND bằng thẻ ATM",
+      voltageLabel:"Điện áp", voltageText:"：Việt Nam chủ yếu dùng ổ A/C 220V, sạc thường tương thích đa điện áp, thiết bị lớn cần lưu ý",
+      emergencyLabel:"Liên hệ khẩn cấp", emergencyText:"：Văn phòng Kinh tế Văn hóa Đài Bắc tại TP.HCM, nên tra số điện thoại mới nhất trước khi đi",
+      packed:"đã đóng gói",
+      budgetColItem:"Hạng mục", budgetColEst:"Ước tính (VND)", budgetTotalLabel:"Tổng cộng (chưa gồm tiền mừng cưới)",
+      budgetNote:"Không đặt giới hạn ngân sách, số tiền trên chỉ để tham khảo nhịp độ chi tiêu. Tiền mừng cưới tính riêng theo phong tục, vé máy bay đã mua không tính vào đây.",
+      budgetTotalVal:"Khoảng 4.000.000 – 7.500.000",
+      navDays:"Lịch trình", navTransport:"Di chuyển", navStay:"Chỗ ở", navPack:"Hành lý", navBudget:"Ngân sách"
+    }
+  };
+  function t(key){ return UI[lang][key]; }
+  function placeText(it){ return lang === "vi" ? (it.placeVi || it.place) : it.place; }
+  function noteText2(it){ return lang === "vi" ? (it.noteVi || it.note) : it.note; }
+  function dayTitleText(day){ return lang === "vi" ? (day.titleVi || day.title) : day.title; }
+  var TIME_VI = { "上午":"Buổi sáng", "中午":"Buổi trưa", "下午":"Buổi chiều", "傍晚":"Chiều tối", "晚上":"Buổi tối", "全天":"Cả ngày", "白天":"Ban ngày" };
+  function timeText(it){
+    if(!it.time) return "";
+    return lang === "vi" ? (TIME_VI[it.time] || it.time) : it.time;
+  }
 
   var ITEM_KEY = "hcmc-trip-items-v1";
   var itemState = {};
@@ -345,92 +411,101 @@
     if(dayProgressEls[day.num]) dayProgressEls[day.num].textContent = doneCount + "/" + day.items.length;
   }
 
-  DAYS.forEach(function(day){
-    var isToday = day.dateISO === TODAY;
-    var card = document.createElement("div");
-    card.className = "day-card" + (day.wedding ? " wedding" : "") + (isToday ? " today" : "");
-    card.id = "day-" + day.num;
-    var head = document.createElement("div");
-    head.className = "day-head";
-    head.innerHTML =
-      '<span class="day-num">Day ' + day.num + '</span>' +
-      '<span class="day-date">' + day.date + '</span>' +
-      (day.wedding ? '<span class="day-badge wedding">婚禮</span>' : (isToday ? '<span class="day-badge">今天</span>' : ''));
-    var progress = document.createElement("span");
-    progress.className = "day-progress";
-    head.appendChild(progress);
-    dayProgressEls[day.num] = progress;
-    card.appendChild(head);
-    var title = document.createElement("div");
-    title.className = "day-title";
-    title.textContent = day.title;
-    card.appendChild(title);
+  function renderDays(){
+    daysContainer.innerHTML = "";
+    dayChipsEl.innerHTML = "";
+    dayProgressEls = {};
 
-    var tl = document.createElement("div");
-    tl.className = "timeline";
-    day.items.forEach(function(it, idx){
-      var itemId = "d" + day.num + "_" + idx;
-      var row = document.createElement("div");
-      row.className = "titem" + (itemState[itemId] ? " done" : "");
+    DAYS.forEach(function(day){
+      var isToday = day.dateISO === TODAY;
+      var card = document.createElement("div");
+      card.className = "day-card" + (day.wedding ? " wedding" : "") + (isToday ? " today" : "");
+      card.id = "day-" + day.num;
+      var head = document.createElement("div");
+      head.className = "day-head";
+      head.innerHTML =
+        '<span class="day-num">Day ' + day.num + '</span>' +
+        '<span class="day-date">' + day.date + '</span>' +
+        (day.wedding ? '<span class="day-badge wedding">' + t("wedding") + '</span>' : (isToday ? '<span class="day-badge">' + t("today") + '</span>' : ''));
+      var progress = document.createElement("span");
+      progress.className = "day-progress";
+      head.appendChild(progress);
+      dayProgressEls[day.num] = progress;
+      card.appendChild(head);
+      var title = document.createElement("div");
+      title.className = "day-title";
+      title.textContent = dayTitleText(day);
+      card.appendChild(title);
 
-      var check = document.createElement("button");
-      check.className = "tcheck";
-      check.setAttribute("aria-label", "標記已完成：" + it.place);
-      check.setAttribute("aria-pressed", itemState[itemId] ? "true" : "false");
-      var ring = document.createElement("span");
-      ring.className = "tcheck-ring";
-      ring.textContent = itemState[itemId] ? "✓" : "";
-      check.appendChild(ring);
-      check.addEventListener("click", function(){
-        itemState[itemId] = !itemState[itemId];
-        saveItems();
-        row.classList.toggle("done", !!itemState[itemId]);
+      var tl = document.createElement("div");
+      tl.className = "timeline";
+      day.items.forEach(function(it, idx){
+        var itemId = "d" + day.num + "_" + idx;
+        var row = document.createElement("div");
+        row.className = "titem" + (itemState[itemId] ? " done" : "");
+
+        var check = document.createElement("button");
+        check.className = "tcheck";
+        check.setAttribute("aria-label", t("markCompleted") + placeText(it));
         check.setAttribute("aria-pressed", itemState[itemId] ? "true" : "false");
+        var ring = document.createElement("span");
+        ring.className = "tcheck-ring";
         ring.textContent = itemState[itemId] ? "✓" : "";
-        updateDayProgress(day);
+        check.appendChild(ring);
+        check.addEventListener("click", function(){
+          itemState[itemId] = !itemState[itemId];
+          saveItems();
+          row.classList.toggle("done", !!itemState[itemId]);
+          check.setAttribute("aria-pressed", itemState[itemId] ? "true" : "false");
+          ring.textContent = itemState[itemId] ? "✓" : "";
+          updateDayProgress(day);
+        });
+
+        var time = document.createElement("div");
+        time.className = "ttime";
+        time.textContent = timeText(it);
+        var body = document.createElement("div");
+        body.className = "tbody";
+        var pl = document.createElement("div");
+        pl.className = "tplace";
+        pl.textContent = placeText(it);
+        body.appendChild(pl);
+        var noteTxt = noteText2(it);
+        if(noteTxt){
+          var nt = document.createElement("div");
+          nt.className = "tnote";
+          nt.textContent = noteTxt;
+          body.appendChild(nt);
+        }
+        if(it.link){
+          var a = document.createElement("a");
+          a.className = "tnav";
+          a.href = it.link;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          a.innerHTML = '<svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M10 3l6 14-6-3-6 3z"/></svg> ' + t("navigate");
+          body.appendChild(a);
+        }
+        row.appendChild(check);
+        row.appendChild(time);
+        row.appendChild(body);
+        tl.appendChild(row);
       });
+      card.appendChild(tl);
+      daysContainer.appendChild(card);
+      updateDayProgress(day);
 
-      var time = document.createElement("div");
-      time.className = "ttime";
-      time.textContent = it.time || "";
-      var body = document.createElement("div");
-      body.className = "tbody";
-      var pl = document.createElement("div");
-      pl.className = "tplace";
-      pl.textContent = it.place;
-      body.appendChild(pl);
-      if(it.note){
-        var nt = document.createElement("div");
-        nt.className = "tnote";
-        nt.textContent = it.note;
-        body.appendChild(nt);
-      }
-      if(it.link){
-        var a = document.createElement("a");
-        a.className = "tnav";
-        a.href = it.link;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        a.innerHTML = '<svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M10 3l6 14-6-3-6 3z"/></svg> 導航';
-        body.appendChild(a);
-      }
-      row.appendChild(check);
-      row.appendChild(time);
-      row.appendChild(body);
-      tl.appendChild(row);
+      var chip = document.createElement("button");
+      chip.className = "daychip" + (day.wedding ? " wedding" : "") + (isToday ? " today" : "");
+      chip.innerHTML = '<span class="n">Day ' + day.num + '</span><span class="d">' + day.date.replace(/（.*/,"") + '</span>';
+      chip.addEventListener("click", function(){
+        document.getElementById("day-" + day.num).scrollIntoView({behavior:"auto", block:"start"});
+      });
+      dayChipsEl.appendChild(chip);
     });
-    card.appendChild(tl);
-    daysContainer.appendChild(card);
-    updateDayProgress(day);
+  }
 
-    var chip = document.createElement("button");
-    chip.className = "daychip" + (day.wedding ? " wedding" : "") + (isToday ? " today" : "");
-    chip.innerHTML = '<span class="n">Day ' + day.num + '</span><span class="d">' + day.date.replace(/（.*/,"") + '</span>';
-    chip.addEventListener("click", function(){
-      document.getElementById("day-" + day.num).scrollIntoView({behavior:"auto", block:"start"});
-    });
-    dayChipsEl.appendChild(chip);
-  });
+  renderDays();
 
   var todayDay = DAYS.filter(function(d){ return d.dateISO === TODAY; })[0];
   if(todayDay){
@@ -441,10 +516,18 @@
 
   /* ---------------- PACKING ---------------- */
   var PACKING = [
-    { group:"證件與金錢", items:["護照正本＋e-Visa 證明（紙本＋電子備份）","信用卡","少量美金／越南盾現金"] },
-    { group:"衣物", items:["輕便透氣衣物（8月胡志明市 28–35°C）","雨具（雨季）","婚禮正式服裝＋鞋","防曬、遮陽帽"] },
-    { group:"個人用品", items:["防蚊液","常備藥","個人保養品","轉接頭／充電線","eSIM 或當地 SIM 卡"] },
-    { group:"其他", items:["空行李袋空間（伴手禮、購物戰利品）","旅平險保單／證明"] }
+    { group:"證件與金錢", groupVi:"Giấy tờ và tiền bạc",
+      items:["護照正本＋e-Visa 證明（紙本＋電子備份）","信用卡","少量美金／越南盾現金"],
+      itemsVi:["Hộ chiếu gốc + minh chứng e-Visa (bản giấy + bản điện tử)","Thẻ tín dụng","Một ít tiền mặt USD／VND"] },
+    { group:"衣物", groupVi:"Quần áo",
+      items:["輕便透氣衣物（8月胡志明市 28–35°C）","雨具（雨季）","婚禮正式服裝＋鞋","防曬、遮陽帽"],
+      itemsVi:["Quần áo nhẹ thoáng khí (tháng 8 ở TP.HCM 28–35°C)","Đồ đi mưa (mùa mưa)","Trang phục dự tiệc cưới + giày","Kem chống nắng, nón che nắng"] },
+    { group:"個人用品", groupVi:"Đồ dùng cá nhân",
+      items:["防蚊液","常備藥","個人保養品","轉接頭／充電線","eSIM 或當地 SIM 卡"],
+      itemsVi:["Thuốc chống muỗi","Thuốc thông dụng","Đồ chăm sóc cá nhân","Cục chuyển đổi/dây sạc","eSIM hoặc SIM địa phương"] },
+    { group:"其他", groupVi:"Khác",
+      items:["空行李袋空間（伴手禮、購物戰利品）","旅平險保單／證明"],
+      itemsVi:["Chừa chỗ trống trong vali (quà, đồ mua sắm)","Hợp đồng/giấy chứng nhận bảo hiểm du lịch"] }
   ];
   var PACK_KEY = "hcmc-trip-packing-v1";
   var packState = {};
@@ -456,59 +539,72 @@
   var totalPackItems = 0;
   function updatePackProgress(){
     var done = Object.keys(packState).filter(function(k){return packState[k];}).length;
-    packProgress.textContent = done + " / " + totalPackItems + " 已打包";
+    packProgress.textContent = done + " / " + totalPackItems + " " + t("packed");
   }
-  PACKING.forEach(function(group, gi){
-    var gEl = document.createElement("div");
-    gEl.className = "pack-group";
-    var h3 = document.createElement("h3");
-    h3.textContent = group.group;
-    gEl.appendChild(h3);
-    group.items.forEach(function(label, ii){
-      totalPackItems++;
-      var id = "p" + gi + "_" + ii;
-      var row = document.createElement("div");
-      row.className = "pack-item" + (packState[id] ? " done" : "");
-      var btn = document.createElement("button");
-      btn.className = "pack-check";
-      btn.setAttribute("aria-label", "標記已打包：" + label);
-      btn.setAttribute("aria-pressed", packState[id] ? "true" : "false");
-      var ring = document.createElement("span");
-      ring.className = "pack-check-ring";
-      ring.textContent = packState[id] ? "✓" : "";
-      btn.appendChild(ring);
-      btn.addEventListener("click", function(){
-        packState[id] = !packState[id];
-        savePack();
-        row.classList.toggle("done", !!packState[id]);
+  function renderPacking(){
+    packContainer.innerHTML = "";
+    totalPackItems = 0;
+    PACKING.forEach(function(group, gi){
+      var groupLabel = lang === "vi" ? (group.groupVi || group.group) : group.group;
+      var itemLabels = lang === "vi" ? (group.itemsVi || group.items) : group.items;
+      var gEl = document.createElement("div");
+      gEl.className = "pack-group";
+      var h3 = document.createElement("h3");
+      h3.textContent = groupLabel;
+      gEl.appendChild(h3);
+      itemLabels.forEach(function(label, ii){
+        totalPackItems++;
+        var id = "p" + gi + "_" + ii;
+        var row = document.createElement("div");
+        row.className = "pack-item" + (packState[id] ? " done" : "");
+        var btn = document.createElement("button");
+        btn.className = "pack-check";
+        btn.setAttribute("aria-label", t("markCompleted") + label);
         btn.setAttribute("aria-pressed", packState[id] ? "true" : "false");
+        var ring = document.createElement("span");
+        ring.className = "pack-check-ring";
         ring.textContent = packState[id] ? "✓" : "";
-        updatePackProgress();
+        btn.appendChild(ring);
+        btn.addEventListener("click", function(){
+          packState[id] = !packState[id];
+          savePack();
+          row.classList.toggle("done", !!packState[id]);
+          btn.setAttribute("aria-pressed", packState[id] ? "true" : "false");
+          ring.textContent = packState[id] ? "✓" : "";
+          updatePackProgress();
+        });
+        var lbl = document.createElement("span");
+        lbl.className = "pack-label";
+        lbl.textContent = label;
+        row.appendChild(btn);
+        row.appendChild(lbl);
+        gEl.appendChild(row);
       });
-      var lbl = document.createElement("span");
-      lbl.className = "pack-label";
-      lbl.textContent = label;
-      row.appendChild(btn);
-      row.appendChild(lbl);
-      gEl.appendChild(row);
+      packContainer.appendChild(gEl);
     });
-    packContainer.appendChild(gEl);
-  });
-  updatePackProgress();
+    updatePackProgress();
+  }
+  renderPacking();
 
   /* ---------------- BUDGET ---------------- */
   var BUDGET = [
-    ["每日餐飲＋咖啡＋購物（9天）", "3,500,000 – 6,500,000"],
-    ["婚禮禮金", "依習俗，另計"],
-    ["eSIM／保險等雜支", "500,000 – 1,000,000"]
+    { item:"每日餐飲＋咖啡＋購物（9天）", itemVi:"Ăn uống + cà phê + mua sắm mỗi ngày (9 ngày)", est:"3,500,000 – 6,500,000" },
+    { item:"婚禮禮金", itemVi:"Tiền mừng cưới", est:"依習俗，另計", estVi:"Theo phong tục, tính riêng" },
+    { item:"eSIM／保險等雜支", itemVi:"eSIM／bảo hiểm và chi phí lặt vặt khác", est:"500,000 – 1,000,000" }
   ];
   var budgetBody = document.getElementById("budgetBody");
-  BUDGET.forEach(function(row){
-    var tr = document.createElement("tr");
-    tr.innerHTML = "<td>" + row[0] + "</td><td>" + row[1] + "</td>";
-    budgetBody.appendChild(tr);
-  });
-  document.getElementById("budgetTotal").textContent = "約 4,000,000 – 7,500,000";
+  function renderBudget(){
+    budgetBody.innerHTML = "";
+    BUDGET.forEach(function(row){
+      var itemLabel = lang === "vi" ? row.itemVi : row.item;
+      var estLabel = lang === "vi" ? (row.estVi || row.est) : row.est;
+      var tr = document.createElement("tr");
+      tr.innerHTML = "<td>" + itemLabel + "</td><td>" + estLabel + "</td>";
+      budgetBody.appendChild(tr);
+    });
+    document.getElementById("budgetTotal").textContent = t("budgetTotalVal");
+  }
+  renderBudget();
 
   /* ---------------- BOTTOM NAV ---------------- */
   var navBtns = document.querySelectorAll(".navbtn");
@@ -531,5 +627,56 @@
   });
   var initial = (location.hash || "").replace("#","");
   if(views[initial] && initial !== "days") activateView(initial, false);
+
+  /* ---------------- LANG TOGGLE ---------------- */
+  var langBtn = document.getElementById("langBtn");
+  function applyStaticLang(){
+    document.getElementById("pageTitle").textContent = t("pageTitle");
+    document.getElementById("dateRange").textContent = t("dateRange");
+    document.getElementById("weddingMeta").textContent = t("weddingMeta");
+    document.getElementById("stayMeta").textContent = t("stayMeta");
+    document.getElementById("outboundLabel").textContent = t("outboundLabel");
+    document.getElementById("returnLabel").textContent = t("returnLabel");
+    document.getElementById("flightInfo1").textContent = t("flightInfo1");
+    document.getElementById("flightInfo2").textContent = t("flightInfo2");
+    document.getElementById("navAirportLabel").textContent = t("navAirportLabel");
+    document.getElementById("cityTransportLabel").textContent = t("cityTransportLabel");
+    document.getElementById("cityTransportNote").innerHTML = t("cityTransportNote");
+    document.getElementById("stayTitle").textContent = t("stayTitle");
+    document.getElementById("stayP1").textContent = t("stayP1");
+    document.getElementById("addressLabel").textContent = t("addressLabel");
+    document.getElementById("addressFillIn").textContent = t("addressFillIn");
+    document.getElementById("usefulInfoTitle").textContent = t("usefulInfoTitle");
+    document.getElementById("visaLabel").textContent = t("visaLabel");
+    document.getElementById("visaText").textContent = t("visaText");
+    document.getElementById("wifiLabel").textContent = t("wifiLabel");
+    document.getElementById("wifiText").textContent = t("wifiText");
+    document.getElementById("exchangeLabel").textContent = t("exchangeLabel");
+    document.getElementById("exchangeText").textContent = t("exchangeText");
+    document.getElementById("voltageLabel").textContent = t("voltageLabel");
+    document.getElementById("voltageText").textContent = t("voltageText");
+    document.getElementById("emergencyLabel").textContent = t("emergencyLabel");
+    document.getElementById("emergencyText").textContent = t("emergencyText");
+    document.getElementById("budgetColItem").textContent = t("budgetColItem");
+    document.getElementById("budgetColEst").textContent = t("budgetColEst");
+    document.getElementById("budgetTotalLabel").textContent = t("budgetTotalLabel");
+    document.getElementById("budgetNote").textContent = t("budgetNote");
+    document.getElementById("navDays").textContent = t("navDays");
+    document.getElementById("navTransport").textContent = t("navTransport");
+    document.getElementById("navStay").textContent = t("navStay");
+    document.getElementById("navPack").textContent = t("navPack");
+    document.getElementById("navBudget").textContent = t("navBudget");
+    langBtn.textContent = lang === "vi" ? "中文" : "VI";
+    langBtn.setAttribute("aria-label", lang === "vi" ? "Chuyển sang tiếng Trung" : "切換到越南文");
+  }
+  applyStaticLang();
+  langBtn.addEventListener("click", function(){
+    lang = lang === "vi" ? "zh" : "vi";
+    localStorage.setItem(LANG_KEY, lang);
+    applyStaticLang();
+    renderDays();
+    renderPacking();
+    renderBudget();
+  });
 })();
 </script>
