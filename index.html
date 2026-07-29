@@ -3,19 +3,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <style>
   :root{
-    --ink:#182620; --paper:#E7E3D2; --paper-raised:#F4F1E4; --paper-sunk:#DEDAC7;
-    --jade:#1F6F5C; --jade-ink:#12463A; --brass:#B9812C;
-    --rose:#B9506B; --rose-soft:#F3DCE2;
-    --line:rgba(24,38,32,0.18); --line-soft:rgba(24,38,32,0.10);
-    --done-ink:rgba(24,38,32,0.64); --shadow:rgba(24,38,32,0.10);
+    --ink:#171614; --paper:#F7F6F1; --paper-raised:#FFFFFF; --paper-sunk:#EDECE5;
+    --accent:#B4351F;
+    --line:rgba(23,22,20,0.16); --line-strong:#171614; --line-soft:rgba(23,22,20,0.10);
+    --done-ink:rgba(23,22,20,0.52); --shadow:rgba(23,22,20,0.08);
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --ink:#EAE6D8; --paper:#101B17; --paper-raised:#16221D; --paper-sunk:#0C1512;
-      --jade:#57C7A6; --jade-ink:#DFF7EE; --brass:#E4AC55;
-      --rose:#E48CA3; --rose-soft:#3A222A;
-      --line:rgba(234,230,216,0.18); --line-soft:rgba(234,230,216,0.10);
-      --done-ink:rgba(234,230,216,0.62); --shadow:rgba(0,0,0,0.4);
+      --ink:#EDEAE3; --paper:#141311; --paper-raised:#1B1A17; --paper-sunk:#0F0E0C;
+      --accent:#E06A4B;
+      --line:rgba(237,234,227,0.18); --line-strong:#EDEAE3; --line-soft:rgba(237,234,227,0.10);
+      --done-ink:rgba(237,234,227,0.55); --shadow:rgba(0,0,0,0.4);
     }
   }
   *{box-sizing:border-box;}
@@ -28,33 +26,35 @@
   }
   a{color:inherit;text-decoration:none;}
   button{font:inherit;}
-  :focus-visible{outline:2px solid var(--jade);outline-offset:2px;}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
   .icon{width:16px;height:16px;flex:0 0 auto;display:inline-block;vertical-align:-3px;}
 
   header.top{
     position:sticky;top:0;z-index:15;background:var(--paper);
-    padding:16px 16px 12px;border-bottom:1px solid var(--line);
+    padding:18px 16px 12px;border-bottom:1px solid var(--line-strong);
   }
-  .eyebrow{font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--brass);font-weight:700;}
-  h1{font-family:Georgia,"Iowan Old Style","Noto Serif TC",serif;font-size:1.35rem;margin:2px 0 4px;text-wrap:balance;}
-  .daterange{font-size:0.8rem;color:var(--done-ink);font-family:ui-monospace,"SF Mono",Menlo,monospace;}
+  .eyebrow{font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink);font-weight:700;border-bottom:2px solid var(--accent);padding-bottom:3px;display:inline-block;}
+  .langbtn{border:1px solid var(--line-strong);background:transparent;color:var(--ink);font-size:0.68rem;letter-spacing:0.08em;padding:5px 10px;cursor:pointer;min-width:38px;min-height:32px;}
+  .langbtn:active{background:var(--ink);color:var(--paper-raised);}
+  h1{font-family:"Noto Serif TC",Georgia,serif;font-weight:700;font-size:1.4rem;margin:10px 0 4px;text-wrap:balance;letter-spacing:0.01em;}
+  .daterange{font-size:0.78rem;color:var(--done-ink);font-family:ui-monospace,"SF Mono",Menlo,monospace;}
   .tripmeta{display:flex;gap:14px;margin-top:10px;font-size:0.74rem;color:var(--done-ink);flex-wrap:wrap;align-items:center;}
   .tripmeta span{display:inline-flex;align-items:center;gap:5px;}
   .tripmeta b{color:var(--ink);}
 
-  .daychips{display:flex;gap:6px;overflow-x:auto;padding:10px 2px 2px;margin:2px -2px -2px;scrollbar-width:none;}
+  .daychips{display:flex;gap:5px;overflow-x:auto;padding:12px 2px 2px;margin:2px -2px -2px;scrollbar-width:none;}
   .daychips::-webkit-scrollbar{display:none;}
   .daychip{
     flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:1px;
-    padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:transparent;
+    padding:5px 10px;border-radius:0;border:1px solid var(--line);background:transparent;
     color:var(--ink);cursor:pointer;min-width:38px;
   }
   .daychip .n{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:0.72rem;font-weight:700;}
   .daychip .d{font-size:0.6rem;color:var(--done-ink);}
-  .daychip.wedding{border-color:var(--rose);color:var(--rose);}
-  .daychip.today{background:var(--jade);border-color:var(--jade);color:var(--paper-raised);}
+  .daychip.wedding{border-color:var(--accent);color:var(--accent);}
+  .daychip.today{background:var(--ink);border-color:var(--ink);color:var(--paper-raised);}
   .daychip.today .d{color:var(--paper-raised);opacity:0.85;}
-  .daychip.active{box-shadow:0 0 0 2px var(--jade) inset;}
+  .daychip.active{box-shadow:0 0 0 2px var(--ink) inset;}
 
   .wrap{max-width:640px;margin:0 auto;padding:14px 16px 24px;}
   .view{display:none;}
@@ -62,41 +62,41 @@
 
   /* ---- day cards ---- */
   .day-card{
-    background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:10px;
-    padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 3px var(--shadow);
-    border-left:3px solid transparent;
+    background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:0;
+    padding:14px 16px;margin-bottom:14px;
+    border-top:2px solid var(--line-strong);
     scroll-margin-top:172px;
   }
-  .day-card.wedding{border-color:var(--rose);background:linear-gradient(135deg,var(--rose-soft),var(--paper-raised) 60%);}
-  .day-card.today{border-left-color:var(--jade);}
+  .day-card.wedding{border-top-color:var(--accent);}
+  .day-card.today{border-top-color:var(--accent);}
   .day-head{display:flex;align-items:baseline;gap:8px;margin-bottom:2px;flex-wrap:wrap;}
-  .day-num{font-family:Georgia,"Iowan Old Style","Noto Serif TC",serif;font-size:1.05rem;font-weight:700;}
+  .day-num{font-family:"Noto Serif TC",Georgia,serif;font-size:1.1rem;font-weight:700;}
   .day-date{font-size:0.76rem;color:var(--done-ink);font-family:ui-monospace,"SF Mono",Menlo,monospace;}
-  .day-badge{margin-left:auto;font-size:0.66rem;padding:3px 9px;border-radius:100px;background:var(--jade);color:var(--paper-raised);white-space:nowrap;}
-  .day-badge.wedding{background:var(--rose);}
-  .day-progress{font-size:0.7rem;color:var(--jade);font-family:ui-monospace,"SF Mono",Menlo,monospace;white-space:nowrap;}
+  .day-badge{margin-left:auto;font-size:0.64rem;letter-spacing:0.06em;padding:2px 8px;border-radius:0;border:1px solid var(--accent);color:var(--accent);white-space:nowrap;}
+  .day-badge:not(.wedding){background:var(--ink);border-color:var(--ink);color:var(--paper-raised);}
+  .day-progress{font-size:0.7rem;color:var(--accent);font-family:ui-monospace,"SF Mono",Menlo,monospace;white-space:nowrap;}
   .day-title{font-size:0.82rem;color:var(--done-ink);margin:2px 0 10px;}
 
   .timeline{display:flex;flex-direction:column;gap:0;}
-  .titem{display:flex;gap:8px;align-items:flex-start;padding:9px 0;border-top:1px dashed var(--line-soft);}
+  .titem{display:flex;gap:8px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line-soft);}
   .titem:first-child{border-top:none;}
   .titem.done .tplace{color:var(--done-ink);text-decoration:line-through;}
   .tcheck{flex:0 0 auto;width:38px;height:38px;margin:-9px -4px -9px -9px;border-radius:50%;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
-  .tcheck-ring{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--jade);display:flex;align-items:center;justify-content:center;color:var(--paper-raised);font-size:0.62rem;}
-  .titem.done .tcheck-ring{background:var(--jade);}
-  .ttime{flex:0 0 52px;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:0.76rem;color:var(--brass);padding-top:2px;font-weight:700;}
+  .tcheck-ring{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;color:var(--paper-raised);font-size:0.62rem;}
+  .titem.done .tcheck-ring{background:var(--ink);}
+  .ttime{flex:0 0 52px;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:0.76rem;color:var(--accent);padding-top:2px;font-weight:700;}
   .tbody{flex:1;min-width:0;}
   .tplace{font-weight:700;font-size:0.9rem;text-wrap:balance;}
   .tnote{font-size:0.78rem;color:var(--done-ink);margin-top:2px;}
   .tnav{
     display:inline-flex;align-items:center;gap:4px;margin:6px -8px -8px 0;
-    font-size:0.72rem;padding:11px 12px;border:1px solid var(--brass);color:var(--brass);border-radius:100px;
+    font-size:0.72rem;letter-spacing:0.03em;padding:11px 12px;border:1px solid var(--ink);color:var(--ink);border-radius:0;
     min-height:38px;
   }
-  .tnav:active{background:var(--brass);color:var(--paper-raised);}
+  .tnav:active{background:var(--ink);color:var(--paper-raised);}
 
   /* ---- transport view ---- */
-  .flight-card{background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
+  .flight-card{background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:0;padding:14px 16px;margin-bottom:14px;}
   .flight-row{display:flex;align-items:center;gap:10px;margin:8px 0;}
   .flight-pt{text-align:center;flex:0 0 auto;}
   .flight-code{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-weight:700;font-size:1.1rem;}
@@ -104,53 +104,52 @@
   .flight-line{flex:1;height:1px;background:var(--line);position:relative;}
   .flight-line::after{content:"✈";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:0.8rem;background:var(--paper-raised);padding:0 4px;}
   .flight-info{font-size:0.76rem;color:var(--done-ink);margin-top:6px;}
-  .section-h{font-family:Georgia,"Iowan Old Style","Noto Serif TC",serif;font-size:1rem;margin:20px 0 10px;border-bottom:2px solid var(--ink);padding-bottom:6px;}
-  .note-card{background:var(--paper-sunk);border-radius:8px;padding:12px 14px;font-size:0.82rem;line-height:1.6;margin-bottom:12px;}
-  .note-card b{color:var(--jade-ink);}
+  .section-h{font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC",sans-serif;font-weight:700;font-size:0.86rem;letter-spacing:0.08em;text-transform:uppercase;margin:20px 0 10px;border-bottom:2px solid var(--line-strong);padding-bottom:6px;}
+  .note-card{background:var(--paper-sunk);border-radius:0;border:1px solid var(--line-soft);padding:12px 14px;font-size:0.82rem;line-height:1.6;margin-bottom:12px;}
+  .note-card b{color:var(--ink);}
 
   /* ---- accommodation ---- */
-  .info-card{background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:10px;padding:16px;margin-bottom:14px;}
-  .info-card h3{font-family:Georgia,"Iowan Old Style","Noto Serif TC",serif;margin:0 0 6px;font-size:1rem;}
+  .info-card{background:var(--paper-raised);border:1px solid var(--line-soft);border-radius:0;padding:16px;margin-bottom:14px;}
+  .info-card h3{font-family:"Noto Serif TC",Georgia,serif;margin:0 0 6px;font-size:1rem;}
   .info-card p{font-size:0.84rem;color:var(--done-ink);margin:4px 0;line-height:1.6;}
-  .fill-in{border-bottom:1px dashed var(--brass);color:var(--brass);}
+  .fill-in{border-bottom:1px dashed var(--accent);color:var(--accent);}
 
   /* ---- packing ---- */
   .pack-group{margin-bottom:18px;}
-  .pack-group h3{font-family:Georgia,"Iowan Old Style","Noto Serif TC",serif;font-size:0.95rem;margin:0 0 8px;color:var(--jade-ink);}
+  .pack-group h3{font-family:"Noto Serif TC",Georgia,serif;font-size:0.95rem;margin:0 0 8px;color:var(--ink);}
   .pack-item{display:flex;align-items:center;gap:10px;padding:9px 4px;border-top:1px solid var(--line-soft);}
   .pack-item:first-child{border-top:none;}
   .pack-check{
     flex:0 0 auto;width:38px;height:38px;margin:-8px;border-radius:50%;border:none;background:transparent;
     display:flex;align-items:center;justify-content:center;cursor:pointer;
   }
-  .pack-check-ring{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--jade);display:flex;align-items:center;justify-content:center;color:var(--paper-raised);font-size:0.7rem;}
-  .pack-item.done .pack-check-ring{background:var(--jade);}
+  .pack-check-ring{width:20px;height:20px;border-radius:2px;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;color:var(--paper-raised);font-size:0.7rem;}
+  .pack-item.done .pack-check-ring{background:var(--ink);}
   .pack-label{font-size:0.86rem;}
   .pack-item.done .pack-label{color:var(--done-ink);text-decoration:line-through;}
-  .pack-progress{font-size:0.76rem;color:var(--jade);font-family:ui-monospace,"SF Mono",Menlo,monospace;margin-bottom:14px;}
+  .pack-progress{font-size:0.76rem;color:var(--accent);font-family:ui-monospace,"SF Mono",Menlo,monospace;margin-bottom:14px;}
 
   /* ---- budget ---- */
   .budget-table{width:100%;border-collapse:collapse;font-size:0.84rem;margin-bottom:16px;}
-  .budget-table th{text-align:left;font-size:0.7rem;color:var(--done-ink);text-transform:uppercase;letter-spacing:0.04em;padding-bottom:6px;border-bottom:2px solid var(--ink);}
+  .budget-table th{text-align:left;font-size:0.7rem;color:var(--done-ink);text-transform:uppercase;letter-spacing:0.06em;padding-bottom:6px;border-bottom:2px solid var(--line-strong);}
   .budget-table td{padding:9px 4px;border-top:1px solid var(--line-soft);}
   .budget-table td:last-child,.budget-table th:last-child{text-align:right;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-variant-numeric:tabular-nums;white-space:nowrap;}
   .budget-total{font-weight:700;background:var(--paper-sunk);}
-  .budget-total td{border-top:2px solid var(--ink);}
+  .budget-total td{border-top:2px solid var(--line-strong);}
 
   /* ---- bottom nav ---- */
   nav.bottom{
     position:fixed;left:0;right:0;bottom:0;z-index:20;
-    background:var(--paper-raised);border-top:1px solid var(--line);
+    background:var(--paper-raised);border-top:1px solid var(--line-strong);
     display:flex;padding-bottom:env(safe-area-inset-bottom);
-    box-shadow:0 -2px 10px var(--shadow);
   }
   .navbtn{
     flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-    padding:9px 2px 8px;background:none;border:none;color:var(--done-ink);cursor:pointer;
+    padding:9px 2px 8px;background:none;border:none;border-top:2px solid transparent;color:var(--done-ink);cursor:pointer;
   }
-  .navbtn.active{color:var(--jade);}
+  .navbtn.active{color:var(--ink);border-top-color:var(--accent);margin-top:-2px;}
   .navbtn svg{width:21px;height:21px;}
-  .navbtn span{font-size:0.64rem;}
+  .navbtn span{font-size:0.64rem;letter-spacing:0.02em;}
 
   @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
 </style>
