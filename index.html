@@ -240,6 +240,45 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+  /* ---- big text mode ---- */
+  html.big-text{font-size:19px;}
+
+  /* ---- jump to today ---- */
+  .jump-today{
+    position:fixed;right:16px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:19;
+    display:none;align-items:center;gap:6px;padding:10px 14px;border:2px solid var(--ink);
+    background:var(--teal);color:#fff;font-weight:900;font-size:0.76rem;cursor:pointer;
+    box-shadow:4px 4px 0 var(--shadow);
+  }
+  .jump-today.show{display:inline-flex;}
+  .jump-today:active{background:var(--ink);}
+
+  /* ---- list progress overview ---- */
+  .list-progress{
+    display:flex;align-items:center;gap:8px;font-size:0.8rem;font-weight:700;color:var(--ink);
+    background:var(--paper-raised);border:2px solid var(--ink);padding:8px 12px;margin-bottom:12px;
+  }
+  .list-progress .bar{flex:1;height:8px;background:var(--paper-sunk);border:1.5px solid var(--ink);position:relative;overflow:hidden;}
+  .list-progress .bar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--red);}
+  .list-progress .mono{white-space:nowrap;}
+
+  /* ---- status filter chips (favorite / visited) ---- */
+  .statuschip.active{background:var(--red);color:#fff;}
+  .fav{
+    flex:0 0 auto;width:38px;height:38px;margin:-9px -9px -9px 0;border-radius:50%;background:transparent;
+    border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--star-off);font-size:1rem;
+  }
+  .fav.on{color:var(--star-on);}
+
+  /* ---- card photo slot ---- */
+  .card-photo{
+    flex:0 0 auto;width:44px;height:44px;border:2px solid var(--ink);background:var(--paper-sunk);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;background-size:cover;background-position:center;color:var(--done-ink);
+    margin-right:2px;
+  }
+  .card-photo svg{width:18px;height:18px;}
+  .card-photo input{display:none;}
+
   /* ---- bottom nav ---- */
   nav.bottom{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper-raised);border-top:4px solid var(--ink);display:flex;padding-bottom:env(safe-area-inset-bottom);}
   .navbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 8px;background:none;border:none;color:var(--done-ink);cursor:pointer;position:relative;}
@@ -253,7 +292,10 @@
 <header class="top">
   <div style="display:flex;align-items:center;justify-content:space-between;">
     <div class="eyebrow">Ho Chi Minh City</div>
-    <button class="langbtn" id="langBtn">VI</button>
+    <div style="display:flex;gap:6px;">
+      <button class="langbtn" id="bigTextBtn" aria-pressed="false">Aa</button>
+      <button class="langbtn" id="langBtn">VI</button>
+    </div>
   </div>
   <h1 id="pageTitle">胡志明市之旅</h1>
   <div class="daterange" id="dateRange">2026/08/05 – 2026/08/15・10 天 9 夜</div>
@@ -270,15 +312,24 @@
   <div class="view active" id="view-days">
     <div id="daysContainer"></div>
   </div>
+  <button class="jump-today" id="jumpTodayBtn">
+    <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 6v4l3 2"/></svg>
+    <span id="jumpTodayLabel">回到今天</span>
+  </button>
 
   <div class="view" id="view-list">
     <div class="sharebar">
       <button class="sharebtn" id="copyTextBtn"><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="4" width="10" height="13" rx="1.5"/><rect x="7.5" y="2" width="5" height="3" rx="1"/></svg> <span id="copyTextLabel">複製地點清單文字</span></button>
       <button class="sharebtn" id="exportBtn"><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3v9"/><path d="M6 8l4 4 4-4"/><path d="M4 16h12"/></svg> <span id="exportLabel">匯出清單</span></button>
     </div>
+    <div class="list-progress">
+      <span id="listProgressLabel" class="mono">0 / 0</span>
+      <span class="bar"><span class="bar-fill" id="listProgressFill" style="width:0%"></span></span>
+    </div>
     <div class="search-row">
       <input class="search" id="search" type="text" placeholder="搜尋地點、類型或筆記…" />
     </div>
+    <div class="chiprow" id="statusChiprow"></div>
     <div class="chiprow" id="chiprow"></div>
     <div id="sections"></div>
     <p class="empty-msg" id="emptyMsg">沒有符合的地點，換個關鍵字試試。</p>
@@ -640,7 +691,9 @@
       mapLoadFail:"地圖元件載入失敗，請確認裝置已連上網路後重新整理頁面。",
       copiedText:"清單文字已複製，貼給旅伴吧", copyFailed:"複製失敗，請改用「匯出清單」下載檔案",
       noClipboard:"這個瀏覽器不支援自動複製，請改用「匯出清單」", exported:"已下載，傳給旅伴吧",
-      summaryTitle:"胡志明市之旅 — 踩點清單與行程"
+      summaryTitle:"胡志明市之旅 — 踩點清單與行程",
+      jumpToday:"回到今天", visitedProgress:"已踩點", favorite:"收藏：", uploadPhoto:"上傳照片：",
+      statusFilter_all:"全部", statusFilter_favorite:"收藏", statusFilter_visited:"已去過", statusFilter_notvisited:"未去過"
     },
     vi:{
       pageTitle:"Chuyến đi TP. Hồ Chí Minh", dateRange:"2026/08/05 – 2026/08/15・10 ngày 9 đêm",
@@ -679,7 +732,9 @@
       mapLoadFail:"Tải bản đồ thất bại, vui lòng kiểm tra kết nối mạng rồi tải lại trang.",
       copiedText:"Đã sao chép danh sách, gửi cho bạn đồng hành nhé", copyFailed:"Sao chép thất bại, vui lòng dùng「Xuất danh sách」để tải file",
       noClipboard:"Trình duyệt này không hỗ trợ sao chép tự động, vui lòng dùng「Xuất danh sách」", exported:"Đã tải xuống, gửi cho bạn đồng hành nhé",
-      summaryTitle:"Chuyến đi TP. Hồ Chí Minh — Danh sách & lịch trình"
+      summaryTitle:"Chuyến đi TP. Hồ Chí Minh — Danh sách & lịch trình",
+      jumpToday:"Về hôm nay", visitedProgress:"Đã đi", favorite:"Yêu thích：", uploadPhoto:"Tải ảnh lên：",
+      statusFilter_all:"Tất cả", statusFilter_favorite:"Yêu thích", statusFilter_visited:"Đã đi", statusFilter_notvisited:"Chưa đi"
     }
   };
   function t(key){ return UI[lang][key]; }
@@ -708,7 +763,7 @@
   function savePack(){ localStorage.setItem(PACK_KEY, JSON.stringify(packState)); }
 
   var CHECKLIST_KEY = "hcmc-merged-checklist-v1";
-  var cl = { visited:{}, rating:{}, notes:{}, addedItems:{} };
+  var cl = { visited:{}, rating:{}, notes:{}, addedItems:{}, favorite:{}, photos:{} };
   try{
     var loaded = JSON.parse(localStorage.getItem(CHECKLIST_KEY) || "null");
     if(loaded) cl = Object.assign(cl, loaded);
@@ -720,6 +775,7 @@
     return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
   }
   var TODAY = todayISO();
+  var todayDayRef = DAYS.filter(function(d){ return d.dateISO === TODAY; })[0] || null;
 
   function toast(msg){
     var el = document.getElementById("toast");
@@ -1007,6 +1063,36 @@
         var top = document.createElement("div");
         top.className = "card-top";
 
+        var photoSlot = document.createElement("label");
+        photoSlot.className = "card-photo";
+        photoSlot.setAttribute("aria-label", t("uploadPhoto") + item.name);
+        photoSlot.style.borderColor = areaColor(gi);
+        function paintPhotoSlot(){
+          if(cl.photos[id]){
+            photoSlot.style.backgroundImage = "url(" + cl.photos[id] + ")";
+            photoSlot.innerHTML = "";
+          }else{
+            photoSlot.style.backgroundImage = "";
+            photoSlot.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="14" height="10" rx="1.5"/><path d="M7 6l1.2-2h3.6L13 6"/><circle cx="10" cy="11" r="2.6"/></svg>';
+          }
+        }
+        paintPhotoSlot();
+        var photoInput = document.createElement("input");
+        photoInput.type = "file";
+        photoInput.accept = "image/*";
+        photoInput.addEventListener("change", function(){
+          var file = photoInput.files && photoInput.files[0];
+          if(!file) return;
+          var reader = new FileReader();
+          reader.onload = function(){
+            cl.photos[id] = reader.result;
+            saveCl();
+            paintPhotoSlot();
+          };
+          reader.readAsDataURL(file);
+        });
+        photoSlot.appendChild(photoInput);
+
         var check = document.createElement("button");
         check.className = "check";
         check.setAttribute("aria-label", t("markVisited") + item.name);
@@ -1022,6 +1108,8 @@
           check.setAttribute("aria-pressed", cl.visited[id] ? "true" : "false");
           checkRing.textContent = cl.visited[id] ? "✓" : "";
           if(item.marker) item.marker.setIcon(pinIcon(areaColor(item.groupIndex), !!cl.visited[id]));
+          updateListProgress();
+          if(statusFilter === "visited" || statusFilter === "notvisited") applySearch();
         });
 
         var body = document.createElement("div");
@@ -1036,8 +1124,22 @@
         tagEl.className = "tag";
         tagEl.textContent = typeText(item);
         tagEl.style.borderColor = areaColor(gi);
+        var favBtn = document.createElement("button");
+        favBtn.className = "fav" + (cl.favorite[id] ? " on" : "");
+        favBtn.textContent = cl.favorite[id] ? "♥" : "♡";
+        favBtn.setAttribute("aria-label", t("favorite") + item.name);
+        favBtn.setAttribute("aria-pressed", cl.favorite[id] ? "true" : "false");
+        favBtn.addEventListener("click", function(){
+          cl.favorite[id] = !cl.favorite[id];
+          saveCl();
+          favBtn.classList.toggle("on", !!cl.favorite[id]);
+          favBtn.textContent = cl.favorite[id] ? "♥" : "♡";
+          favBtn.setAttribute("aria-pressed", cl.favorite[id] ? "true" : "false");
+          applySearch();
+        });
         nameRow.appendChild(nameEl);
         nameRow.appendChild(tagEl);
+        nameRow.appendChild(favBtn);
         var dayLabel = scheduledDayLabel(id);
         if(dayLabel){
           var pill = document.createElement("span");
@@ -1112,6 +1214,7 @@
           detail.classList.toggle("open");
         });
 
+        top.appendChild(photoSlot);
         top.appendChild(check);
         top.appendChild(body);
         card.appendChild(top);
@@ -1130,19 +1233,54 @@
     });
 
     document.getElementById("totalCount").textContent = PLACES.length;
+    renderStatusChips();
+    updateListProgress();
     applySearch();
   }
 
-  /* ================= SEARCH ================= */
+  function updateListProgress(){
+    var visitedCount = PLACES.filter(function(p){ return cl.visited[p.id]; }).length;
+    var total = PLACES.length;
+    document.getElementById("listProgressLabel").textContent = t("visitedProgress") + " " + visitedCount + " / " + total;
+    document.getElementById("listProgressFill").style.width = (total ? (visitedCount / total * 100) : 0) + "%";
+  }
+
+  /* ================= SEARCH & STATUS FILTER ================= */
   var searchEl = document.getElementById("search");
   var emptyMsg = document.getElementById("emptyMsg");
+  var statusChiprowEl = document.getElementById("statusChiprow");
+  var STATUS_FILTER_KEY = "hcmc-trip-status-filter";
+  var statusFilter = localStorage.getItem(STATUS_FILTER_KEY) || "all";
+  var STATUS_FILTERS = ["all", "favorite", "visited", "notvisited"];
+  function statusMatch(id){
+    if(statusFilter === "favorite") return !!cl.favorite[id];
+    if(statusFilter === "visited") return !!cl.visited[id];
+    if(statusFilter === "notvisited") return !cl.visited[id];
+    return true;
+  }
+  function renderStatusChips(){
+    statusChiprowEl.innerHTML = "";
+    STATUS_FILTERS.forEach(function(key){
+      var chip = document.createElement("button");
+      chip.className = "chip statuschip" + (statusFilter === key ? " active" : "");
+      chip.textContent = t("statusFilter_" + key);
+      chip.addEventListener("click", function(){
+        statusFilter = key;
+        localStorage.setItem(STATUS_FILTER_KEY, statusFilter);
+        renderStatusChips();
+        applySearch();
+      });
+      statusChiprowEl.appendChild(chip);
+    });
+  }
   function applySearch(){
     var q = searchEl.value.trim().toLowerCase();
     var anyVisible = false;
     document.querySelectorAll("section.area").forEach(function(sec){
       var visibleInSection = 0;
       sec.querySelectorAll(".card").forEach(function(card){
-        var match = !q || card.dataset.search.indexOf(q) > -1;
+        var id = card.id.replace("card-", "");
+        var match = (!q || card.dataset.search.indexOf(q) > -1) && statusMatch(id);
         card.classList.toggle("hide", !match);
         if(match) visibleInSection++;
       });
@@ -1392,16 +1530,22 @@
     map: document.getElementById("view-map"),
     info: document.getElementById("view-info")
   };
+  var jumpTodayBtn = document.getElementById("jumpTodayBtn");
   function activateView(name, pushHash){
     if(!views[name]) name = "days";
     navBtns.forEach(function(b){ b.classList.toggle("active", b.dataset.view === name); });
     Object.keys(views).forEach(function(k){ views[k].classList.toggle("active", k === name); });
     window.scrollTo(0,0);
     if(name === "map") initOrRefreshMap();
+    jumpTodayBtn.classList.toggle("show", name === "days" && !!todayDayRef);
     if(pushHash !== false) history.replaceState(null, "", "#" + name);
   }
   navBtns.forEach(function(b){
     b.addEventListener("click", function(){ activateView(b.dataset.view); });
+  });
+  jumpTodayBtn.addEventListener("click", function(){
+    if(!todayDayRef) return;
+    document.getElementById("day-" + todayDayRef.num).scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
   });
 
   var infoChips = document.getElementById("infoChips").querySelectorAll(".chip");
@@ -1469,7 +1613,8 @@
     document.getElementById("emptyMsg").textContent = t("emptyMsg");
     document.getElementById("mapOfflineNote").textContent = t("mapOfflineNote");
     document.getElementById("footerText").textContent = t("footerText");
-    langBtn.textContent = lang === "vi" ? "中文" : "VI";
+    document.getElementById("jumpTodayLabel").textContent = t("jumpToday");
+    langBtn.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:13px;height:13px;vertical-align:-2px;margin-right:3px;"><circle cx="10" cy="10" r="7.5"/><path d="M2.5 10h15M10 2.5c2.1 2.1 3.3 4.7 3.3 7.5s-1.2 5.4-3.3 7.5c-2.1-2.1-3.3-4.7-3.3-7.5s1.2-5.4 3.3-7.5z"/></svg>' + (lang === "vi" ? "中文" : "Tiếng Việt");
     langBtn.setAttribute("aria-label", lang === "vi" ? "Chuyển sang tiếng Trung" : "切換到越南文");
     document.documentElement.lang = lang === "zh" ? "zh-Hant" : "vi";
     document.body.classList.toggle("lang-vi", lang === "vi");
@@ -1497,14 +1642,30 @@
   renderShopping();
   renderBudget();
 
-  var todayDay = DAYS.filter(function(d){ return d.dateISO === TODAY; })[0];
-  if(todayDay){
+  if(todayDayRef){
     requestAnimationFrame(function(){
-      document.getElementById("day-" + todayDay.num).scrollIntoView({behavior:"auto", block:"start"});
+      document.getElementById("day-" + todayDayRef.num).scrollIntoView({behavior:"auto", block:"start"});
     });
   }
+  jumpTodayBtn.classList.toggle("show", !!todayDayRef);
 
   var initial = (location.hash || "").replace("#","");
   if(views[initial] && initial !== "days") activateView(initial, false);
+
+  /* ================= BIG TEXT MODE ================= */
+  var BIGTEXT_KEY = "hcmc-trip-bigtext";
+  var bigTextBtn = document.getElementById("bigTextBtn");
+  var bigText = localStorage.getItem(BIGTEXT_KEY) === "1";
+  function applyBigText(){
+    document.documentElement.classList.toggle("big-text", bigText);
+    bigTextBtn.setAttribute("aria-pressed", bigText ? "true" : "false");
+    bigTextBtn.style.background = bigText ? "var(--red)" : "var(--navy)";
+  }
+  applyBigText();
+  bigTextBtn.addEventListener("click", function(){
+    bigText = !bigText;
+    localStorage.setItem(BIGTEXT_KEY, bigText ? "1" : "0");
+    applyBigText();
+  });
 })();
 </script>
