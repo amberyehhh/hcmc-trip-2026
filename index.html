@@ -297,6 +297,7 @@
       <button class="chip" data-target="info-stay" id="infoNavStay">住宿</button>
       <button class="chip" data-target="info-pack" id="infoNavPack">行李</button>
       <button class="chip" data-target="info-budget" id="infoNavBudget">預算</button>
+      <button class="chip" data-target="info-shopping" id="infoNavShopping">代購清單</button>
     </div>
 
     <div class="info-section" id="info-transport">
@@ -361,6 +362,12 @@
       <div class="note-card" id="budgetNote">
         沒有設定預算上限，以上金額僅供抓花費節奏參考。婚禮禮金依習俗另計，機票已購買不列入。
       </div>
+    </div>
+
+    <div class="info-section" id="info-shopping">
+      <div class="section-h" id="shoppingLabel">代購清單</div>
+      <div class="pack-progress" id="shoppingProgress">0 / 0</div>
+      <div id="shoppingContainer"></div>
     </div>
   </div>
 
@@ -498,7 +505,8 @@
     { area:"偏北・老洋樓一帶", color:4, desc:"",
       items:[
         {name:"Beanthere Cafe – Hồ Hảo Hớn", type:"咖啡", note:"老洋樓咖啡廳", link:"https://maps.app.goo.gl/iAy4v1t62zgNpaRX6", lat:10.7620124, lng:106.6923935},
-        {name:"JUBIN Studio ｜ Château JUBIN", type:"女裝", note:"好看洋裝", link:"https://maps.app.goo.gl/Nh76gunG5iPTmU5U9", lat:10.7898032, lng:106.6997679}
+        {name:"JUBIN Studio ｜ Château JUBIN", type:"女裝", note:"好看洋裝", link:"https://maps.app.goo.gl/Nh76gunG5iPTmU5U9", lat:10.7898032, lng:106.6997679},
+        {name:"Analog Cafe", type:"底片店", note:"要買的底片：Proimage 100×2、Cinestill 800T×3、Reflx Lab 640T×2、Cyberpunk 400D×3", link:"https://maps.app.goo.gl/rYJc4UMyQJifP6Eq8", lat:10.7632421, lng:106.6778319}
       ]
     },
     { area:"Bình Thạnh", color:5, desc:"",
@@ -542,11 +550,13 @@
       itemsVi:["Thuốc chống muỗi","Thuốc thông dụng","Đồ chăm sóc cá nhân","Cục chuyển đổi/dây sạc","eSIM hoặc SIM địa phương"] },
     { group:"其他", groupVi:"Khác",
       items:["空行李袋空間（伴手禮、購物戰利品）","旅平險保單／證明"],
-      itemsVi:["Chừa chỗ trống trong vali (quà, đồ mua sắm)","Hợp đồng/giấy chứng nhận bảo hiểm du lịch"] },
-    { group:"請舅舅先買的零食", groupVi:"Nhờ cậu mua trước đồ ăn vặt",
-      items:["Orion An Ngô Nướng Bơ（玉米奶油米餅）","Lay's Vị Phở Bò Hà Nội（河內牛肉河粉口味洋芋片）","Callant Bánh Kem Xốp Dừa（椰子奶油餅乾球）"],
-      itemsVi:["Orion An Ngô Nướng Bơ (bánh gạo nướng vị bơ bắp)","Lay's vị Phở Bò Hà Nội","Callant Bánh Kem Xốp Dừa"] }
+      itemsVi:["Chừa chỗ trống trong vali (quà, đồ mua sắm)","Hợp đồng/giấy chứng nhận bảo hiểm du lịch"] }
   ];
+
+  var SHOPPING = {
+    items:["Orion An Ngô Nướng Bơ（玉米奶油米餅）","Lay's Vị Phở Bò Hà Nội（河內牛肉河粉口味洋芋片）","Callant Bánh Kem Xốp Dừa（椰子奶油餅乾球）"],
+    itemsVi:["Orion An Ngô Nướng Bơ (bánh gạo nướng vị bơ bắp)","Lay's vị Phở Bò Hà Nội","Callant Bánh Kem Xốp Dừa"]
+  };
 
   /* ================= BUDGET ================= */
   var BUDGET = [
@@ -566,10 +576,11 @@
     "禮品店":"Cửa hàng quà tặng", "生活風格禮品":"Quà tặng phong cách sống", "小吃":"Món ăn vặt",
     "香水體驗店":"Trải nghiệm nước hoa", "女裝":"Thời trang nữ", "手作店":"Đồ thủ công",
     "甜點":"Bánh ngọt", "麵包店":"Tiệm bánh mì", "服飾品牌":"Thương hiệu thời trang", "服飾門市":"Cửa hàng thời trang",
-    "鞋店":"Cửa hàng giày"
+    "鞋店":"Cửa hàng giày", "底片店":"Cửa hàng phim máy ảnh"
   };
   var VI_NOTE = {
     "Nagashoes - 95 Trần Quang Diệu":"Giày cưới",
+    "Analog Cafe":"Phim cần mua: Proimage 100 x2, Cinestill 800T x3, Reflx Lab 640T x2, Cyberpunk 400D x3",
     "ngâm CAFE":"Croissant ngon, croissant matcha sữa ngon",
     "Bếp Cuốn Sài Gòn":"Chả giò, bánh trứng giòn",
     "The 350F – Nguyễn Trãi":"Tiramisu",
@@ -628,7 +639,7 @@
       exchangeLabel:"換匯", exchangeText:"：機場匯率較差，市區金飾店匯率通常較好，也可提款卡直接領越南盾",
       voltageLabel:"電壓", voltageText:"：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意",
       emergencyLabel:"緊急聯絡", emergencyText:"：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用",
-      packed:"已打包", packLabel:"行李清單", budgetLabel:"預算",
+      packed:"已打包", packLabel:"行李清單", budgetLabel:"預算", shoppingLabel:"代購清單", infoNavShopping:"代購清單",
       budgetColItem:"項目", budgetColEst:"估計（VND）", budgetTotalLabel:"總計（不含禮金）",
       budgetNote:"沒有設定預算上限，以上金額僅供抓花費節奏參考。婚禮禮金依習俗另計，機票已購買不列入。",
       budgetTotalVal:"約 4,000,000 – 7,500,000",
@@ -667,7 +678,7 @@
       exchangeLabel:"Đổi tiền", exchangeText:"：Tỷ giá ở sân bay kém hơn, tiệm vàng trong thành phố thường tốt hơn, cũng có thể rút VND bằng thẻ ATM",
       voltageLabel:"Điện áp", voltageText:"：Việt Nam chủ yếu dùng ổ A/C 220V, sạc thường tương thích đa điện áp, thiết bị lớn cần lưu ý",
       emergencyLabel:"Liên hệ khẩn cấp", emergencyText:"：Văn phòng Kinh tế Văn hóa Đài Bắc tại TP.HCM, nên tra số điện thoại mới nhất trước khi đi",
-      packed:"đã đóng gói", packLabel:"Danh sách hành lý", budgetLabel:"Ngân sách",
+      packed:"đã đóng gói", packLabel:"Danh sách hành lý", budgetLabel:"Ngân sách", shoppingLabel:"Nhờ mua hộ", infoNavShopping:"Nhờ mua hộ",
       budgetColItem:"Hạng mục", budgetColEst:"Ước tính (VND)", budgetTotalLabel:"Tổng cộng (chưa gồm tiền mừng cưới)",
       budgetNote:"Không đặt giới hạn ngân sách, số tiền trên chỉ để tham khảo nhịp độ chi tiêu. Tiền mừng cưới tính riêng theo phong tục, vé máy bay đã mua không tính vào đây.",
       budgetTotalVal:"Khoảng 4.000.000 – 7.500.000",
@@ -1286,6 +1297,51 @@
     updatePackProgress();
   }
 
+  /* ================= SHOPPING (代購) RENDER ================= */
+  var shoppingContainer = document.getElementById("shoppingContainer");
+  var shoppingProgress = document.getElementById("shoppingProgress");
+  var totalShoppingItems = 0;
+  function updateShoppingProgress(){
+    var done = SHOPPING.items.filter(function(_, ii){ return packState["sh_" + ii]; }).length;
+    shoppingProgress.textContent = done + " / " + totalShoppingItems + " " + t("packed");
+  }
+  function renderShopping(){
+    shoppingContainer.innerHTML = "";
+    var itemLabels = lang === "vi" ? SHOPPING.itemsVi : SHOPPING.items;
+    totalShoppingItems = itemLabels.length;
+    var gEl = document.createElement("div");
+    gEl.className = "pack-group";
+    itemLabels.forEach(function(label, ii){
+      var id = "sh_" + ii;
+      var row = document.createElement("div");
+      row.className = "pack-item" + (packState[id] ? " done" : "");
+      var btn = document.createElement("button");
+      btn.className = "pack-check";
+      btn.setAttribute("aria-label", t("markCompleted") + label);
+      btn.setAttribute("aria-pressed", packState[id] ? "true" : "false");
+      var ring = document.createElement("span");
+      ring.className = "pack-check-ring";
+      ring.textContent = packState[id] ? "✓" : "";
+      btn.appendChild(ring);
+      btn.addEventListener("click", function(){
+        packState[id] = !packState[id];
+        savePack();
+        row.classList.toggle("done", !!packState[id]);
+        btn.setAttribute("aria-pressed", packState[id] ? "true" : "false");
+        ring.textContent = packState[id] ? "✓" : "";
+        updateShoppingProgress();
+      });
+      var lbl = document.createElement("span");
+      lbl.className = "pack-label";
+      lbl.textContent = label;
+      row.appendChild(btn);
+      row.appendChild(lbl);
+      gEl.appendChild(row);
+    });
+    shoppingContainer.appendChild(gEl);
+    updateShoppingProgress();
+  }
+
   /* ================= BUDGET RENDER ================= */
   var budgetBody = document.getElementById("budgetBody");
   function renderBudget(){
@@ -1403,6 +1459,8 @@
     document.getElementById("emergencyText").textContent = t("emergencyText");
     document.getElementById("packLabel").textContent = t("packLabel");
     document.getElementById("budgetLabel").textContent = t("budgetLabel");
+    document.getElementById("shoppingLabel").textContent = t("shoppingLabel");
+    document.getElementById("infoNavShopping").textContent = t("infoNavShopping");
     document.getElementById("budgetColItem").textContent = t("budgetColItem");
     document.getElementById("budgetColEst").textContent = t("budgetColEst");
     document.getElementById("budgetTotalLabel").textContent = t("budgetTotalLabel");
@@ -1433,6 +1491,7 @@
     renderDays();
     renderList();
     renderPacking();
+    renderShopping();
     renderBudget();
     if(leafletMap){
       mapPlaces.forEach(function(p){ if(p.marker) p.marker.setPopupContent(popupHtml(p)); });
@@ -1445,6 +1504,7 @@
   renderDays();
   renderList();
   renderPacking();
+  renderShopping();
   renderBudget();
 
   var todayDay = DAYS.filter(function(d){ return d.dateISO === TODAY; })[0];
