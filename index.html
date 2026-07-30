@@ -1,25 +1,42 @@
 <meta charset="utf-8" />
-<title>胡志明市行程 8/5–8/15</title>
+<title>胡志明市之旅 8/5–8/15</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@700;900&display=swap" rel="stylesheet">
+<meta name="robots" content="noindex, nofollow">
 <style>
   :root{
     --ink:#241F17; --paper:#F3E8CD; --paper-raised:#FFFFFF; --paper-sunk:#EAE0BF;
-    --red:#C0392B; --teal:#2F7A6B; --mustard:#E0A93A; --navy:#1F3A5F;
-    --accent:#C0392B;
+    --red:#C0392B; --teal:#2F7A6B; --mustard:#E0A93A; --navy:#1F3A5F; --teal-soft:#CFE6DF;
     --line:var(--ink); --line-strong:var(--ink); --line-soft:rgba(36,31,23,0.25);
     --done-ink:rgba(36,31,23,0.6); --shadow:var(--ink);
+    --star-off:rgba(36,31,23,0.25); --star-on:#C0392B;
   }
   @media (prefers-color-scheme: dark){
     :root{
       --ink:#F2E9D8; --paper:#1C1712; --paper-raised:#241F17; --paper-sunk:#151109;
-      --red:#D9614F; --teal:#4FA893; --mustard:#E8BB5E; --navy:#5A7FA8;
-      --accent:#D9614F;
+      --red:#D9614F; --teal:#4FA893; --mustard:#E8BB5E; --navy:#5A7FA8; --teal-soft:#233D34;
       --line:var(--ink); --line-strong:var(--ink); --line-soft:rgba(242,233,216,0.25);
       --done-ink:rgba(242,233,216,0.62); --shadow:#000;
+      --star-off:rgba(242,233,216,0.25); --star-on:#D9614F;
     }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F2E9D8; --paper:#1C1712; --paper-raised:#241F17; --paper-sunk:#151109;
+    --red:#D9614F; --teal:#4FA893; --mustard:#E8BB5E; --navy:#5A7FA8; --teal-soft:#233D34;
+    --line:var(--ink); --line-strong:var(--ink); --line-soft:rgba(242,233,216,0.25);
+    --done-ink:rgba(242,233,216,0.62); --shadow:#000;
+    --star-off:rgba(242,233,216,0.25); --star-on:#D9614F;
+  }
+  :root[data-theme="light"]{
+    --ink:#241F17; --paper:#F3E8CD; --paper-raised:#FFFFFF; --paper-sunk:#EAE0BF;
+    --red:#C0392B; --teal:#2F7A6B; --mustard:#E0A93A; --navy:#1F3A5F; --teal-soft:#CFE6DF;
+    --line:var(--ink); --line-strong:var(--ink); --line-soft:rgba(36,31,23,0.25);
+    --done-ink:rgba(36,31,23,0.6); --shadow:var(--ink);
+    --star-off:rgba(36,31,23,0.25); --star-on:#C0392B;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -31,6 +48,7 @@
     -webkit-font-smoothing:antialiased;
     padding-bottom:calc(70px + env(safe-area-inset-bottom));
   }
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;}
   a{color:inherit;text-decoration:none;}
   button{font:inherit;}
   :focus-visible{outline:2px solid var(--red);outline-offset:2px;}
@@ -44,7 +62,9 @@
   .langbtn{border:2px solid var(--ink);background:var(--navy);color:#F3E8CD;font-weight:900;font-size:0.68rem;letter-spacing:0.04em;padding:5px 11px;cursor:pointer;min-width:38px;min-height:32px;}
   .langbtn:active{background:var(--ink);}
   h1{font-family:"Zen Kaku Gothic New",-apple-system,sans-serif;font-weight:900;font-size:1.55rem;margin:8px 0 4px;text-wrap:balance;letter-spacing:0.01em;}
-  .lang-vi h1{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;font-weight:800;}
+  .lang-vi h1, .lang-vi .day-num, .lang-vi .section-h, .lang-vi .info-card h3, .lang-vi .pack-group h3, .lang-vi .day-head h3{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;font-weight:800;
+  }
   .daterange{font-size:0.78rem;color:#F3E8CD;opacity:0.85;font-family:ui-monospace,"SF Mono",Menlo,monospace;}
   .tripmeta{display:flex;gap:14px;margin-top:10px;font-size:0.74rem;color:#F3E8CD;opacity:0.9;flex-wrap:wrap;align-items:center;}
   .tripmeta span{display:inline-flex;align-items:center;gap:5px;}
@@ -68,7 +88,7 @@
   .view{display:none;}
   .view.active{display:block;}
 
-  /* ---- day cards ---- */
+  /* ---- day cards (itinerary) ---- */
   .day-card{
     position:relative;background:var(--paper-raised);border:3px solid var(--ink);
     margin-bottom:26px;box-shadow:6px 6px 0 var(--shadow);
@@ -78,7 +98,6 @@
   .day-card.wedding .day-head{background:var(--red);}
   .day-card.today .day-head{background:var(--navy);}
   .day-num{font-family:"Zen Kaku Gothic New",sans-serif;font-size:1.1rem;font-weight:900;}
-  .lang-vi .day-num{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;font-weight:800;}
   .day-date{font-size:0.76rem;opacity:0.9;font-family:ui-monospace,"SF Mono",Menlo,monospace;}
   .day-badge{margin-left:auto;font-size:0.64rem;letter-spacing:0.04em;padding:3px 10px;background:var(--mustard);color:var(--ink);white-space:nowrap;font-weight:900;border:2px solid var(--ink);}
   .day-progress{font-size:0.7rem;color:#fff;opacity:0.9;font-family:ui-monospace,"SF Mono",Menlo,monospace;white-space:nowrap;font-weight:700;}
@@ -96,13 +115,19 @@
   .tplace{font-weight:700;font-size:0.9rem;text-wrap:balance;}
   .tnote{font-size:0.78rem;color:var(--done-ink);margin-top:2px;}
   .tnav{
-    display:inline-flex;align-items:center;gap:4px;margin-top:8px;
+    display:inline-flex;align-items:center;gap:4px;margin-top:8px;margin-right:6px;
     font-size:0.72rem;letter-spacing:0.02em;padding:9px 13px;border:2px solid var(--ink);background:var(--navy);color:#fff;
     min-height:38px;font-weight:900;
   }
   .tnav:active{background:var(--ink);}
+  .tremove{
+    display:inline-flex;align-items:center;justify-content:center;margin-top:8px;
+    width:38px;height:38px;border:2px solid var(--line);background:transparent;color:var(--done-ink);
+    font-size:0.8rem;cursor:pointer;
+  }
+  .tadded-tag{font-size:0.62rem;letter-spacing:0.03em;padding:2px 8px;border:1.5px solid var(--teal);color:var(--teal);white-space:nowrap;font-weight:700;display:inline-block;margin-top:2px;}
 
-  /* ---- transport view ---- */
+  /* ---- transport / stay / packing / budget (info view) ---- */
   .flight-card{position:relative;background:var(--paper-raised);border:3px solid var(--ink);padding:16px;margin-bottom:22px;box-shadow:6px 6px 0 var(--shadow);}
   .flight-row{display:flex;align-items:center;gap:10px;margin:8px 0;}
   .flight-pt{text-align:center;flex:0 0 auto;}
@@ -111,35 +136,24 @@
   .flight-line{flex:1;height:2px;background:var(--ink);position:relative;}
   .flight-line::after{content:"✈";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:0.8rem;background:var(--paper-raised);padding:0 4px;}
   .flight-info{font-size:0.76rem;color:var(--done-ink);margin-top:6px;}
+  .info-section{scroll-margin-top:150px;}
   .section-h{display:inline-block;font-family:"Zen Kaku Gothic New",sans-serif;font-weight:900;font-size:0.85rem;margin:22px 0 10px;color:#fff;background:var(--navy);padding:5px 12px;border:2px solid var(--ink);}
-  .lang-vi .section-h{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;font-weight:800;}
   .note-card{position:relative;background:var(--mustard);border:3px solid var(--ink);padding:12px 14px;font-size:0.82rem;line-height:1.6;margin-bottom:12px;font-weight:600;}
   .note-card b{color:var(--red);}
-
-  /* ---- accommodation ---- */
   .info-card{background:var(--paper-raised);border:3px solid var(--ink);padding:16px;margin-bottom:22px;box-shadow:6px 6px 0 var(--shadow);}
   .info-card h3{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:900;margin:0 0 6px;font-size:1.05rem;color:var(--teal);}
-  .lang-vi .info-card h3{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;font-weight:800;}
   .info-card p{font-size:0.84rem;color:var(--done-ink);margin:4px 0;line-height:1.6;}
   .fill-in{border-bottom:2px dashed var(--red);color:var(--red);}
-
-  /* ---- packing ---- */
   .pack-group{margin-bottom:18px;}
   .pack-group h3{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:900;font-size:1rem;margin:0 0 8px;color:var(--teal);}
-  .lang-vi .pack-group h3{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;font-weight:800;}
   .pack-item{display:flex;align-items:center;gap:10px;padding:9px 4px;border-top:2px dashed var(--line-soft);}
   .pack-item:first-child{border-top:none;}
-  .pack-check{
-    flex:0 0 auto;width:38px;height:38px;margin:-8px;border-radius:50%;border:none;background:transparent;
-    display:flex;align-items:center;justify-content:center;cursor:pointer;
-  }
+  .pack-check{flex:0 0 auto;width:38px;height:38px;margin:-8px;border-radius:50%;border:none;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;}
   .pack-check-ring{width:20px;height:20px;border:2px solid var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.7rem;}
   .pack-item.done .pack-check-ring{background:var(--navy);}
   .pack-label{font-size:0.86rem;}
   .pack-item.done .pack-label{color:var(--done-ink);text-decoration:line-through;}
   .pack-progress{font-size:0.76rem;color:var(--red);font-family:ui-monospace,"SF Mono",Menlo,monospace;margin-bottom:14px;font-weight:900;}
-
-  /* ---- budget ---- */
   .budget-table{width:100%;border-collapse:collapse;font-size:0.84rem;margin-bottom:16px;background:var(--paper-raised);border:3px solid var(--ink);box-shadow:6px 6px 0 var(--shadow);}
   .budget-table th{text-align:left;font-size:0.7rem;color:#fff;text-transform:uppercase;letter-spacing:0.06em;padding:10px 12px 8px;background:var(--teal);}
   .budget-table td{padding:9px 12px;border-top:2px dashed var(--line-soft);}
@@ -147,16 +161,87 @@
   .budget-total{font-weight:700;background:var(--mustard);}
   .budget-total td{border-top:2px solid var(--ink);}
 
+  /* ---- checklist (list view) ---- */
+  .sharebar{display:flex;gap:8px;margin-bottom:14px;}
+  .sharebtn{
+    flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+    padding:8px 10px;border:2px solid var(--ink);
+    background:var(--paper-raised);color:var(--ink);font-size:0.78rem;cursor:pointer;font-weight:700;
+  }
+  .sharebtn:active{background:var(--paper-sunk);}
+  .search-row{padding:0 0 10px;}
+  .search{width:100%;padding:10px 12px;border:2px solid var(--ink);background:var(--paper-raised);color:var(--ink);font-size:0.95rem;outline:none;}
+  .search:focus{border-color:var(--navy);}
+  .search::placeholder{color:var(--done-ink);}
+  .chiprow{display:flex;gap:8px;overflow-x:auto;padding:0 2px 10px;scrollbar-width:none;}
+  .chiprow::-webkit-scrollbar{display:none;}
+  .chip{flex:0 0 auto;padding:6px 12px;border:2px solid var(--ink);background:var(--paper-raised);color:var(--ink);font-size:0.76rem;font-weight:700;white-space:nowrap;cursor:pointer;transition:background .15s,color .15s,border-color .15s;}
+  .chip.active{background:var(--mustard);color:var(--ink);}
+  section.area{margin-top:30px;scroll-margin-top:150px;}
+  .area-head{display:flex;align-items:baseline;gap:10px;border-bottom:4px solid var(--ink);padding-bottom:6px;margin-bottom:4px;}
+  .area-head h2{font-family:"Noto Serif TC",Georgia,serif;font-size:1.1rem;margin:0;text-wrap:balance;color:var(--red);font-weight:900;}
+  .area-count{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:0.7rem;color:var(--done-ink);margin-left:auto;}
+  .area-desc{font-size:0.76rem;color:var(--done-ink);margin:6px 0 12px;}
+  .card{position:relative;background:var(--paper-raised);border:3px solid var(--ink);padding:12px 14px;margin-bottom:16px;box-shadow:5px 5px 0 var(--shadow);transition:opacity .2s;}
+  .card.done{opacity:0.6;}
+  .card.hide{display:none;}
+  .card-top{display:flex;gap:12px;align-items:flex-start;}
+  .check{flex:0 0 auto;width:44px;height:44px;margin:-11px 0 0 -11px;border-radius:50%;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+  .check-ring{width:22px;height:22px;border-radius:50%;border:2px solid var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.85rem;line-height:1;}
+  .card.done .check-ring{background:var(--red);}
+  .card-body{flex:1;min-width:0;}
+  .card-name-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  .card-name{font-family:"Noto Serif TC",Georgia,serif;font-size:1rem;font-weight:700;text-wrap:balance;}
+  .card.done .card-name{text-decoration:line-through;color:var(--done-ink);}
+  .tag{font-size:0.66rem;padding:2px 8px;border:1.5px solid var(--line);color:var(--done-ink);white-space:nowrap;font-weight:700;}
+  .day-pill{font-size:0.66rem;padding:2px 8px;background:var(--navy);color:#fff;white-space:nowrap;font-weight:900;}
+  .card-note{font-size:0.82rem;margin-top:4px;color:var(--ink);opacity:0.85;text-wrap:balance;}
+  .card-actions{margin-top:9px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .maplink{display:inline-flex;align-items:center;gap:5px;font-size:0.74rem;padding:5px 11px;border:2px solid var(--ink);background:var(--navy);color:#fff;text-decoration:none;transition:background .15s,color .15s;font-weight:900;}
+  .maplink:hover{background:var(--ink);}
+  .ghostbtn{display:inline-flex;align-items:center;gap:4px;font-size:0.74rem;padding:5px 10px;border:1.5px solid var(--line);color:var(--ink);background:transparent;cursor:pointer;font-weight:700;}
+  .ghostbtn:active{background:var(--paper-sunk);}
+  .daypick{font-size:0.74rem;padding:5px 8px;border:1.5px solid var(--line);background:var(--paper-raised);color:var(--ink);}
+  .detail{display:none;margin-top:10px;padding-top:10px;border-top:2px dashed var(--line);}
+  .detail.open{display:block;}
+  .stars{display:flex;margin:-9px -9px 8px 0;}
+  .star{background:none;border:none;font-size:1.1rem;line-height:1;cursor:pointer;padding:11px 9px;color:var(--star-off);}
+  .star.on{color:var(--star-on);}
+  .notearea{width:100%;min-height:56px;resize:vertical;padding:8px 10px;border:2px dashed var(--line);background:var(--paper-sunk);color:var(--ink);font-size:0.84rem;font-family:inherit;outline:none;}
+  .notearea:focus{border-color:var(--red);}
+  .empty-msg{display:none;text-align:center;padding:40px 0;color:var(--done-ink);font-size:0.9rem;}
+  .empty-msg.show{display:block;}
+  .list-footer{margin-top:30px;padding-top:14px;border-top:2px dashed var(--line-soft);font-size:0.7rem;color:var(--done-ink);text-align:center;}
+
+  /* ---- real map view ---- */
+  #leafletMap{width:100%;height:calc(100dvh - 210px);min-height:460px;border:3px solid var(--ink);margin-top:0;background:var(--paper-sunk);position:relative;}
+  .leaflet-container{font-family:inherit;}
+  .leaflet-control-zoom a{width:40px !important;height:40px !important;line-height:40px !important;font-size:1.1rem !important;}
+  .cute-pin{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 2px 5px rgba(36,31,23,0.3);display:flex;align-items:center;justify-content:center;}
+  .cute-pin::after{content:"";width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.9);}
+  .cute-pin.done{opacity:0.5;}
+  .leaflet-popup-content-wrapper{background:var(--paper-raised);color:var(--ink);border-radius:2px;border:2px solid var(--ink);}
+  .leaflet-popup-tip{background:var(--paper-raised);}
+  .leaflet-popup-content{font-size:0.82rem;margin:10px 22px 10px 12px;line-height:1.5;}
+  .popup-name{font-family:"Noto Serif TC",Georgia,serif;font-weight:700;font-size:0.92rem;display:block;margin-bottom:3px;}
+  .popup-note{color:var(--done-ink);font-size:0.78rem;margin-top:3px;}
+  .popup-link{color:var(--red);font-size:0.76rem;text-decoration:underline;display:inline-block;margin-top:5px;}
+  .map-offline-note{font-size:0.74rem;color:var(--done-ink);text-align:center;margin-top:8px;}
+  .map-legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:14px;}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:0.74rem;color:var(--done-ink);}
+  .legend-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
+  .map-note{font-size:0.74rem;color:var(--done-ink);margin-top:14px;line-height:1.6;}
+
+  .toast{
+    position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(8px);
+    background:var(--ink);color:var(--paper);font-size:0.82rem;padding:9px 16px;border:2px solid var(--ink);
+    opacity:0;pointer-events:none;transition:opacity .18s, transform .18s;z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
   /* ---- bottom nav ---- */
-  nav.bottom{
-    position:fixed;left:0;right:0;bottom:0;z-index:20;
-    background:var(--paper-raised);border-top:4px solid var(--ink);
-    display:flex;padding-bottom:env(safe-area-inset-bottom);
-  }
-  .navbtn{
-    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-    padding:9px 2px 8px;background:none;border:none;color:var(--done-ink);cursor:pointer;position:relative;
-  }
+  nav.bottom{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper-raised);border-top:4px solid var(--ink);display:flex;padding-bottom:env(safe-area-inset-bottom);}
+  .navbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 8px;background:none;border:none;color:var(--done-ink);cursor:pointer;position:relative;}
   .navbtn.active{color:#fff;background:var(--red);}
   .navbtn svg{width:21px;height:21px;}
   .navbtn span{font-size:0.64rem;letter-spacing:0.02em;font-weight:700;}
@@ -185,91 +270,120 @@
     <div id="daysContainer"></div>
   </div>
 
-  <div class="view" id="view-transport">
-    <div class="flight-card">
-      <div class="section-h" style="margin-top:0;" id="outboundLabel">去程 8/5（三）</div>
-      <div class="flight-row">
-        <div class="flight-pt"><div class="flight-code">TPE</div><div class="flight-time">19:35</div></div>
-        <div class="flight-line"></div>
-        <div class="flight-pt"><div class="flight-code">SGN</div><div class="flight-time">22:00</div></div>
+  <div class="view" id="view-list">
+    <div class="sharebar">
+      <button class="sharebtn" id="copyTextBtn"><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="4" width="10" height="13" rx="1.5"/><rect x="7.5" y="2" width="5" height="3" rx="1"/></svg> <span id="copyTextLabel">複製地點清單文字</span></button>
+      <button class="sharebtn" id="exportBtn"><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3v9"/><path d="M6 8l4 4 4-4"/><path d="M4 16h12"/></svg> <span id="exportLabel">匯出清單</span></button>
+    </div>
+    <div class="search-row">
+      <input class="search" id="search" type="text" placeholder="搜尋地點、類型或筆記…" />
+    </div>
+    <div class="chiprow" id="chiprow"></div>
+    <div id="sections"></div>
+    <p class="empty-msg" id="emptyMsg">沒有符合的地點，換個關鍵字試試。</p>
+    <p class="list-footer"><span id="totalCount" class="mono">0</span><span id="footerText"> 個候選地點・可加入上面的每日行程・資料存在這台裝置的瀏覽器裡</span></p>
+  </div>
+
+  <div class="view" id="view-map">
+    <div id="leafletMap"></div>
+    <p class="map-offline-note" id="mapOfflineNote">地圖需要網路連線讀取街道圖磚（OpenStreetMap），離線時會是空白</p>
+    <div class="map-legend" id="mapLegend"></div>
+    <p class="map-note" id="mapNote"></p>
+  </div>
+
+  <div class="view" id="view-info">
+    <div class="chiprow" id="infoChips">
+      <button class="chip" data-target="info-transport" id="infoNavTransport">交通</button>
+      <button class="chip" data-target="info-stay" id="infoNavStay">住宿</button>
+      <button class="chip" data-target="info-pack" id="infoNavPack">行李</button>
+      <button class="chip" data-target="info-budget" id="infoNavBudget">預算</button>
+    </div>
+
+    <div class="info-section" id="info-transport">
+      <div class="flight-card">
+        <div class="section-h" style="margin-top:0;" id="outboundLabel">去程 8/5（三）</div>
+        <div class="flight-row">
+          <div class="flight-pt"><div class="flight-code">TPE</div><div class="flight-time">19:35</div></div>
+          <div class="flight-line"></div>
+          <div class="flight-pt"><div class="flight-code">SGN</div><div class="flight-time">22:00</div></div>
+        </div>
+        <div class="flight-info" id="flightInfo1">長榮航空 BR381・經濟艙・A330-300・含餐點</div>
       </div>
-      <div class="flight-info" id="flightInfo1">長榮航空 BR381・經濟艙・A330-300・含餐點</div>
-    </div>
-    <div class="flight-card">
-      <div class="section-h" style="margin-top:0;" id="returnLabel">回程 8/15（六）</div>
-      <div class="flight-row">
-        <div class="flight-pt"><div class="flight-code">SGN</div><div class="flight-time">01:50</div></div>
-        <div class="flight-line"></div>
-        <div class="flight-pt"><div class="flight-code">TPE</div><div class="flight-time">06:15</div></div>
+      <div class="flight-card">
+        <div class="section-h" style="margin-top:0;" id="returnLabel">回程 8/15（六）</div>
+        <div class="flight-row">
+          <div class="flight-pt"><div class="flight-code">SGN</div><div class="flight-time">01:50</div></div>
+          <div class="flight-line"></div>
+          <div class="flight-pt"><div class="flight-code">TPE</div><div class="flight-time">06:15</div></div>
+        </div>
+        <div class="flight-info" id="flightInfo2">長榮航空 BR382・經濟艙・A330-300・含餐點</div>
+        <a class="tnav" style="margin-top:10px;" href="https://www.google.com/maps/dir/?api=1&destination=10.8188,106.6520" target="_blank" rel="noopener noreferrer">
+          <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 2v13M10 15l-4-4M10 15l4-4"/><path d="M4 18h12"/></svg>
+          <span id="navAirportLabel">導航到新山一機場</span>
+        </a>
       </div>
-      <div class="flight-info" id="flightInfo2">長榮航空 BR382・經濟艙・A330-300・含餐點</div>
-      <a class="tnav" style="margin-top:10px;" href="https://www.google.com/maps/dir/?api=1&destination=10.8188,106.6520" target="_blank" rel="noopener noreferrer">
-        <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 2v13M10 15l-4-4M10 15l4-4"/><path d="M4 18h12"/></svg>
-        <span id="navAirportLabel">導航到新山一機場</span>
-      </a>
+      <div class="section-h" id="cityTransportLabel">市區交通</div>
+      <div class="note-card" id="cityTransportNote">
+        這趟主要靠 <b>舅舅開車</b> 或 <b>舅媽騎車</b> 接送,沒有另外抓大眾運輸或包車費用。<br>
+        每天出發前記得跟舅舅／舅媽對一下當天路線,尖峰時段(約 7–9 點、17–19 點)車流較多,抓寬鬆一點的時間。
+      </div>
     </div>
 
-    <div class="section-h" id="cityTransportLabel">市區交通</div>
-    <div class="note-card" id="cityTransportNote">
-      這趟主要靠 <b>舅舅開車</b> 或 <b>舅媽騎車</b> 接送,沒有另外抓大眾運輸或包車費用。<br>
-      每天出發前記得跟舅舅／舅媽對一下當天路線,尖峰時段(約 7–9 點、17–19 點)車流較多,抓寬鬆一點的時間。
+    <div class="info-section" id="info-stay">
+      <div class="info-card">
+        <h3 id="stayTitle">住宿</h3>
+        <p id="stayP1">整趟旅程住在親戚家,沒有另外訂飯店。</p>
+        <p><span id="addressLabel">地址：</span><span class="fill-in" id="addressFillIn">（請自行填入親戚家地址，方便跟司機/計程車說）</span></p>
+      </div>
+      <div class="info-card">
+        <h3 id="usefulInfoTitle">實用資訊</h3>
+        <p><b id="visaLabel">簽證</b><span id="visaText">：台灣護照無免簽,需事先申請電子簽證(e-Visa)，evisa.gov.vn</span></p>
+        <p><b id="wifiLabel">網路</b><span id="wifiText">：機場或當地購買 eSIM／SIM 卡，或開通台灣電信漫遊</span></p>
+        <p><b id="exchangeLabel">換匯</b><span id="exchangeText">：機場匯率較差，市區金飾店匯率通常較好，也可提款卡直接領越南盾</span></p>
+        <p><b id="voltageLabel">電壓</b><span id="voltageText">：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意</span></p>
+        <p><b id="emergencyLabel">緊急聯絡</b><span id="emergencyText">：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用</span></p>
+      </div>
     </div>
-  </div>
 
-  <div class="view" id="view-stay">
-    <div class="info-card">
-      <h3 id="stayTitle">住宿</h3>
-      <p id="stayP1">整趟旅程住在親戚家,沒有另外訂飯店。</p>
-      <p><span id="addressLabel">地址：</span><span class="fill-in" id="addressFillIn">（請自行填入親戚家地址，方便跟司機/計程車說）</span></p>
+    <div class="info-section" id="info-pack">
+      <div class="section-h" id="packLabel">行李清單</div>
+      <div class="pack-progress" id="packProgress">0 / 0</div>
+      <div id="packContainer"></div>
     </div>
-    <div class="info-card">
-      <h3 id="usefulInfoTitle">實用資訊</h3>
-      <p><b id="visaLabel">簽證</b><span id="visaText">：台灣護照無免簽,需事先申請電子簽證(e-Visa)，evisa.gov.vn</span></p>
-      <p><b id="wifiLabel">網路</b><span id="wifiText">：機場或當地購買 eSIM／SIM 卡，或開通台灣電信漫遊</span></p>
-      <p><b id="exchangeLabel">換匯</b><span id="exchangeText">：機場匯率較差，市區金飾店匯率通常較好，也可提款卡直接領越南盾</span></p>
-      <p><b id="voltageLabel">電壓</b><span id="voltageText">：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意</span></p>
-      <p><b id="emergencyLabel">緊急聯絡</b><span id="emergencyText">：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用</span></p>
-    </div>
-  </div>
 
-  <div class="view" id="view-pack">
-    <div class="pack-progress" id="packProgress">0 / 0</div>
-    <div id="packContainer"></div>
-  </div>
-
-  <div class="view" id="view-budget">
-    <table class="budget-table">
-      <thead><tr><th id="budgetColItem">項目</th><th id="budgetColEst">估計（VND）</th></tr></thead>
-      <tbody id="budgetBody"></tbody>
-      <tfoot><tr class="budget-total"><td id="budgetTotalLabel">總計（不含禮金）</td><td id="budgetTotal"></td></tr></tfoot>
-    </table>
-    <div class="note-card" id="budgetNote">
-      沒有設定預算上限，以上金額僅供抓花費節奏參考。婚禮禮金依習俗另計，機票已購買不列入。
+    <div class="info-section" id="info-budget">
+      <div class="section-h" id="budgetLabel">預算</div>
+      <table class="budget-table">
+        <thead><tr><th id="budgetColItem">項目</th><th id="budgetColEst">估計（VND）</th></tr></thead>
+        <tbody id="budgetBody"></tbody>
+        <tfoot><tr class="budget-total"><td id="budgetTotalLabel">總計（不含禮金）</td><td id="budgetTotal"></td></tr></tfoot>
+      </table>
+      <div class="note-card" id="budgetNote">
+        沒有設定預算上限，以上金額僅供抓花費節奏參考。婚禮禮金依習俗另計，機票已購買不列入。
+      </div>
     </div>
   </div>
 
 </div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <nav class="bottom">
   <button class="navbtn active" data-view="days">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
     <span id="navDays">每日行程</span>
   </button>
-  <button class="navbtn" data-view="transport">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 17h14M6 17v-5l2-5h8l2 5v5M4 17h1M19 17h1"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/></svg>
-    <span id="navTransport">交通</span>
+  <button class="navbtn" data-view="list">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.4"/><circle cx="3.5" cy="12" r="1.4"/><circle cx="3.5" cy="18" r="1.4"/></svg>
+    <span id="navList">踩點清單</span>
   </button>
-  <button class="navbtn" data-view="stay">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>
-    <span id="navStay">住宿</span>
+  <button class="navbtn" data-view="map">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 4l-6 2v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>
+    <span id="navMap">地圖</span>
   </button>
-  <button class="navbtn" data-view="pack">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="8" width="14" height="12" rx="2"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-    <span id="navPack">行李</span>
-  </button>
-  <button class="navbtn" data-view="budget">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="16" cy="14" r="1.4"/></svg>
-    <span id="navBudget">預算</span>
+  <button class="navbtn" data-view="info">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>
+    <span id="navInfo">資訊</span>
   </button>
 </nav>
 
@@ -278,6 +392,7 @@
   function nav(lat, lng){ return "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng; }
   function navQ(q){ return "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(q); }
 
+  /* ================= DAYS (real itinerary, 10 days) ================= */
   var DAYS = [
     { num:1, date:"8/5（三）", dateISO:"2026-08-05", title:"抵達", titleVi:"Đến nơi", items:[
       {time:"19:35", place:"桃園機場 T2 起飛", placeVi:"Khởi hành sân bay Đào Viên T2", note:"長榮 BR381", noteVi:"EVA Air BR381", link:null},
@@ -337,14 +452,168 @@
     ]}
   ];
 
-  /* ---------------- I18N ---------------- */
+  /* ================= DATA (checklist places, browsable) ================= */
+  var DATA = [
+    { area:"Xuân Hòa 核心區", color:0, desc:"步行可達的密集小區，適合排一整天",
+      items:[
+        {name:"OHQUAO – The Local Edit", type:"選物店", note:"", link:"https://maps.app.goo.gl/dY2dK6Kz6N17PXPz6", lat:null, lng:null},
+        {name:"Kisserine House", type:"禮服店", note:"", link:"https://maps.app.goo.gl/8K9QdCxMd9NbJ2Wt5", lat:10.7842992, lng:106.6929711},
+        {name:"Nhà Tú – Việt Nam Restaurant", type:"越南料理", note:"", link:"https://maps.app.goo.gl/bYXHQwz7542Gg3AU7", lat:null, lng:null},
+        {name:"ngâm CAFE", type:"咖啡", note:"可頌好吃、可頌抹茶牛奶", link:"https://maps.app.goo.gl/nKkANEAfBPt9j7J27", lat:10.7864405, lng:106.6861926},
+        {name:"Bếp Cuốn Sài Gòn", type:"越南料理", note:"春捲、蛋酥", link:"https://maps.app.goo.gl/p9rKzQRUUGVZ1WMt9", lat:10.7765904, lng:106.6900581}
+      ]
+    },
+    { area:"Phạm Ngũ Lão／The 350F 小街區", color:1, desc:"很緊密的一小群，順著走就能全部逛到",
+      items:[
+        {name:"The 350F – Nguyễn Trãi", type:"甜點店", note:"提拉米蘇", link:"https://maps.app.goo.gl/BZdPBDic93zvtxgs5", lat:10.7707123, lng:106.6925886},
+        {name:"Ka's clothing", type:"服飾", note:"好看韓系服飾", link:"https://maps.app.goo.gl/dUFM4fimCHvg8Yoa6", lat:10.7714774, lng:106.6942158},
+        {name:"Maztermind", type:"遊戲", note:"", link:"https://maps.app.goo.gl/nhnnQHBMknnjzXQ2A", lat:10.7709614, lng:106.6925465},
+        {name:"Tick And Pick", type:"文創", note:"", link:"https://maps.app.goo.gl/veQAACFFTaDvwQ5N8", lat:10.7709614, lng:106.6925465},
+        {name:"Bánh Mì Huynh Hoa", type:"越南麵包", note:"法棍老店", link:"https://maps.app.goo.gl/Dy29ypprL2XpUpHr6", lat:10.7715226, lng:106.6923968},
+        {name:"Cà phê Linh", type:"咖啡", note:"鹽咖啡", link:"https://maps.app.goo.gl/gmLBgKPuAvFiwoTc7", lat:10.7713482, lng:106.6964333},
+        {name:"Phở Việt Nam", type:"河粉", note:"米其林推薦", link:"https://maps.app.goo.gl/y1bDcMC3K4Mvy2Mv7", lat:10.771386, lng:106.6961339},
+        {name:"PSYCHE SAIGON", type:"文創", note:"", link:"https://maps.app.goo.gl/ZnJAXJ5Tbu9zuy3ZA", lat:10.7688211, lng:106.6967985}
+      ]
+    },
+    { area:"ThiBa Space 一帶", color:2, desc:"",
+      items:[
+        {name:"ThiBa Space", type:"coworking space", note:"", link:"https://maps.app.goo.gl/8oxook6deuVtZHwNA", lat:10.7921337, lng:106.7013149},
+        {name:"Saigon Eco Craft", type:"禮品店", note:"好看湯匙、偏貴、只收現金", link:"https://maps.app.goo.gl/4ijdiFPTHa4P1xZ57", lat:10.7743518, lng:106.7005356},
+        {name:"em.G clothé", type:"服飾", note:"高級簡約風格", link:"https://maps.app.goo.gl/wgB2noCAcYfEBG3Y8", lat:10.7781625, lng:106.7010533},
+        {name:"THE MERX I", type:"服飾", note:"好看襯衫", link:"https://maps.app.goo.gl/bDRQMQsLn89PdS2i6", lat:10.7782744, lng:106.7009935},
+        {name:"HUONG Boutique – Union Square", type:"服飾", note:"簡約長期主義女裝、禮服", link:"https://maps.app.goo.gl/Nc4dwsxzytEiyru38", lat:10.7764233, lng:106.7019916},
+        {name:"GIA STUDIOS HCM", type:"服飾", note:"簡約女裝", link:"https://maps.app.goo.gl/kG14g4yiCitech6A6", lat:10.780597, lng:106.7004583},
+        {name:"Hoa Túc Saigon", type:"越南料理", note:"雞蛋炸蝦春捲、蟹肉炒飯", link:"https://maps.app.goo.gl/8qP7hp3tn37PUhGV7", lat:10.7785004, lng:106.7037745},
+        {name:"Bánh Canh Cua Út Thảo", type:"小吃", note:"蟹粉", link:"https://maps.app.goo.gl/4jE8i9iL5TeQQ7Bp6", lat:10.7737701, lng:106.6987734},
+        {name:"Nicotin Cafe II", type:"咖啡", note:"日式老屋咖啡廳", link:"https://maps.app.goo.gl/bR6d3dRDcM67wZJM8", lat:10.774102, lng:106.7040848}
+      ]
+    },
+    { area:"Bến Thành／Q1 老城", color:3, desc:"",
+      items:[
+        {name:"Vesta Lifestyle & Gifts", type:"生活風格禮品", note:"", link:"https://maps.app.goo.gl/yjwMF7oVwmtg7wgZ7", lat:null, lng:null},
+        {name:"Little HaNoi Egg Coffee (Yersin)", type:"咖啡", note:"雞蛋麵包、芒果吐司、蛋咖啡", link:"https://maps.app.goo.gl/PKdDnGofdL99aR5J9", lat:10.7694043, lng:106.6960112},
+        {name:"Morra Perfume Experience Center", type:"香水體驗店", note:"客製刻字/照片/星座/簽名；推 No.33 木質菸草、No.42 芝麻白麝香、No.43 柑橘萬用款", link:"https://maps.app.goo.gl/CachYFLeAPU4133Z7", lat:null, lng:null}
+      ]
+    },
+    { area:"偏北・老洋樓一帶", color:4, desc:"",
+      items:[
+        {name:"Beanthere Cafe – Hồ Hảo Hớn", type:"咖啡", note:"老洋樓咖啡廳", link:"https://maps.app.goo.gl/iAy4v1t62zgNpaRX6", lat:10.7620124, lng:106.6923935},
+        {name:"JUBIN Studio ｜ Château JUBIN", type:"女裝", note:"好看洋裝", link:"https://maps.app.goo.gl/Nh76gunG5iPTmU5U9", lat:10.7898032, lng:106.6997679}
+      ]
+    },
+    { area:"Bình Thạnh", color:5, desc:"",
+      items:[
+        {name:"Nhâm Coffee", type:"咖啡", note:"法棍配奶油＋越南咖啡牛奶", link:"https://maps.app.goo.gl/LB3KgVxPaUSfwc9L9", lat:10.8007538, lng:106.7067888}
+      ]
+    },
+    { area:"Phú Nhuận／Đặng Tất", color:6, desc:"",
+      items:[
+        {name:"L'ESPOIR", type:"服飾品牌", note:"簡約長期主義女裝、禮服", link:"https://maps.app.goo.gl/tCxo7X7aFvZRrjxVA", lat:10.7911752, lng:106.6698677},
+        {name:"Veene Land", type:"手作店", note:"", link:"https://maps.app.goo.gl/xvS7VoPocnUyYxXj6", lat:10.7929366, lng:106.6880189},
+        {name:"Nagashoes - 95 Trần Quang Diệu", type:"鞋店", note:"婚禮鞋子", link:"https://maps.app.goo.gl/B5hs1ujhQ1Pdwwuk7", lat:10.7903766, lng:106.6780239}
+      ]
+    },
+    { area:"Thảo Điền", color:7, desc:"麵包甜點集中區，跟 L'ESPOIR 旗艦店排同一趟",
+      items:[
+        {name:"L'ESPOIR 旗艦店", type:"服飾門市", note:"", link:"https://maps.app.goo.gl/U5JoseDh4yFAwp329", lat:null, lng:null},
+        {name:"Banan Patisserie Ngo Quang Huy", type:"甜點", note:"布丁", link:"https://maps.app.goo.gl/6mfXwpiAcayw2MS38", lat:10.8042109, lng:106.7344061},
+        {name:"Micro Boulangerie", type:"麵包店", note:"紅豆奶油法國麵包", link:"https://maps.app.goo.gl/yKzwSLBXNrYLbg8S9", lat:10.8054795, lng:106.729937},
+        {name:"Breadventure", type:"麵包店", note:"奶油法國麵包", link:"https://maps.app.goo.gl/8hKrpPsQBE3vA2Wb9", lat:10.803713, lng:106.728971}
+      ]
+    },
+    { area:"其他城市 / 待查", color:8, desc:"不在胡志明市步行範圍內，或地址還沒查到",
+      items:[
+        {name:"LIBÉ", type:"服飾品牌", note:"只有官網，門市地址待查", link:"https://libeworkshop.com", lat:null, lng:null},
+        {name:"Oliu Sourdough – Coffee", type:"咖啡", note:"漂亮咖啡廳（在河內，不是胡志明市）", link:"https://maps.app.goo.gl/JWHJXGafRpKwHhfJ9", lat:20.2627274, lng:105.965486, otherCity:true}
+      ]
+    }
+  ];
+
+  /* ================= PACKING ================= */
+  var PACKING = [
+    { group:"證件與金錢", groupVi:"Giấy tờ và tiền bạc",
+      items:["護照正本＋e-Visa 證明（紙本＋電子備份）","信用卡","少量美金／越南盾現金"],
+      itemsVi:["Hộ chiếu gốc + minh chứng e-Visa (bản giấy + bản điện tử)","Thẻ tín dụng","Một ít tiền mặt USD／VND"] },
+    { group:"衣物", groupVi:"Quần áo",
+      items:["輕便透氣衣物（8月胡志明市 28–35°C）","雨具（雨季）","婚禮正式服裝＋鞋","防曬、遮陽帽"],
+      itemsVi:["Quần áo nhẹ thoáng khí (tháng 8 ở TP.HCM 28–35°C)","Đồ đi mưa (mùa mưa)","Trang phục dự tiệc cưới + giày","Kem chống nắng, nón che nắng"] },
+    { group:"個人用品", groupVi:"Đồ dùng cá nhân",
+      items:["防蚊液","常備藥","個人保養品","轉接頭／充電線","eSIM 或當地 SIM 卡"],
+      itemsVi:["Thuốc chống muỗi","Thuốc thông dụng","Đồ chăm sóc cá nhân","Cục chuyển đổi/dây sạc","eSIM hoặc SIM địa phương"] },
+    { group:"其他", groupVi:"Khác",
+      items:["空行李袋空間（伴手禮、購物戰利品）","旅平險保單／證明"],
+      itemsVi:["Chừa chỗ trống trong vali (quà, đồ mua sắm)","Hợp đồng/giấy chứng nhận bảo hiểm du lịch"] },
+    { group:"請舅舅先買的零食", groupVi:"Nhờ cậu mua trước đồ ăn vặt",
+      items:["Orion An Ngô Nướng Bơ（玉米奶油米餅）","Lay's Vị Phở Bò Hà Nội（河內牛肉河粉口味洋芋片）","Callant Bánh Kem Xốp Dừa（椰子奶油餅乾球）"],
+      itemsVi:["Orion An Ngô Nướng Bơ (bánh gạo nướng vị bơ bắp)","Lay's vị Phở Bò Hà Nội","Callant Bánh Kem Xốp Dừa"] }
+  ];
+
+  /* ================= BUDGET ================= */
+  var BUDGET = [
+    { item:"每日餐飲＋咖啡＋購物（9天）", itemVi:"Ăn uống + cà phê + mua sắm mỗi ngày (9 ngày)", est:"3,500,000 – 6,500,000" },
+    { item:"婚禮禮金", itemVi:"Tiền mừng cưới", est:"依習俗，另計", estVi:"Theo phong tục, tính riêng" },
+    { item:"eSIM／保險等雜支", itemVi:"eSIM／bảo hiểm và chi phí lặt vặt khác", est:"500,000 – 1,000,000" }
+  ];
+
+  /* ================= I18N ================= */
   var LANG_KEY = "hcmc-trip-lang";
   var lang = localStorage.getItem(LANG_KEY) || "zh";
+
+  var VI_TYPE = {
+    "選物店":"Cửa hàng đồ tuyển chọn", "禮服店":"Tiệm váy dạ hội", "越南料理":"Món Việt",
+    "咖啡":"Cà phê", "甜點店":"Tiệm bánh ngọt", "服飾":"Thời trang", "遊戲":"Khu vui chơi",
+    "文創":"Đồ sáng tạo", "越南麵包":"Bánh mì", "河粉":"Phở", "coworking space":"Không gian làm việc chung",
+    "禮品店":"Cửa hàng quà tặng", "生活風格禮品":"Quà tặng phong cách sống", "小吃":"Món ăn vặt",
+    "香水體驗店":"Trải nghiệm nước hoa", "女裝":"Thời trang nữ", "手作店":"Đồ thủ công",
+    "甜點":"Bánh ngọt", "麵包店":"Tiệm bánh mì", "服飾品牌":"Thương hiệu thời trang", "服飾門市":"Cửa hàng thời trang",
+    "鞋店":"Cửa hàng giày"
+  };
+  var VI_NOTE = {
+    "Nagashoes - 95 Trần Quang Diệu":"Giày cưới",
+    "ngâm CAFE":"Croissant ngon, croissant matcha sữa ngon",
+    "Bếp Cuốn Sài Gòn":"Chả giò, bánh trứng giòn",
+    "The 350F – Nguyễn Trãi":"Tiramisu",
+    "Ka's clothing":"Thời trang phong cách Hàn đẹp",
+    "Bánh Mì Huynh Hoa":"Tiệm bánh mì lâu đời",
+    "Cà phê Linh":"Cà phê muối",
+    "Phở Việt Nam":"Được Michelin đề xuất",
+    "Saigon Eco Craft":"Muỗng đẹp, hơi đắt, chỉ nhận tiền mặt",
+    "em.G clothé":"Phong cách tối giản cao cấp",
+    "THE MERX I":"Áo sơ mi đẹp",
+    "HUONG Boutique – Union Square":"Thời trang nữ tối giản bền vững, váy dạ hội",
+    "GIA STUDIOS HCM":"Thời trang nữ tối giản",
+    "Hoa Túc Saigon":"Chả giò tôm trứng, cơm chiên cua",
+    "Bánh Canh Cua Út Thảo":"Bánh canh cua",
+    "Nicotin Cafe II":"Quán cà phê nhà cổ kiểu Nhật",
+    "Little HaNoi Egg Coffee (Yersin)":"Bánh mì trứng, bánh mì xoài, cà phê trứng",
+    "Morra Perfume Experience Center":"Khắc chữ/ảnh/cung hoàng đạo/chữ ký theo yêu cầu; gợi ý No.33 gỗ thuốc lá, No.42 mè xạ hương trắng, No.43 cam quýt đa dụng",
+    "Beanthere Cafe – Hồ Hảo Hớn":"Quán cà phê biệt thự cổ",
+    "JUBIN Studio ｜ Château JUBIN":"Váy đầm đẹp",
+    "Nhâm Coffee":"Bánh mì bơ + cà phê sữa đá",
+    "L'ESPOIR":"Thời trang nữ tối giản bền vững, váy dạ hội",
+    "Banan Patisserie Ngo Quang Huy":"Bánh flan",
+    "Micro Boulangerie":"Bánh mì Pháp đậu đỏ bơ",
+    "Breadventure":"Bánh mì Pháp bơ",
+    "LIBÉ":"Chỉ có trang web, chưa rõ địa chỉ cửa hàng",
+    "Oliu Sourdough – Coffee":"Quán cà phê đẹp (ở Hà Nội, không phải TP.HCM)"
+  };
+  var VI_AREA = {
+    "Xuân Hòa 核心區": {name:"Khu trung tâm Xuân Hòa", desc:"Khu vực nhỏ, đi bộ được, thích hợp dành cả ngày"},
+    "Phạm Ngũ Lão／The 350F 小街區": {name:"Khu phố nhỏ Phạm Ngũ Lão／The 350F", desc:"Cụm nhỏ sát nhau, đi bộ dọc theo là ghé hết"},
+    "ThiBa Space 一帶": {name:"Khu vực ThiBa Space", desc:""},
+    "Bến Thành／Q1 老城": {name:"Bến Thành／Phố cổ Quận 1", desc:""},
+    "偏北・老洋樓一帶": {name:"Khu biệt thự cổ phía Bắc", desc:""},
+    "Bình Thạnh": {name:"Bình Thạnh", desc:""},
+    "Phú Nhuận／Đặng Tất": {name:"Phú Nhuận／Đặng Tất", desc:""},
+    "Thảo Điền": {name:"Thảo Điền", desc:"Khu tập trung tiệm bánh, kết hợp ghé cửa hàng chính L'ESPOIR"},
+    "其他城市 / 待查": {name:"Thành phố khác / Chưa xác định", desc:"Không nằm trong phạm vi đi bộ ở TP.HCM, hoặc chưa tìm được địa chỉ"}
+  };
+
   var UI = {
     zh:{
       pageTitle:"胡志明市之旅", dateRange:"2026/08/05 – 2026/08/15・10 天 9 夜",
       weddingMeta:"8/9 妹妹婚禮", stayMeta:"住親戚家",
-      today:"今天", wedding:"婚禮", markCompleted:"標記已完成：", navigate:"導航",
+      today:"今天", wedding:"婚禮", markCompleted:"標記已完成：", navigate:"導航", removeFromDay:"從這天移除",
       outboundLabel:"去程 8/5（三）", returnLabel:"回程 8/15（六）",
       flightInfo1:"長榮航空 BR381・經濟艙・A330-300・含餐點",
       flightInfo2:"長榮航空 BR382・經濟艙・A330-300・含餐點",
@@ -359,16 +628,31 @@
       exchangeLabel:"換匯", exchangeText:"：機場匯率較差，市區金飾店匯率通常較好，也可提款卡直接領越南盾",
       voltageLabel:"電壓", voltageText:"：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意",
       emergencyLabel:"緊急聯絡", emergencyText:"：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用",
-      packed:"已打包",
+      packed:"已打包", packLabel:"行李清單", budgetLabel:"預算",
       budgetColItem:"項目", budgetColEst:"估計（VND）", budgetTotalLabel:"總計（不含禮金）",
       budgetNote:"沒有設定預算上限，以上金額僅供抓花費節奏參考。婚禮禮金依習俗另計，機票已購買不列入。",
       budgetTotalVal:"約 4,000,000 – 7,500,000",
-      navDays:"每日行程", navTransport:"交通", navStay:"住宿", navPack:"行李", navBudget:"預算"
+      navDays:"每日行程", navList:"踩點清單", navMap:"地圖", navInfo:"資訊",
+      infoNavTransport:"交通", infoNavStay:"住宿", infoNavPack:"行李", infoNavBudget:"預算",
+      copyText:"複製地點清單文字", exportBtn:"匯出清單", places:" 處",
+      searchPlaceholder:"搜尋地點、類型或筆記…", emptyMsg:"沒有符合的地點，換個關鍵字試試。",
+      mapOfflineNote:"地圖需要網路連線讀取街道圖磚（OpenStreetMap），離線時會是空白",
+      footerText:" 個候選地點・可加入上面的每日行程・資料存在這台裝置的瀏覽器裡",
+      openMap:"開地圖 ↗", officialSite:"官網 ↗", locateOnMap:"在地圖上找",
+      notesRating:"筆記與評分", addToDay:"＋ 加入行程", scheduled:"（已排）",
+      notePlaceholder:"寫點自己的心得、想吃的東西…",
+      markVisited:"標記為已去過：", summaryVisitedHeader:"【已去過】",
+      added:"已加入 ",
+      missingCoords:"沒有精確座標、地圖上未標示：", otherCityNote:"不同城市未納入地圖：", hanoi:"（河內）",
+      mapLoadFail:"地圖元件載入失敗，請確認裝置已連上網路後重新整理頁面。",
+      copiedText:"清單文字已複製，貼給旅伴吧", copyFailed:"複製失敗，請改用「匯出清單」下載檔案",
+      noClipboard:"這個瀏覽器不支援自動複製，請改用「匯出清單」", exported:"已下載，傳給旅伴吧",
+      summaryTitle:"胡志明市之旅 — 踩點清單與行程"
     },
     vi:{
       pageTitle:"Chuyến đi TP. Hồ Chí Minh", dateRange:"2026/08/05 – 2026/08/15・10 ngày 9 đêm",
       weddingMeta:"8/9 Đám cưới em gái", stayMeta:"Ở nhà người thân",
-      today:"Hôm nay", wedding:"Đám cưới", markCompleted:"Đánh dấu đã xong：", navigate:"Chỉ đường",
+      today:"Hôm nay", wedding:"Đám cưới", markCompleted:"Đánh dấu đã xong：", navigate:"Chỉ đường", removeFromDay:"Xóa khỏi ngày này",
       outboundLabel:"Chuyến đi 5/8 (Thứ Tư)", returnLabel:"Chuyến về 15/8 (Thứ Bảy)",
       flightInfo1:"EVA Air BR381・Hạng phổ thông・A330-300・Có suất ăn",
       flightInfo2:"EVA Air BR382・Hạng phổ thông・A330-300・Có suất ăn",
@@ -383,11 +667,26 @@
       exchangeLabel:"Đổi tiền", exchangeText:"：Tỷ giá ở sân bay kém hơn, tiệm vàng trong thành phố thường tốt hơn, cũng có thể rút VND bằng thẻ ATM",
       voltageLabel:"Điện áp", voltageText:"：Việt Nam chủ yếu dùng ổ A/C 220V, sạc thường tương thích đa điện áp, thiết bị lớn cần lưu ý",
       emergencyLabel:"Liên hệ khẩn cấp", emergencyText:"：Văn phòng Kinh tế Văn hóa Đài Bắc tại TP.HCM, nên tra số điện thoại mới nhất trước khi đi",
-      packed:"đã đóng gói",
+      packed:"đã đóng gói", packLabel:"Danh sách hành lý", budgetLabel:"Ngân sách",
       budgetColItem:"Hạng mục", budgetColEst:"Ước tính (VND)", budgetTotalLabel:"Tổng cộng (chưa gồm tiền mừng cưới)",
       budgetNote:"Không đặt giới hạn ngân sách, số tiền trên chỉ để tham khảo nhịp độ chi tiêu. Tiền mừng cưới tính riêng theo phong tục, vé máy bay đã mua không tính vào đây.",
       budgetTotalVal:"Khoảng 4.000.000 – 7.500.000",
-      navDays:"Lịch trình", navTransport:"Di chuyển", navStay:"Chỗ ở", navPack:"Hành lý", navBudget:"Ngân sách"
+      navDays:"Lịch trình", navList:"Danh sách", navMap:"Bản đồ", navInfo:"Thông tin",
+      infoNavTransport:"Di chuyển", infoNavStay:"Chỗ ở", infoNavPack:"Hành lý", infoNavBudget:"Ngân sách",
+      copyText:"Sao chép danh sách địa điểm", exportBtn:"Xuất danh sách", places:" địa điểm",
+      searchPlaceholder:"Tìm địa điểm, loại hình hoặc ghi chú…", emptyMsg:"Không tìm thấy địa điểm phù hợp, thử từ khóa khác.",
+      mapOfflineNote:"Bản đồ cần kết nối mạng để tải (OpenStreetMap), sẽ trống khi offline",
+      footerText:" địa điểm gợi ý ・ có thể thêm vào lịch trình phía trên ・ Dữ liệu lưu trên trình duyệt thiết bị này",
+      openMap:"Mở bản đồ ↗", officialSite:"Trang web ↗", locateOnMap:"Tìm trên bản đồ",
+      notesRating:"Ghi chú & đánh giá", addToDay:"＋ Thêm vào lịch trình", scheduled:"（đã thêm）",
+      notePlaceholder:"Viết cảm nhận, món muốn ăn…",
+      markVisited:"Đánh dấu đã đi: ", summaryVisitedHeader:"【Đã đi】",
+      added:"Đã thêm vào ",
+      missingCoords:"Không có tọa độ chính xác, chưa hiển thị trên bản đồ: ", otherCityNote:"Thành phố khác không có trên bản đồ: ", hanoi:"（Hà Nội）",
+      mapLoadFail:"Tải bản đồ thất bại, vui lòng kiểm tra kết nối mạng rồi tải lại trang.",
+      copiedText:"Đã sao chép danh sách, gửi cho bạn đồng hành nhé", copyFailed:"Sao chép thất bại, vui lòng dùng「Xuất danh sách」để tải file",
+      noClipboard:"Trình duyệt này không hỗ trợ sao chép tự động, vui lòng dùng「Xuất danh sách」", exported:"Đã tải xuống, gửi cho bạn đồng hành nhé",
+      summaryTitle:"Chuyến đi TP. Hồ Chí Minh — Danh sách & lịch trình"
     }
   };
   function t(key){ return UI[lang][key]; }
@@ -399,11 +698,29 @@
     if(!it.time) return "";
     return lang === "vi" ? (TIME_VI[it.time] || it.time) : it.time;
   }
+  function typeText(item){ return lang === "vi" ? (VI_TYPE[item.type] || item.type) : item.type; }
+  function noteText(item){ return lang === "vi" ? (VI_NOTE[item.name] || "") : item.note; }
+  function areaName(group){ return lang === "vi" ? (VI_AREA[group.area] ? VI_AREA[group.area].name : group.area) : group.area; }
+  function areaDesc(group){ return lang === "vi" ? (VI_AREA[group.area] ? VI_AREA[group.area].desc : "") : group.desc; }
 
+  /* ================= STORAGE ================= */
   var ITEM_KEY = "hcmc-trip-items-v1";
   var itemState = {};
   try{ itemState = JSON.parse(localStorage.getItem(ITEM_KEY) || "{}"); }catch(e){}
   function saveItems(){ localStorage.setItem(ITEM_KEY, JSON.stringify(itemState)); }
+
+  var PACK_KEY = "hcmc-trip-packing-v1";
+  var packState = {};
+  try{ packState = JSON.parse(localStorage.getItem(PACK_KEY) || "{}"); }catch(e){}
+  function savePack(){ localStorage.setItem(PACK_KEY, JSON.stringify(packState)); }
+
+  var CHECKLIST_KEY = "hcmc-merged-checklist-v1";
+  var cl = { visited:{}, rating:{}, notes:{}, addedItems:{} };
+  try{
+    var loaded = JSON.parse(localStorage.getItem(CHECKLIST_KEY) || "null");
+    if(loaded) cl = Object.assign(cl, loaded);
+  }catch(e){}
+  function saveCl(){ localStorage.setItem(CHECKLIST_KEY, JSON.stringify(cl)); }
 
   function todayISO(){
     var d = new Date();
@@ -411,13 +728,46 @@
   }
   var TODAY = todayISO();
 
+  function toast(msg){
+    var el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toast._h);
+    toast._h = setTimeout(function(){ el.classList.remove("show"); }, 2200);
+  }
+
+  function slug(area, name){ return (area + "__" + name).replace(/\s+/g,"_"); }
+  var PLACES = [];
+  DATA.forEach(function(group, gi){
+    group.items.forEach(function(item){
+      item.id = slug(group.area, item.name);
+      item.groupIndex = gi;
+      item.groupArea = group.area;
+      PLACES.push(item);
+    });
+  });
+  var placeById = {};
+  PLACES.forEach(function(p){ placeById[p.id] = p; });
+
+  function scheduledDayLabel(placeId){
+    for(var i=0;i<DAYS.length;i++){
+      var d = DAYS[i];
+      if((cl.addedItems[d.num]||[]).indexOf(placeId) > -1) return "Day " + d.num;
+    }
+    return null;
+  }
+
+  /* ================= DAYS RENDER ================= */
   var daysContainer = document.getElementById("daysContainer");
   var dayChipsEl = document.getElementById("dayChips");
   var dayProgressEls = {};
 
   function updateDayProgress(day){
-    var doneCount = day.items.filter(function(it, i){ return itemState["d" + day.num + "_" + i]; }).length;
-    if(dayProgressEls[day.num]) dayProgressEls[day.num].textContent = doneCount + "/" + day.items.length;
+    var addedCount = (cl.addedItems[day.num]||[]).length;
+    var totalCount = day.items.length + addedCount;
+    var doneFixed = day.items.filter(function(it, i){ return itemState["d" + day.num + "_" + i]; }).length;
+    var doneAdded = (cl.addedItems[day.num]||[]).filter(function(pid){ return itemState["d" + day.num + "_added_" + pid]; }).length;
+    if(dayProgressEls[day.num]) dayProgressEls[day.num].textContent = (doneFixed + doneAdded) + "/" + totalCount;
   }
 
   function renderDays(){
@@ -448,58 +798,21 @@
 
       var tl = document.createElement("div");
       tl.className = "timeline";
+
       day.items.forEach(function(it, idx){
         var itemId = "d" + day.num + "_" + idx;
-        var row = document.createElement("div");
-        row.className = "titem" + (itemState[itemId] ? " done" : "");
-
-        var check = document.createElement("button");
-        check.className = "tcheck";
-        check.setAttribute("aria-label", t("markCompleted") + placeText(it));
-        check.setAttribute("aria-pressed", itemState[itemId] ? "true" : "false");
-        var ring = document.createElement("span");
-        ring.className = "tcheck-ring";
-        ring.textContent = itemState[itemId] ? "✓" : "";
-        check.appendChild(ring);
-        check.addEventListener("click", function(){
-          itemState[itemId] = !itemState[itemId];
-          saveItems();
-          row.classList.toggle("done", !!itemState[itemId]);
-          check.setAttribute("aria-pressed", itemState[itemId] ? "true" : "false");
-          ring.textContent = itemState[itemId] ? "✓" : "";
-          updateDayProgress(day);
-        });
-
-        var time = document.createElement("div");
-        time.className = "ttime";
-        time.textContent = timeText(it);
-        var body = document.createElement("div");
-        body.className = "tbody";
-        var pl = document.createElement("div");
-        pl.className = "tplace";
-        pl.textContent = placeText(it);
-        body.appendChild(pl);
-        var noteTxt = noteText2(it);
-        if(noteTxt){
-          var nt = document.createElement("div");
-          nt.className = "tnote";
-          nt.textContent = noteTxt;
-          body.appendChild(nt);
-        }
-        if(it.link){
-          var a = document.createElement("a");
-          a.className = "tnav";
-          a.href = it.link;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-          a.innerHTML = '<svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M10 3l6 14-6-3-6 3z"/></svg> ' + t("navigate");
-          body.appendChild(a);
-        }
-        row.appendChild(check);
-        row.appendChild(time);
-        row.appendChild(body);
+        var row = buildTimelineRow(itemId, timeText(it), placeText(it), noteText2(it), it.link, null);
         tl.appendChild(row);
       });
+
+      (cl.addedItems[day.num] || []).forEach(function(placeId){
+        var place = placeById[placeId];
+        if(!place) return;
+        var itemId = "d" + day.num + "_added_" + placeId;
+        var row = buildTimelineRow(itemId, "", place.name, noteText(place) || typeText(place), place.link, placeId);
+        tl.appendChild(row);
+      });
+
       card.appendChild(tl);
       daysContainer.appendChild(card);
       updateDayProgress(day);
@@ -508,44 +821,420 @@
       chip.className = "daychip" + (day.wedding ? " wedding" : "") + (isToday ? " today" : "");
       chip.innerHTML = '<span class="n">Day ' + day.num + '</span><span class="d">' + day.date.replace(/（.*/,"") + '</span>';
       chip.addEventListener("click", function(){
+        activateView("days", true);
         document.getElementById("day-" + day.num).scrollIntoView({behavior:"auto", block:"start"});
       });
       dayChipsEl.appendChild(chip);
     });
   }
 
-  renderDays();
+  function buildTimelineRow(itemId, timeLabel, placeLabel, noteLabel, link, addedPlaceId){
+    var row = document.createElement("div");
+    row.className = "titem" + (itemState[itemId] ? " done" : "");
 
-  var todayDay = DAYS.filter(function(d){ return d.dateISO === TODAY; })[0];
-  if(todayDay){
-    requestAnimationFrame(function(){
-      document.getElementById("day-" + todayDay.num).scrollIntoView({behavior:"auto", block:"start"});
+    var check = document.createElement("button");
+    check.className = "tcheck";
+    check.setAttribute("aria-label", t("markCompleted") + placeLabel);
+    check.setAttribute("aria-pressed", itemState[itemId] ? "true" : "false");
+    var ring = document.createElement("span");
+    ring.className = "tcheck-ring";
+    ring.textContent = itemState[itemId] ? "✓" : "";
+    check.appendChild(ring);
+    check.addEventListener("click", function(){
+      itemState[itemId] = !itemState[itemId];
+      saveItems();
+      row.classList.toggle("done", !!itemState[itemId]);
+      check.setAttribute("aria-pressed", itemState[itemId] ? "true" : "false");
+      ring.textContent = itemState[itemId] ? "✓" : "";
+      var dayNum = itemId.split("_")[0].replace("d","");
+      var day = DAYS.filter(function(d){return String(d.num)===dayNum;})[0];
+      if(day) updateDayProgress(day);
+    });
+
+    var time = document.createElement("div");
+    time.className = "ttime";
+    time.textContent = timeLabel;
+    var body = document.createElement("div");
+    body.className = "tbody";
+    var pl = document.createElement("div");
+    pl.className = "tplace";
+    pl.textContent = placeLabel;
+    body.appendChild(pl);
+    if(addedPlaceId){
+      var tag = document.createElement("span");
+      tag.className = "tadded-tag";
+      tag.textContent = "＋ " + t("navList");
+      body.appendChild(tag);
+    }
+    if(noteLabel){
+      var nt = document.createElement("div");
+      nt.className = "tnote";
+      nt.textContent = noteLabel;
+      body.appendChild(nt);
+    }
+    if(link){
+      var a = document.createElement("a");
+      a.className = "tnav";
+      a.href = link;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.innerHTML = '<svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M10 3l6 14-6-3-6 3z"/></svg> ' + t("navigate");
+      body.appendChild(a);
+    }
+    if(addedPlaceId){
+      var rm = document.createElement("button");
+      rm.className = "tremove";
+      rm.textContent = "✕";
+      rm.setAttribute("aria-label", t("removeFromDay") + "：" + placeLabel);
+      rm.addEventListener("click", function(){
+        var dayNum = itemId.split("_")[0].replace("d","");
+        cl.addedItems[dayNum] = (cl.addedItems[dayNum]||[]).filter(function(id){ return id !== addedPlaceId; });
+        saveCl();
+        renderDays();
+        renderList();
+      });
+      body.appendChild(rm);
+    }
+    row.appendChild(check);
+    row.appendChild(time);
+    row.appendChild(body);
+    return row;
+  }
+
+  /* ================= LIST (checklist) RENDER ================= */
+  var sectionsEl = document.getElementById("sections");
+  var chiprowEl = document.getElementById("chiprow");
+
+  var AREA_COLORS = [
+    ["#1F6F5C","#57C7A6"], ["#B9812C","#E4AC55"], ["#5B7FB9","#8FB2E8"],
+    ["#B9506B","#E48CA3"], ["#6B9A3C","#A3D172"], ["#8A5FB9","#BFA0E8"],
+    ["#4FA8A0","#7FDCD2"], ["#C1622C","#E8935F"], ["#7A6B4F","#B3A17E"]
+  ];
+  function isDark(){
+    var root = document.documentElement;
+    if(root.getAttribute("data-theme")==="dark") return true;
+    if(root.getAttribute("data-theme")==="light") return false;
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function areaColor(i){ return AREA_COLORS[i % AREA_COLORS.length][isDark()?1:0]; }
+  function pinIcon(color, done){
+    return L.divIcon({
+      className: "",
+      html: '<div class="cute-pin' + (done ? " done" : "") + '" style="background:' + color + '"></div>',
+      iconSize: [26, 26], iconAnchor: [13, 26], popupAnchor: [0, -24]
     });
   }
 
-  /* ---------------- PACKING ---------------- */
-  var PACKING = [
-    { group:"證件與金錢", groupVi:"Giấy tờ và tiền bạc",
-      items:["護照正本＋e-Visa 證明（紙本＋電子備份）","信用卡","少量美金／越南盾現金"],
-      itemsVi:["Hộ chiếu gốc + minh chứng e-Visa (bản giấy + bản điện tử)","Thẻ tín dụng","Một ít tiền mặt USD／VND"] },
-    { group:"衣物", groupVi:"Quần áo",
-      items:["輕便透氣衣物（8月胡志明市 28–35°C）","雨具（雨季）","婚禮正式服裝＋鞋","防曬、遮陽帽"],
-      itemsVi:["Quần áo nhẹ thoáng khí (tháng 8 ở TP.HCM 28–35°C)","Đồ đi mưa (mùa mưa)","Trang phục dự tiệc cưới + giày","Kem chống nắng, nón che nắng"] },
-    { group:"個人用品", groupVi:"Đồ dùng cá nhân",
-      items:["防蚊液","常備藥","個人保養品","轉接頭／充電線","eSIM 或當地 SIM 卡"],
-      itemsVi:["Thuốc chống muỗi","Thuốc thông dụng","Đồ chăm sóc cá nhân","Cục chuyển đổi/dây sạc","eSIM hoặc SIM địa phương"] },
-    { group:"其他", groupVi:"Khác",
-      items:["空行李袋空間（伴手禮、購物戰利品）","旅平險保單／證明"],
-      itemsVi:["Chừa chỗ trống trong vali (quà, đồ mua sắm)","Hợp đồng/giấy chứng nhận bảo hiểm du lịch"] },
-    { group:"請舅舅先買的零食", groupVi:"Nhờ cậu mua trước đồ ăn vặt",
-      items:["Orion An Ngô Nướng Bơ（玉米奶油米餅）","Lay's Vị Phở Bò Hà Nội（河內牛肉河粉口味洋芋片）","Callant Bánh Kem Xốp Dừa（椰子奶油餅乾球）"],
-      itemsVi:["Orion An Ngô Nướng Bơ (bánh gạo nướng vị bơ bắp)","Lay's vị Phở Bò Hà Nội","Callant Bánh Kem Xốp Dừa"] }
-  ];
-  var PACK_KEY = "hcmc-trip-packing-v1";
-  var packState = {};
-  try{ packState = JSON.parse(localStorage.getItem(PACK_KEY) || "{}"); }catch(e){}
-  function savePack(){ localStorage.setItem(PACK_KEY, JSON.stringify(packState)); }
+  function renderStars(placeId, container){
+    container.innerHTML = "";
+    var r = cl.rating[placeId] || 0;
+    for(var i=1;i<=5;i++){
+      (function(i){
+        var b = document.createElement("button");
+        b.className = "star" + (i<=r ? " on" : "");
+        b.textContent = i<=r ? "★" : "☆";
+        b.setAttribute("aria-label", "評 " + i + " 星");
+        b.addEventListener("click", function(){
+          cl.rating[placeId] = (cl.rating[placeId] === i) ? 0 : i;
+          saveCl();
+          renderStars(placeId, container);
+        });
+        container.appendChild(b);
+      })(i);
+    }
+  }
 
+  function buildDaySelect(placeId){
+    var sel = document.createElement("select");
+    sel.className = "daypick";
+    var optNone = document.createElement("option");
+    optNone.value = "";
+    optNone.textContent = t("addToDay");
+    sel.appendChild(optNone);
+    DAYS.forEach(function(d){
+      var opt = document.createElement("option");
+      opt.value = String(d.num);
+      opt.textContent = "Day " + d.num + " " + d.date.replace(/（.*/,"");
+      var already = (cl.addedItems[d.num]||[]).indexOf(placeId) > -1;
+      if(already){ opt.textContent += t("scheduled"); }
+      sel.appendChild(opt);
+    });
+    sel.addEventListener("change", function(){
+      var v = sel.value;
+      if(!v) return;
+      if(!cl.addedItems[v]) cl.addedItems[v] = [];
+      if(cl.addedItems[v].indexOf(placeId) === -1){
+        cl.addedItems[v].push(placeId);
+        toast(t("added") + "Day " + v);
+      }
+      saveCl();
+      sel.value = "";
+      renderList();
+      renderDays();
+    });
+    return sel;
+  }
+
+  function renderList(){
+    sectionsEl.innerHTML = "";
+    chiprowEl.innerHTML = "";
+
+    DATA.forEach(function(group, gi){
+      var sec = document.createElement("section");
+      sec.className = "area";
+      sec.id = "area-" + gi;
+
+      var head = document.createElement("div");
+      head.className = "area-head";
+      var h2 = document.createElement("h2");
+      h2.textContent = areaName(group);
+      h2.style.borderColor = areaColor(gi);
+      var count = document.createElement("span");
+      count.className = "area-count mono";
+      count.textContent = group.items.length + t("places");
+      head.appendChild(h2);
+      head.appendChild(count);
+      sec.appendChild(head);
+
+      var descText = areaDesc(group);
+      if(descText){
+        var desc = document.createElement("p");
+        desc.className = "area-desc";
+        desc.textContent = descText;
+        sec.appendChild(desc);
+      }
+
+      group.items.forEach(function(item){
+        var id = item.id;
+        var card = document.createElement("div");
+        card.className = "card" + (cl.visited[id] ? " done" : "");
+        card.id = "card-" + id;
+        card.dataset.search = (item.name + " " + item.type + " " + item.note + " " + (VI_TYPE[item.type]||"") + " " + (VI_NOTE[item.name]||"")).toLowerCase();
+
+        var top = document.createElement("div");
+        top.className = "card-top";
+
+        var check = document.createElement("button");
+        check.className = "check";
+        check.setAttribute("aria-label", t("markVisited") + item.name);
+        check.setAttribute("aria-pressed", cl.visited[id] ? "true" : "false");
+        var checkRing = document.createElement("span");
+        checkRing.className = "check-ring";
+        checkRing.textContent = cl.visited[id] ? "✓" : "";
+        check.appendChild(checkRing);
+        check.addEventListener("click", function(){
+          cl.visited[id] = !cl.visited[id];
+          saveCl();
+          card.classList.toggle("done", !!cl.visited[id]);
+          check.setAttribute("aria-pressed", cl.visited[id] ? "true" : "false");
+          checkRing.textContent = cl.visited[id] ? "✓" : "";
+          if(item.marker) item.marker.setIcon(pinIcon(areaColor(item.groupIndex), !!cl.visited[id]));
+        });
+
+        var body = document.createElement("div");
+        body.className = "card-body";
+
+        var nameRow = document.createElement("div");
+        nameRow.className = "card-name-row";
+        var nameEl = document.createElement("span");
+        nameEl.className = "card-name";
+        nameEl.textContent = item.name;
+        var tagEl = document.createElement("span");
+        tagEl.className = "tag";
+        tagEl.textContent = typeText(item);
+        tagEl.style.borderColor = areaColor(gi);
+        nameRow.appendChild(nameEl);
+        nameRow.appendChild(tagEl);
+        var dayLabel = scheduledDayLabel(id);
+        if(dayLabel){
+          var pill = document.createElement("span");
+          pill.className = "day-pill";
+          pill.textContent = dayLabel;
+          nameRow.appendChild(pill);
+        }
+        body.appendChild(nameRow);
+
+        var noteTxt = noteText(item);
+        if(noteTxt){
+          var noteEl = document.createElement("p");
+          noteEl.className = "card-note";
+          noteEl.textContent = noteTxt;
+          body.appendChild(noteEl);
+        }
+
+        var actions = document.createElement("div");
+        actions.className = "card-actions";
+        var mapA = document.createElement("a");
+        mapA.className = "maplink";
+        mapA.href = item.link;
+        mapA.target = "_blank";
+        mapA.rel = "noopener noreferrer";
+        mapA.textContent = item.link.indexOf("maps.app.goo.gl") > -1 ? t("openMap") : t("officialSite");
+        actions.appendChild(mapA);
+
+        if(item.lat != null && !item.otherCity){
+          var locateBtn = document.createElement("button");
+          locateBtn.className = "ghostbtn";
+          locateBtn.textContent = t("locateOnMap");
+          locateBtn.addEventListener("click", function(){
+            activateView("map", true);
+            setTimeout(function(){
+              if(item.marker){
+                leafletMap.setView([item.lat, item.lng], 17, {animate:true});
+                item.marker.openPopup();
+              }
+            }, 60);
+          });
+          actions.appendChild(locateBtn);
+        }
+
+        var detailBtn = document.createElement("button");
+        detailBtn.className = "ghostbtn";
+        var hasContent = cl.rating[id] || (cl.notes[id] && cl.notes[id].trim());
+        detailBtn.textContent = (hasContent ? "★ " : "") + t("notesRating");
+        actions.appendChild(detailBtn);
+
+        actions.appendChild(buildDaySelect(id));
+
+        body.appendChild(actions);
+
+        var detail = document.createElement("div");
+        detail.className = "detail";
+        var starsWrap = document.createElement("div");
+        starsWrap.className = "stars";
+        renderStars(id, starsWrap);
+        detail.appendChild(starsWrap);
+        var textarea = document.createElement("textarea");
+        textarea.className = "notearea";
+        textarea.placeholder = t("notePlaceholder");
+        textarea.value = cl.notes[id] || "";
+        textarea.addEventListener("input", function(){
+          cl.notes[id] = textarea.value;
+          saveCl();
+        });
+        detail.appendChild(textarea);
+        body.appendChild(detail);
+
+        detailBtn.addEventListener("click", function(){
+          detail.classList.toggle("open");
+        });
+
+        top.appendChild(check);
+        top.appendChild(body);
+        card.appendChild(top);
+        sec.appendChild(card);
+      });
+
+      sectionsEl.appendChild(sec);
+
+      var chip = document.createElement("button");
+      chip.className = "chip";
+      chip.textContent = areaName(group);
+      chip.addEventListener("click", function(){
+        document.getElementById("area-" + gi).scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+      });
+      chiprowEl.appendChild(chip);
+    });
+
+    document.getElementById("totalCount").textContent = PLACES.length;
+    applySearch();
+  }
+
+  /* ================= SEARCH ================= */
+  var searchEl = document.getElementById("search");
+  var emptyMsg = document.getElementById("emptyMsg");
+  function applySearch(){
+    var q = searchEl.value.trim().toLowerCase();
+    var anyVisible = false;
+    document.querySelectorAll("section.area").forEach(function(sec){
+      var visibleInSection = 0;
+      sec.querySelectorAll(".card").forEach(function(card){
+        var match = !q || card.dataset.search.indexOf(q) > -1;
+        card.classList.toggle("hide", !match);
+        if(match) visibleInSection++;
+      });
+      sec.style.display = visibleInSection ? "" : "none";
+      if(visibleInSection) anyVisible = true;
+    });
+    emptyMsg.classList.toggle("show", !anyVisible);
+    dimMarkers(q);
+  }
+  searchEl.addEventListener("input", applySearch);
+
+  /* ================= MAP ================= */
+  var mapPlaces = PLACES.filter(function(p){ return p.lat != null && p.lng != null && !p.otherCity; });
+  var leafletMap = null;
+  var tileLayer = null;
+  var CARTO_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>';
+  function tileUrl(){
+    return "https://{s}.basemaps.cartocdn.com/" + (isDark() ? "dark_all" : "rastertiles/voyager") + "/{z}/{x}/{y}{r}.png";
+  }
+  function swapTileLayer(){
+    if(!leafletMap) return;
+    if(tileLayer) leafletMap.removeLayer(tileLayer);
+    tileLayer = L.tileLayer(tileUrl(), {maxZoom: 19, attribution: CARTO_ATTR}).addTo(leafletMap);
+  }
+  function popupHtml(p){
+    var html = '<span class="popup-name">' + p.name + '</span>' + '<span class="tag">' + typeText(p) + '</span>';
+    var n = noteText(p);
+    if(n) html += '<div class="popup-note">' + n + '</div>';
+    html += '<a class="popup-link" href="' + p.link + '" target="_blank" rel="noopener noreferrer">' +
+      (p.link.indexOf("maps.app.goo.gl") > -1 ? t("openMap") : t("officialSite")) + '</a>';
+    return html;
+  }
+  function renderMapChrome(){
+    var legend = document.getElementById("mapLegend");
+    legend.innerHTML = "";
+    DATA.forEach(function(group, gi){
+      var hasCoord = group.items.some(function(it){ return it.lat != null && !it.otherCity; });
+      if(!hasCoord) return;
+      var li = document.createElement("div");
+      li.className = "legend-item";
+      var dot = document.createElement("span");
+      dot.className = "legend-dot";
+      dot.style.background = areaColor(gi);
+      li.appendChild(dot);
+      li.appendChild(document.createTextNode(areaName(group)));
+      legend.appendChild(li);
+    });
+    var missing = PLACES.filter(function(p){ return p.lat == null; }).map(function(p){return p.name;});
+    var other = PLACES.filter(function(p){ return p.otherCity; }).map(function(p){return p.name + t("hanoi");});
+    var noteParts = [];
+    if(missing.length) noteParts.push(t("missingCoords") + missing.join("、"));
+    if(other.length) noteParts.push(t("otherCityNote") + other.join("、"));
+    document.getElementById("mapNote").textContent = noteParts.join("　");
+  }
+  function initOrRefreshMap(){
+    if(!window.L){
+      document.getElementById("mapNote").textContent = t("mapLoadFail");
+      return;
+    }
+    if(!leafletMap){
+      leafletMap = L.map("leafletMap", {scrollWheelZoom:true});
+      swapTileLayer();
+      var bounds = L.latLngBounds(mapPlaces.map(function(p){ return [p.lat, p.lng]; }));
+      leafletMap.fitBounds(bounds, {padding:[24,24]});
+      mapPlaces.forEach(function(p){
+        var marker = L.marker([p.lat, p.lng], { icon: pinIcon(areaColor(p.groupIndex), !!cl.visited[p.id]) }).addTo(leafletMap);
+        marker.bindPopup(popupHtml(p), {minWidth:180, maxWidth:240});
+        marker.on("click", function(){
+          leafletMap.setView([p.lat, p.lng], Math.max(leafletMap.getZoom(), 17), {animate:true});
+        });
+        p.marker = marker;
+      });
+      renderMapChrome();
+    }
+    setTimeout(function(){ leafletMap.invalidateSize(); }, 50);
+  }
+  function dimMarkers(q){
+    mapPlaces.forEach(function(p){
+      if(!p.marker) return;
+      var match = !q || (p.name + " " + p.type + " " + p.note + " " + (VI_TYPE[p.type]||"") + " " + (VI_NOTE[p.name]||"")).toLowerCase().indexOf(q) > -1;
+      p.marker.setOpacity(match ? 1 : 0.2);
+    });
+  }
+
+  /* ================= PACKING RENDER ================= */
   var packContainer = document.getElementById("packContainer");
   var packProgress = document.getElementById("packProgress");
   var totalPackItems = 0;
@@ -596,14 +1285,8 @@
     });
     updatePackProgress();
   }
-  renderPacking();
 
-  /* ---------------- BUDGET ---------------- */
-  var BUDGET = [
-    { item:"每日餐飲＋咖啡＋購物（9天）", itemVi:"Ăn uống + cà phê + mua sắm mỗi ngày (9 ngày)", est:"3,500,000 – 6,500,000" },
-    { item:"婚禮禮金", itemVi:"Tiền mừng cưới", est:"依習俗，另計", estVi:"Theo phong tục, tính riêng" },
-    { item:"eSIM／保險等雜支", itemVi:"eSIM／bảo hiểm và chi phí lặt vặt khác", est:"500,000 – 1,000,000" }
-  ];
+  /* ================= BUDGET RENDER ================= */
   var budgetBody = document.getElementById("budgetBody");
   function renderBudget(){
     budgetBody.innerHTML = "";
@@ -616,31 +1299,80 @@
     });
     document.getElementById("budgetTotal").textContent = t("budgetTotalVal");
   }
-  renderBudget();
 
-  /* ---------------- BOTTOM NAV ---------------- */
+  /* ================= SHARE (checklist export/copy) ================= */
+  function buildSummaryText(){
+    var lines = [t("summaryTitle"), ""];
+    DAYS.forEach(function(day){
+      lines.push("【Day " + day.num + " " + day.date + "】" + dayTitleText(day));
+      day.items.forEach(function(it){ lines.push("　- " + placeText(it)); });
+      (cl.addedItems[day.num]||[]).forEach(function(pid){
+        var place = placeById[pid];
+        if(!place) return;
+        var star = cl.rating[pid] ? " " + "★".repeat(cl.rating[pid]) : "";
+        lines.push("　- " + place.name + "（" + typeText(place) + "）" + star);
+      });
+      lines.push("");
+    });
+    var visitedList = PLACES.filter(function(p){ return cl.visited[p.id]; });
+    if(visitedList.length){
+      lines.push(t("summaryVisitedHeader"));
+      visitedList.forEach(function(p){ lines.push("　- " + p.name); });
+    }
+    return lines.join("\n");
+  }
+  document.getElementById("copyTextBtn").addEventListener("click", function(){
+    var text = buildSummaryText();
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ toast(t("copiedText")); }).catch(function(){ toast(t("copyFailed")); });
+    }else{ toast(t("noClipboard")); }
+  });
+  document.getElementById("exportBtn").addEventListener("click", function(){
+    var text = buildSummaryText();
+    var blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = "hcmc-trip.txt";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    toast(t("exported"));
+  });
+
+  /* ================= THEME REPAINT ================= */
+  if(window.matchMedia){
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(){
+      renderList(); swapTileLayer();
+      mapPlaces.forEach(function(p){ if(p.marker) p.marker.setIcon(pinIcon(areaColor(p.groupIndex), !!cl.visited[p.id])); });
+    });
+  }
+
+  /* ================= BOTTOM NAV ================= */
   var navBtns = document.querySelectorAll(".navbtn");
   var views = {
     days: document.getElementById("view-days"),
-    transport: document.getElementById("view-transport"),
-    stay: document.getElementById("view-stay"),
-    pack: document.getElementById("view-pack"),
-    budget: document.getElementById("view-budget")
+    list: document.getElementById("view-list"),
+    map: document.getElementById("view-map"),
+    info: document.getElementById("view-info")
   };
   function activateView(name, pushHash){
     if(!views[name]) name = "days";
     navBtns.forEach(function(b){ b.classList.toggle("active", b.dataset.view === name); });
     Object.keys(views).forEach(function(k){ views[k].classList.toggle("active", k === name); });
     window.scrollTo(0,0);
+    if(name === "map") initOrRefreshMap();
     if(pushHash !== false) history.replaceState(null, "", "#" + name);
   }
   navBtns.forEach(function(b){
     b.addEventListener("click", function(){ activateView(b.dataset.view); });
   });
-  var initial = (location.hash || "").replace("#","");
-  if(views[initial] && initial !== "days") activateView(initial, false);
 
-  /* ---------------- LANG TOGGLE ---------------- */
+  document.getElementById("infoChips").querySelectorAll(".chip").forEach(function(chip){
+    chip.addEventListener("click", function(){
+      document.getElementById(chip.dataset.target).scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+    });
+  });
+
+  /* ================= LANG TOGGLE ================= */
   var langBtn = document.getElementById("langBtn");
   function applyStaticLang(){
     document.getElementById("pageTitle").textContent = t("pageTitle");
@@ -669,27 +1401,60 @@
     document.getElementById("voltageText").textContent = t("voltageText");
     document.getElementById("emergencyLabel").textContent = t("emergencyLabel");
     document.getElementById("emergencyText").textContent = t("emergencyText");
+    document.getElementById("packLabel").textContent = t("packLabel");
+    document.getElementById("budgetLabel").textContent = t("budgetLabel");
     document.getElementById("budgetColItem").textContent = t("budgetColItem");
     document.getElementById("budgetColEst").textContent = t("budgetColEst");
     document.getElementById("budgetTotalLabel").textContent = t("budgetTotalLabel");
     document.getElementById("budgetNote").textContent = t("budgetNote");
     document.getElementById("navDays").textContent = t("navDays");
-    document.getElementById("navTransport").textContent = t("navTransport");
-    document.getElementById("navStay").textContent = t("navStay");
-    document.getElementById("navPack").textContent = t("navPack");
-    document.getElementById("navBudget").textContent = t("navBudget");
+    document.getElementById("navList").textContent = t("navList");
+    document.getElementById("navMap").textContent = t("navMap");
+    document.getElementById("navInfo").textContent = t("navInfo");
+    document.getElementById("infoNavTransport").textContent = t("infoNavTransport");
+    document.getElementById("infoNavStay").textContent = t("infoNavStay");
+    document.getElementById("infoNavPack").textContent = t("infoNavPack");
+    document.getElementById("infoNavBudget").textContent = t("infoNavBudget");
+    document.getElementById("copyTextLabel").textContent = t("copyText");
+    document.getElementById("exportLabel").textContent = t("exportBtn");
+    document.getElementById("search").placeholder = t("searchPlaceholder");
+    document.getElementById("emptyMsg").textContent = t("emptyMsg");
+    document.getElementById("mapOfflineNote").textContent = t("mapOfflineNote");
+    document.getElementById("footerText").textContent = t("footerText");
     langBtn.textContent = lang === "vi" ? "中文" : "VI";
     langBtn.setAttribute("aria-label", lang === "vi" ? "Chuyển sang tiếng Trung" : "切換到越南文");
+    document.documentElement.lang = lang === "zh" ? "zh-Hant" : "vi";
     document.body.classList.toggle("lang-vi", lang === "vi");
   }
-  applyStaticLang();
   langBtn.addEventListener("click", function(){
     lang = lang === "vi" ? "zh" : "vi";
     localStorage.setItem(LANG_KEY, lang);
     applyStaticLang();
     renderDays();
+    renderList();
     renderPacking();
     renderBudget();
+    if(leafletMap){
+      mapPlaces.forEach(function(p){ if(p.marker) p.marker.setPopupContent(popupHtml(p)); });
+      renderMapChrome();
+    }
   });
+
+  /* ================= INIT ================= */
+  applyStaticLang();
+  renderDays();
+  renderList();
+  renderPacking();
+  renderBudget();
+
+  var todayDay = DAYS.filter(function(d){ return d.dateISO === TODAY; })[0];
+  if(todayDay){
+    requestAnimationFrame(function(){
+      document.getElementById("day-" + todayDay.num).scrollIntoView({behavior:"auto", block:"start"});
+    });
+  }
+
+  var initial = (location.hash || "").replace("#","");
+  if(views[initial] && initial !== "days") activateView(initial, false);
 })();
 </script>
