@@ -136,7 +136,8 @@
   .flight-line{flex:1;height:2px;background:var(--ink);position:relative;}
   .flight-line::after{content:"✈";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:0.8rem;background:var(--paper-raised);padding:0 4px;}
   .flight-info{font-size:0.76rem;color:var(--done-ink);margin-top:6px;}
-  .info-section{scroll-margin-top:150px;}
+  .info-section{display:none;}
+  .info-section.active{display:block;}
   .section-h{display:inline-block;font-family:"Zen Kaku Gothic New",sans-serif;font-weight:900;font-size:0.85rem;margin:22px 0 10px;color:#fff;background:var(--navy);padding:5px 12px;border:2px solid var(--ink);}
   .note-card{position:relative;background:var(--mustard);border:3px solid var(--ink);padding:12px 14px;font-size:0.82rem;line-height:1.6;margin-bottom:12px;font-weight:600;}
   .note-card b{color:var(--red);}
@@ -406,26 +407,17 @@
       {time:"22:00", place:"抵達新山一機場 T2", placeVi:"Đến sân bay Tân Sơn Nhất T2", note:"入境、提領行李", noteVi:"Nhập cảnh, lấy hành lý", link:nav(10.8188,106.6520)},
       {time:"22:30", place:"接機、返回親戚家", placeVi:"Đón sân bay, về nhà người thân", note:"舅舅/舅媽接機", noteVi:"Cậu/mợ đón sân bay", link:null}
     ]},
-    { num:2, date:"8/6（四）", dateISO:"2026-08-06", title:"Xuân Hòa + Phạm Ngũ Lão 小街區", titleVi:"Xuân Hòa + Khu phố nhỏ Phạm Ngũ Lão", items:[
-      {time:"上午", place:"OHQUAO – The Local Edit", note:"選物店", noteVi:"Cửa hàng đồ tuyển chọn", link:navQ("OHQUAO The Local Edit Ho Chi Minh")},
-      {time:"", place:"Kisserine House", note:"禮服店", noteVi:"Tiệm váy dạ hội", link:nav(10.7842992,106.6929711)},
-      {time:"", place:"ngâm CAFE", note:"咖啡，可頌好吃、可頌抹茶牛奶", noteVi:"Cà phê, croissant ngon, croissant matcha sữa ngon", link:nav(10.7864405,106.6861926)},
-      {time:"中午", place:"Nhà Tú – Việt Nam Restaurant", note:"越南料理午餐", noteVi:"Ăn trưa món Việt", link:navQ("Nha Tu Viet Nam Restaurant Ho Chi Minh")},
-      {time:"下午", place:"The 350F", note:"提拉米蘇", noteVi:"Tiramisu", link:nav(10.7707123,106.6925886)},
-      {time:"", place:"Ka's clothing / Maztermind / Tick And Pick", note:"逛街", noteVi:"Đi mua sắm", link:nav(10.7714774,106.6942158)},
-      {time:"", place:"Bánh Mì Huynh Hoa", note:"法棍老店，買著走", noteVi:"Tiệm bánh mì lâu đời, mua mang đi", link:nav(10.7715226,106.6923968)},
-      {time:"傍晚", place:"Cà phê Linh", note:"鹽咖啡", noteVi:"Cà phê muối", link:nav(10.7713482,106.6964333)}
+    { num:2, date:"8/6（四）", dateISO:"2026-08-06", title:"在家遠距上班＋燙染頭髮", titleVi:"Làm việc từ xa + Uốn nhuộm tóc", items:[
+      {time:"上午", place:"在家遠距上班", placeVi:"Làm việc từ xa tại nhà", note:"", link:null},
+      {time:"下午", place:"燙染頭髮", placeVi:"Uốn nhuộm tóc", note:"", link:null}
     ]},
-    { num:3, date:"8/7（五）", dateISO:"2026-08-07", title:"ThiBa Space 一帶 + Bến Thành／Q1 老城", titleVi:"Khu vực ThiBa Space + Bến Thành／Phố cổ Quận 1", items:[
-      {time:"上午", place:"Saigon Eco Craft / em.G clothé / HUONG Boutique", note:"逛街", noteVi:"Đi mua sắm", link:nav(10.7764233,106.7019916)},
-      {time:"中午", place:"Hoa Túc Saigon", note:"蛋炸蝦春捲、蟹肉炒飯", noteVi:"Chả giò tôm trứng, cơm chiên cua", link:nav(10.7785004,106.7037745)},
-      {time:"下午", place:"Bánh Canh Cua Út Thảo / Nicotin Cafe II", note:"小吃、日式老屋咖啡", noteVi:"Món ăn vặt, cà phê nhà cổ kiểu Nhật", link:nav(10.774102,106.7040848)},
-      {time:"傍晚", place:"Vesta Lifestyle & Gifts / Little HaNoi Egg Coffee", note:"Bến Thành 老城，雞蛋咖啡", noteVi:"Phố cổ Bến Thành, cà phê trứng", link:nav(10.7694043,106.6960112)},
-      {time:"晚上", place:"Morra Perfume Experience Center", note:"客製香水，可刻字送禮", noteVi:"Nước hoa theo yêu cầu, khắc chữ làm quà", link:navQ("Morra Perfume Experience Center Ho Chi Minh")}
-    ]},
-    { num:4, date:"8/8（六）", dateISO:"2026-08-08", title:"偏北老洋樓 + 人文大學", titleVi:"Biệt thự cổ phía Bắc + Đại học Nhân văn", items:[
+    { num:3, date:"8/7（五）", dateISO:"2026-08-07", title:"兩間大學日", titleVi:"Ngày hai trường đại học", items:[
       {time:"上午", place:"胡志明市國家大學社會科學與人文大學", placeVi:"Đại học Khoa học Xã hội và Nhân văn TP.HCM", note:"校園走走拍照", noteVi:"Dạo quanh khuôn viên, chụp ảnh", link:nav(10.7858607,106.7027086)},
       {time:"", place:"JUBIN Studio", note:"好看洋裝，離大學很近", noteVi:"Váy đầm đẹp, gần trường đại học", link:nav(10.7898032,106.6997679)},
+      {time:"下午", place:"孫德勝大學", placeVi:"Đại học Tôn Đức Thắng", note:"校園走走，位置較南", noteVi:"Dạo quanh khuôn viên, ở xa hơn về phía nam", link:nav(10.7319314,106.6993418)}
+    ]},
+    { num:4, date:"8/8（六）", dateISO:"2026-08-08", title:"美甲＋放鬆", titleVi:"Làm nail + Thư giãn", items:[
+      {time:"10:00", place:"做指甲", placeVi:"Làm nail", note:"", link:null},
       {time:"下午", place:"Beanthere Cafe – Hồ Hảo Hớn", note:"老洋樓咖啡廳，放鬆", noteVi:"Quán cà phê biệt thự cổ, thư giãn", link:nav(10.7620124,106.6923935)},
       {time:"晚上", place:"早點回家休息", placeVi:"Về nhà nghỉ sớm", note:"明天婚禮，準備服裝", noteVi:"Ngày mai đám cưới, chuẩn bị trang phục", link:null}
     ]},
@@ -443,13 +435,23 @@
       {time:"下午", place:"Micro Boulangerie", note:"紅豆奶油法國麵包", noteVi:"Bánh mì Pháp đậu đỏ bơ", link:nav(10.8054795,106.729937)},
       {time:"", place:"Breadventure", note:"奶油法國麵包", noteVi:"Bánh mì Pháp bơ", link:nav(10.803713,106.728971)}
     ]},
-    { num:8, date:"8/12（三）", dateISO:"2026-08-12", title:"孫德勝大學 + 自由活動", titleVi:"Đại học Tôn Đức Thắng + Thời gian tự do", items:[
-      {time:"上午", place:"孫德勝大學", placeVi:"Đại học Tôn Đức Thắng", note:"校園走走，位置較南單獨排一趟", noteVi:"Dạo quanh khuôn viên, ở xa nên đi riêng", link:nav(10.7319314,106.6993418)},
-      {time:"下午", place:"家族聚會／自由活動", placeVi:"Họp mặt gia đình／Tự do", note:"留給親戚時間", noteVi:"Dành thời gian cho người thân", link:null}
+    { num:8, date:"8/12（三）", dateISO:"2026-08-12", title:"ThiBa Space 一帶 + Bến Thành／Q1 老城", titleVi:"Khu vực ThiBa Space + Bến Thành／Phố cổ Quận 1", items:[
+      {time:"上午", place:"Saigon Eco Craft / em.G clothé / HUONG Boutique", note:"逛街", noteVi:"Đi mua sắm", link:nav(10.7764233,106.7019916)},
+      {time:"中午", place:"Hoa Túc Saigon", note:"蛋炸蝦春捲、蟹肉炒飯", noteVi:"Chả giò tôm trứng, cơm chiên cua", link:nav(10.7785004,106.7037745)},
+      {time:"下午", place:"Bánh Canh Cua Út Thảo / Nicotin Cafe II", note:"小吃、日式老屋咖啡", noteVi:"Món ăn vặt, cà phê nhà cổ kiểu Nhật", link:nav(10.774102,106.7040848)},
+      {time:"傍晚", place:"Vesta Lifestyle & Gifts / Little HaNoi Egg Coffee", note:"Bến Thành 老城，雞蛋咖啡", noteVi:"Phố cổ Bến Thành, cà phê trứng", link:nav(10.7694043,106.6960112)},
+      {time:"晚上", place:"Morra Perfume Experience Center", note:"客製香水，可刻字送禮", noteVi:"Nước hoa theo yêu cầu, khắc chữ làm quà", link:navQ("Morra Perfume Experience Center Ho Chi Minh")}
     ]},
-    { num:9, date:"8/13（四）", dateISO:"2026-08-13", title:"補漏＋家族時間", titleVi:"Bù các điểm còn thiếu + Thời gian gia đình", items:[
-      {time:"全天", place:"回補前幾天沒逛完的點", placeVi:"Ghé lại những điểm chưa đi hết", note:"陪伴親戚、伴手禮採買", noteVi:"Ở bên người thân, mua quà lưu niệm", link:null},
-      {time:"", place:"LIBÉ（如順路）", placeVi:"LIBÉ (nếu tiện đường)", note:"只有官網 libeworkshop.com，沒查到門市地址", noteVi:"Chỉ có trang web libeworkshop.com, chưa rõ địa chỉ cửa hàng", link:null}
+    { num:9, date:"8/13（四）", dateISO:"2026-08-13", title:"補逛 Xuân Hòa + Phạm Ngũ Lão", titleVi:"Ghé lại Xuân Hòa + Phạm Ngũ Lão", items:[
+      {time:"上午", place:"OHQUAO – The Local Edit", note:"選物店", noteVi:"Cửa hàng đồ tuyển chọn", link:navQ("OHQUAO The Local Edit Ho Chi Minh")},
+      {time:"", place:"Kisserine House", note:"禮服店", noteVi:"Tiệm váy dạ hội", link:nav(10.7842992,106.6929711)},
+      {time:"", place:"ngâm CAFE", note:"咖啡，可頌好吃、可頌抹茶牛奶", noteVi:"Cà phê, croissant ngon, croissant matcha sữa ngon", link:nav(10.7864405,106.6861926)},
+      {time:"中午", place:"Nhà Tú – Việt Nam Restaurant", note:"越南料理午餐", noteVi:"Ăn trưa món Việt", link:navQ("Nha Tu Viet Nam Restaurant Ho Chi Minh")},
+      {time:"下午", place:"The 350F", note:"提拉米蘇", noteVi:"Tiramisu", link:nav(10.7707123,106.6925886)},
+      {time:"", place:"Ka's clothing / Maztermind / Tick And Pick", note:"逛街", noteVi:"Đi mua sắm", link:nav(10.7714774,106.6942158)},
+      {time:"", place:"Bánh Mì Huynh Hoa", note:"法棍老店，買著走", noteVi:"Tiệm bánh mì lâu đời, mua mang đi", link:nav(10.7715226,106.6923968)},
+      {time:"傍晚", place:"Cà phê Linh", note:"鹽咖啡", noteVi:"Cà phê muối", link:nav(10.7713482,106.6964333)},
+      {time:"晚上", place:"LIBÉ（如順路）", placeVi:"LIBÉ (nếu tiện đường)", note:"只有官網 libeworkshop.com，沒查到門市地址", noteVi:"Chỉ có trang web libeworkshop.com, chưa rõ địa chỉ cửa hàng", link:null}
     ]},
     { num:10, date:"8/14（五）", dateISO:"2026-08-14", title:"最後一天＋前往機場", titleVi:"Ngày cuối + Ra sân bay", items:[
       {time:"白天", place:"收拾行李、最後採買、跟親戚道別", placeVi:"Thu dọn hành lý, mua sắm lần cuối, chào tạm biệt người thân", note:"", link:null},
@@ -634,8 +636,8 @@
       stayTitle:"住宿", stayP1:"整趟旅程住在親戚家,沒有另外訂飯店。",
       addressLabel:"地址：", addressFillIn:"（請自行填入親戚家地址，方便跟司機/計程車說）",
       usefulInfoTitle:"實用資訊",
-      visaLabel:"簽證", visaText:"：台灣護照無免簽,需事先申請電子簽證(e-Visa)，evisa.gov.vn",
-      wifiLabel:"網路", wifiText:"：機場或當地購買 eSIM／SIM 卡，或開通台灣電信漫遊",
+      visaLabel:"簽證", visaText:"：已辦好電子簽證（藍色簽證本）",
+      wifiLabel:"網路", wifiText:"：媽媽會處理",
       exchangeLabel:"換匯", exchangeText:"：機場匯率較差，市區金飾店匯率通常較好，也可提款卡直接領越南盾",
       voltageLabel:"電壓", voltageText:"：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意",
       emergencyLabel:"緊急聯絡", emergencyText:"：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用",
@@ -673,8 +675,8 @@
       stayTitle:"Chỗ ở", stayP1:"Cả chuyến đi ở nhà người thân, không đặt khách sạn.",
       addressLabel:"Địa chỉ：", addressFillIn:"（Vui lòng tự điền địa chỉ nhà người thân để tiện nói với tài xế/taxi）",
       usefulInfoTitle:"Thông tin hữu ích",
-      visaLabel:"Visa", visaText:"：Hộ chiếu Đài Loan không được miễn visa, cần xin e-Visa trước tại evisa.gov.vn",
-      wifiLabel:"Mạng", wifiText:"：Mua eSIM／SIM tại sân bay hoặc địa phương, hoặc dùng roaming nhà mạng Đài Loan",
+      visaLabel:"Visa", visaText:"：Đã xin xong e-Visa (sổ visa màu xanh)",
+      wifiLabel:"Mạng", wifiText:"：Mẹ sẽ lo việc này",
       exchangeLabel:"Đổi tiền", exchangeText:"：Tỷ giá ở sân bay kém hơn, tiệm vàng trong thành phố thường tốt hơn, cũng có thể rút VND bằng thẻ ATM",
       voltageLabel:"Điện áp", voltageText:"：Việt Nam chủ yếu dùng ổ A/C 220V, sạc thường tương thích đa điện áp, thiết bị lớn cần lưu ý",
       emergencyLabel:"Liên hệ khẩn cấp", emergencyText:"：Văn phòng Kinh tế Văn hóa Đài Bắc tại TP.HCM, nên tra số điện thoại mới nhất trước khi đi",
@@ -1422,9 +1424,17 @@
     b.addEventListener("click", function(){ activateView(b.dataset.view); });
   });
 
-  document.getElementById("infoChips").querySelectorAll(".chip").forEach(function(chip){
+  var infoChips = document.getElementById("infoChips").querySelectorAll(".chip");
+  var infoSections = document.querySelectorAll(".info-section");
+  function activateInfoSection(id){
+    infoChips.forEach(function(c){ c.classList.toggle("active", c.dataset.target === id); });
+    infoSections.forEach(function(s){ s.classList.toggle("active", s.id === id); });
+    window.scrollTo(0,0);
+  }
+  activateInfoSection("info-transport");
+  infoChips.forEach(function(chip){
     chip.addEventListener("click", function(){
-      document.getElementById(chip.dataset.target).scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+      activateInfoSection(chip.dataset.target);
     });
   });
 
