@@ -463,78 +463,62 @@
 
   /* ================= DATA (checklist places, browsable) ================= */
   var DATA = [
-    { area:"Xuân Hòa 核心區", color:0, desc:"步行可達的密集小區，適合排一整天",
+    { area:"咖啡廳", color:0, desc:"",
       items:[
-        {name:"OHQUAO – The Local Edit", type:"選物店", note:"", link:"https://maps.app.goo.gl/dY2dK6Kz6N17PXPz6", lat:null, lng:null},
-        {name:"Kisserine House", type:"禮服店", note:"", link:"https://maps.app.goo.gl/8K9QdCxMd9NbJ2Wt5", lat:10.7842992, lng:106.6929711},
-        {name:"Nhà Tú – Việt Nam Restaurant", type:"越南料理", note:"", link:"https://maps.app.goo.gl/bYXHQwz7542Gg3AU7", lat:null, lng:null},
         {name:"ngâm CAFE", type:"咖啡", note:"可頌好吃、可頌抹茶牛奶", link:"https://maps.app.goo.gl/nKkANEAfBPt9j7J27", lat:10.7864405, lng:106.6861926},
-        {name:"Bếp Cuốn Sài Gòn", type:"越南料理", note:"春捲、蛋酥", link:"https://maps.app.goo.gl/p9rKzQRUUGVZ1WMt9", lat:10.7765904, lng:106.6900581}
-      ]
-    },
-    { area:"Phạm Ngũ Lão／The 350F 小街區", color:1, desc:"很緊密的一小群，順著走就能全部逛到",
-      items:[
-        {name:"The 350F – Nguyễn Trãi", type:"甜點店", note:"提拉米蘇", link:"https://maps.app.goo.gl/BZdPBDic93zvtxgs5", lat:10.7707123, lng:106.6925886},
-        {name:"Ka's clothing", type:"服飾", note:"好看韓系服飾", link:"https://maps.app.goo.gl/dUFM4fimCHvg8Yoa6", lat:10.7714774, lng:106.6942158},
-        {name:"Maztermind", type:"遊戲", note:"", link:"https://maps.app.goo.gl/nhnnQHBMknnjzXQ2A", lat:10.7709614, lng:106.6925465},
-        {name:"Tick And Pick", type:"文創", note:"", link:"https://maps.app.goo.gl/veQAACFFTaDvwQ5N8", lat:10.7709614, lng:106.6925465},
-        {name:"Bánh Mì Huynh Hoa", type:"越南麵包", note:"法棍老店", link:"https://maps.app.goo.gl/Dy29ypprL2XpUpHr6", lat:10.7715226, lng:106.6923968},
         {name:"Cà phê Linh", type:"咖啡", note:"鹽咖啡", link:"https://maps.app.goo.gl/gmLBgKPuAvFiwoTc7", lat:10.7713482, lng:106.6964333},
-        {name:"Phở Việt Nam", type:"河粉", note:"米其林推薦", link:"https://maps.app.goo.gl/y1bDcMC3K4Mvy2Mv7", lat:10.771386, lng:106.6961339},
-        {name:"PSYCHE SAIGON", type:"文創", note:"", link:"https://maps.app.goo.gl/ZnJAXJ5Tbu9zuy3ZA", lat:10.7688211, lng:106.6967985}
+        {name:"Nicotin Cafe II", type:"咖啡", note:"日式老屋咖啡廳", link:"https://maps.app.goo.gl/bR6d3dRDcM67wZJM8", lat:10.774102, lng:106.7040848},
+        {name:"Little HaNoi Egg Coffee (Yersin)", type:"咖啡", note:"雞蛋麵包、芒果吐司、蛋咖啡", link:"https://maps.app.goo.gl/PKdDnGofdL99aR5J9", lat:10.7694043, lng:106.6960112},
+        {name:"Beanthere Cafe – Hồ Hảo Hớn", type:"咖啡", note:"老洋樓咖啡廳", link:"https://maps.app.goo.gl/iAy4v1t62zgNpaRX6", lat:10.7620124, lng:106.6923935},
+        {name:"Nhâm Coffee", type:"咖啡", note:"法棍配奶油＋越南咖啡牛奶", link:"https://maps.app.goo.gl/LB3KgVxPaUSfwc9L9", lat:10.8007538, lng:106.7067888},
+        {name:"Oliu Sourdough – Coffee", type:"咖啡", note:"漂亮咖啡廳（在河內，不是胡志明市）", link:"https://maps.app.goo.gl/JWHJXGafRpKwHhfJ9", lat:20.2627274, lng:105.965486, otherCity:true}
       ]
     },
-    { area:"ThiBa Space 一帶", color:2, desc:"",
+    { area:"美食", color:1, desc:"",
       items:[
-        {name:"ThiBa Space", type:"coworking space", note:"", link:"https://maps.app.goo.gl/8oxook6deuVtZHwNA", lat:10.7921337, lng:106.7013149},
-        {name:"Saigon Eco Craft", type:"禮品店", note:"好看湯匙、偏貴、只收現金", link:"https://maps.app.goo.gl/4ijdiFPTHa4P1xZ57", lat:10.7743518, lng:106.7005356},
-        {name:"em.G clothé", type:"服飾", note:"高級簡約風格", link:"https://maps.app.goo.gl/wgB2noCAcYfEBG3Y8", lat:10.7781625, lng:106.7010533},
-        {name:"THE MERX I", type:"服飾", note:"好看襯衫", link:"https://maps.app.goo.gl/bDRQMQsLn89PdS2i6", lat:10.7782744, lng:106.7009935},
-        {name:"HUONG Boutique – Union Square", type:"服飾", note:"簡約長期主義女裝、禮服", link:"https://maps.app.goo.gl/Nc4dwsxzytEiyru38", lat:10.7764233, lng:106.7019916},
-        {name:"GIA STUDIOS HCM", type:"服飾", note:"簡約女裝", link:"https://maps.app.goo.gl/kG14g4yiCitech6A6", lat:10.780597, lng:106.7004583},
+        {name:"Nhà Tú – Việt Nam Restaurant", type:"越南料理", note:"", link:"https://maps.app.goo.gl/bYXHQwz7542Gg3AU7", lat:null, lng:null},
+        {name:"Bếp Cuốn Sài Gòn", type:"越南料理", note:"春捲、蛋酥", link:"https://maps.app.goo.gl/p9rKzQRUUGVZ1WMt9", lat:10.7765904, lng:106.6900581},
+        {name:"The 350F – Nguyễn Trãi", type:"甜點店", note:"提拉米蘇", link:"https://maps.app.goo.gl/BZdPBDic93zvtxgs5", lat:10.7707123, lng:106.6925886},
+        {name:"Bánh Mì Huynh Hoa", type:"越南麵包", note:"法棍老店", link:"https://maps.app.goo.gl/Dy29ypprL2XpUpHr6", lat:10.7715226, lng:106.6923968},
+        {name:"Phở Việt Nam", type:"河粉", note:"米其林推薦", link:"https://maps.app.goo.gl/y1bDcMC3K4Mvy2Mv7", lat:10.771386, lng:106.6961339},
         {name:"Hoa Túc Saigon", type:"越南料理", note:"雞蛋炸蝦春捲、蟹肉炒飯", link:"https://maps.app.goo.gl/8qP7hp3tn37PUhGV7", lat:10.7785004, lng:106.7037745},
         {name:"Bánh Canh Cua Út Thảo", type:"小吃", note:"蟹粉", link:"https://maps.app.goo.gl/4jE8i9iL5TeQQ7Bp6", lat:10.7737701, lng:106.6987734},
-        {name:"Nicotin Cafe II", type:"咖啡", note:"日式老屋咖啡廳", link:"https://maps.app.goo.gl/bR6d3dRDcM67wZJM8", lat:10.774102, lng:106.7040848}
-      ]
-    },
-    { area:"Bến Thành／Q1 老城", color:3, desc:"",
-      items:[
-        {name:"Vesta Lifestyle & Gifts", type:"生活風格禮品", note:"", link:"https://maps.app.goo.gl/yjwMF7oVwmtg7wgZ7", lat:null, lng:null},
-        {name:"Little HaNoi Egg Coffee (Yersin)", type:"咖啡", note:"雞蛋麵包、芒果吐司、蛋咖啡", link:"https://maps.app.goo.gl/PKdDnGofdL99aR5J9", lat:10.7694043, lng:106.6960112},
-        {name:"Morra Perfume Experience Center", type:"香水體驗店", note:"客製刻字/照片/星座/簽名；推 No.33 木質菸草、No.42 芝麻白麝香、No.43 柑橘萬用款", link:"https://maps.app.goo.gl/CachYFLeAPU4133Z7", lat:null, lng:null}
-      ]
-    },
-    { area:"偏北・老洋樓一帶", color:4, desc:"",
-      items:[
-        {name:"Beanthere Cafe – Hồ Hảo Hớn", type:"咖啡", note:"老洋樓咖啡廳", link:"https://maps.app.goo.gl/iAy4v1t62zgNpaRX6", lat:10.7620124, lng:106.6923935},
-        {name:"JUBIN Studio ｜ Château JUBIN", type:"女裝", note:"好看洋裝", link:"https://maps.app.goo.gl/Nh76gunG5iPTmU5U9", lat:10.7898032, lng:106.6997679},
-        {name:"Analog Cafe", type:"底片店", note:"要買的底片：Proimage 100×2、Cinestill 800T×3、Reflx Lab 640T×2、Cyberpunk 400D×3", link:"https://maps.app.goo.gl/rYJc4UMyQJifP6Eq8", lat:10.7632421, lng:106.6778319}
-      ]
-    },
-    { area:"Bình Thạnh", color:5, desc:"",
-      items:[
-        {name:"Nhâm Coffee", type:"咖啡", note:"法棍配奶油＋越南咖啡牛奶", link:"https://maps.app.goo.gl/LB3KgVxPaUSfwc9L9", lat:10.8007538, lng:106.7067888}
-      ]
-    },
-    { area:"Phú Nhuận／Đặng Tất", color:6, desc:"",
-      items:[
-        {name:"L'ESPOIR", type:"服飾品牌", note:"簡約長期主義女裝、禮服", link:"https://maps.app.goo.gl/tCxo7X7aFvZRrjxVA", lat:10.7911752, lng:106.6698677},
-        {name:"Veene Land", type:"手作店", note:"", link:"https://maps.app.goo.gl/xvS7VoPocnUyYxXj6", lat:10.7929366, lng:106.6880189},
-        {name:"Nagashoes - 95 Trần Quang Diệu", type:"鞋店", note:"婚禮鞋子", link:"https://maps.app.goo.gl/B5hs1ujhQ1Pdwwuk7", lat:10.7903766, lng:106.6780239}
-      ]
-    },
-    { area:"Thảo Điền", color:7, desc:"麵包甜點集中區，跟 L'ESPOIR 旗艦店排同一趟",
-      items:[
-        {name:"L'ESPOIR 旗艦店", type:"服飾門市", note:"", link:"https://maps.app.goo.gl/U5JoseDh4yFAwp329", lat:null, lng:null},
         {name:"Banan Patisserie Ngo Quang Huy", type:"甜點", note:"布丁", link:"https://maps.app.goo.gl/6mfXwpiAcayw2MS38", lat:10.8042109, lng:106.7344061},
         {name:"Micro Boulangerie", type:"麵包店", note:"紅豆奶油法國麵包", link:"https://maps.app.goo.gl/yKzwSLBXNrYLbg8S9", lat:10.8054795, lng:106.729937},
         {name:"Breadventure", type:"麵包店", note:"奶油法國麵包", link:"https://maps.app.goo.gl/8hKrpPsQBE3vA2Wb9", lat:10.803713, lng:106.728971}
       ]
     },
-    { area:"其他城市 / 待查", color:8, desc:"不在胡志明市步行範圍內，或地址還沒查到",
+    { area:"服飾配件", color:2, desc:"",
       items:[
+        {name:"Kisserine House", type:"禮服店", note:"", link:"https://maps.app.goo.gl/8K9QdCxMd9NbJ2Wt5", lat:10.7842992, lng:106.6929711},
+        {name:"Ka's clothing", type:"服飾", note:"好看韓系服飾", link:"https://maps.app.goo.gl/dUFM4fimCHvg8Yoa6", lat:10.7714774, lng:106.6942158},
+        {name:"em.G clothé", type:"服飾", note:"高級簡約風格", link:"https://maps.app.goo.gl/wgB2noCAcYfEBG3Y8", lat:10.7781625, lng:106.7010533},
+        {name:"THE MERX I", type:"服飾", note:"好看襯衫", link:"https://maps.app.goo.gl/bDRQMQsLn89PdS2i6", lat:10.7782744, lng:106.7009935},
+        {name:"HUONG Boutique – Union Square", type:"服飾", note:"簡約長期主義女裝、禮服", link:"https://maps.app.goo.gl/Nc4dwsxzytEiyru38", lat:10.7764233, lng:106.7019916},
+        {name:"GIA STUDIOS HCM", type:"服飾", note:"簡約女裝", link:"https://maps.app.goo.gl/kG14g4yiCitech6A6", lat:10.780597, lng:106.7004583},
+        {name:"JUBIN Studio ｜ Château JUBIN", type:"女裝", note:"好看洋裝", link:"https://maps.app.goo.gl/Nh76gunG5iPTmU5U9", lat:10.7898032, lng:106.6997679},
+        {name:"L'ESPOIR", type:"服飾品牌", note:"簡約長期主義女裝、禮服", link:"https://maps.app.goo.gl/tCxo7X7aFvZRrjxVA", lat:10.7911752, lng:106.6698677},
+        {name:"L'ESPOIR 旗艦店", type:"服飾門市", note:"", link:"https://maps.app.goo.gl/U5JoseDh4yFAwp329", lat:null, lng:null},
         {name:"LIBÉ", type:"服飾品牌", note:"只有官網，門市地址待查", link:"https://libeworkshop.com", lat:null, lng:null},
-        {name:"Oliu Sourdough – Coffee", type:"咖啡", note:"漂亮咖啡廳（在河內，不是胡志明市）", link:"https://maps.app.goo.gl/JWHJXGafRpKwHhfJ9", lat:20.2627274, lng:105.965486, otherCity:true}
+        {name:"Nagashoes - 95 Trần Quang Diệu", type:"鞋店", note:"婚禮鞋子", link:"https://maps.app.goo.gl/B5hs1ujhQ1Pdwwuk7", lat:10.7903766, lng:106.6780239}
+      ]
+    },
+    { area:"文創選物", color:3, desc:"",
+      items:[
+        {name:"OHQUAO – The Local Edit", type:"選物店", note:"", link:"https://maps.app.goo.gl/dY2dK6Kz6N17PXPz6", lat:null, lng:null},
+        {name:"Tick And Pick", type:"文創", note:"", link:"https://maps.app.goo.gl/veQAACFFTaDvwQ5N8", lat:10.7709614, lng:106.6925465},
+        {name:"PSYCHE SAIGON", type:"文創", note:"", link:"https://maps.app.goo.gl/ZnJAXJ5Tbu9zuy3ZA", lat:10.7688211, lng:106.6967985},
+        {name:"Saigon Eco Craft", type:"禮品店", note:"好看湯匙、偏貴、只收現金", link:"https://maps.app.goo.gl/4ijdiFPTHa4P1xZ57", lat:10.7743518, lng:106.7005356},
+        {name:"Vesta Lifestyle & Gifts", type:"生活風格禮品", note:"", link:"https://maps.app.goo.gl/yjwMF7oVwmtg7wgZ7", lat:null, lng:null},
+        {name:"Veene Land", type:"手作店", note:"", link:"https://maps.app.goo.gl/xvS7VoPocnUyYxXj6", lat:10.7929366, lng:106.6880189}
+      ]
+    },
+    { area:"其他體驗", color:4, desc:"",
+      items:[
+        {name:"ThiBa Space", type:"coworking space", note:"", link:"https://maps.app.goo.gl/8oxook6deuVtZHwNA", lat:10.7921337, lng:106.7013149},
+        {name:"Maztermind", type:"遊戲", note:"", link:"https://maps.app.goo.gl/nhnnQHBMknnjzXQ2A", lat:10.7709614, lng:106.6925465},
+        {name:"Morra Perfume Experience Center", type:"香水體驗店", note:"客製刻字/照片/星座/簽名；推 No.33 木質菸草、No.42 芝麻白麝香、No.43 柑橘萬用款", link:"https://maps.app.goo.gl/CachYFLeAPU4133Z7", lat:null, lng:null},
+        {name:"Analog Cafe", type:"底片店", note:"要買的底片：Proimage 100×2、Cinestill 800T×3、Reflx Lab 640T×2、Cyberpunk 400D×3", link:"https://maps.app.goo.gl/rYJc4UMyQJifP6Eq8", lat:10.7632421, lng:106.6778319}
       ]
     }
   ];
@@ -611,15 +595,11 @@
     "Oliu Sourdough – Coffee":"Quán cà phê đẹp (ở Hà Nội, không phải TP.HCM)"
   };
   var VI_AREA = {
-    "Xuân Hòa 核心區": {name:"Khu trung tâm Xuân Hòa", desc:"Khu vực nhỏ, đi bộ được, thích hợp dành cả ngày"},
-    "Phạm Ngũ Lão／The 350F 小街區": {name:"Khu phố nhỏ Phạm Ngũ Lão／The 350F", desc:"Cụm nhỏ sát nhau, đi bộ dọc theo là ghé hết"},
-    "ThiBa Space 一帶": {name:"Khu vực ThiBa Space", desc:""},
-    "Bến Thành／Q1 老城": {name:"Bến Thành／Phố cổ Quận 1", desc:""},
-    "偏北・老洋樓一帶": {name:"Khu biệt thự cổ phía Bắc", desc:""},
-    "Bình Thạnh": {name:"Bình Thạnh", desc:""},
-    "Phú Nhuận／Đặng Tất": {name:"Phú Nhuận／Đặng Tất", desc:""},
-    "Thảo Điền": {name:"Thảo Điền", desc:"Khu tập trung tiệm bánh, kết hợp ghé cửa hàng chính L'ESPOIR"},
-    "其他城市 / 待查": {name:"Thành phố khác / Chưa xác định", desc:"Không nằm trong phạm vi đi bộ ở TP.HCM, hoặc chưa tìm được địa chỉ"}
+    "咖啡廳": {name:"Quán cà phê", desc:""},
+    "美食": {name:"Ẩm thực", desc:""},
+    "服飾配件": {name:"Thời trang & phụ kiện", desc:""},
+    "文創選物": {name:"Đồ sáng tạo & tuyển chọn", desc:""},
+    "其他體驗": {name:"Trải nghiệm khác", desc:""}
   };
 
   var UI = {
