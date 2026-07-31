@@ -289,15 +289,6 @@
   .fav.on{color:var(--star-on);}
   .fav:active{transform:scale(0.8);}
 
-  /* ---- card photo slot ---- */
-  .card-photo{
-    flex:0 0 auto;width:48px;height:48px;border:none;border-radius:14px;background:var(--paper-sunk);
-    display:flex;align-items:center;justify-content:center;cursor:pointer;background-size:cover;background-position:center;color:var(--done-ink);
-    margin-right:2px;
-  }
-  .card-photo svg{width:18px;height:18px;}
-  .card-photo input{display:none;}
-
   /* ---- bottom nav ---- */
   nav.bottom{
     position:fixed;left:0;right:0;bottom:12px;z-index:20;background:var(--paper-raised);display:flex;
@@ -732,7 +723,7 @@
       copiedText:"清單文字已複製，貼給旅伴吧", copyFailed:"複製失敗，請改用「匯出清單」下載檔案",
       noClipboard:"這個瀏覽器不支援自動複製，請改用「匯出清單」", exported:"已下載，傳給旅伴吧",
       summaryTitle:"胡志明市之旅 — 踩點清單與行程",
-      jumpToday:"回到今天", visitedProgress:"已踩點", favorite:"收藏：", uploadPhoto:"上傳照片：",
+      jumpToday:"回到今天", visitedProgress:"已踩點", favorite:"收藏：",
       statusFilter_all:"全部", statusFilter_favorite:"收藏", statusFilter_visited:"已去過", statusFilter_notvisited:"未去過",
       storageFull:"這台裝置的儲存空間滿了，照片沒存成功，可以刪掉幾張舊照片再試一次",
       emptyMsgQuery:"沒有符合「{q}」的地點", emptyMsgFilterOnly:"篩選條件下沒有地點", emptyMsgClear:"清除篩選",
@@ -776,7 +767,7 @@
       copiedText:"Đã sao chép danh sách, gửi cho bạn đồng hành nhé", copyFailed:"Sao chép thất bại, vui lòng dùng「Xuất danh sách」để tải file",
       noClipboard:"Trình duyệt này không hỗ trợ sao chép tự động, vui lòng dùng「Xuất danh sách」", exported:"Đã tải xuống, gửi cho bạn đồng hành nhé",
       summaryTitle:"Chuyến đi TP. Hồ Chí Minh — Danh sách & lịch trình",
-      jumpToday:"Về hôm nay", visitedProgress:"Đã đi", favorite:"Yêu thích：", uploadPhoto:"Tải ảnh lên：",
+      jumpToday:"Về hôm nay", visitedProgress:"Đã đi", favorite:"Yêu thích：",
       statusFilter_all:"Tất cả", statusFilter_favorite:"Yêu thích", statusFilter_visited:"Đã đi", statusFilter_notvisited:"Chưa đi",
       storageFull:"Bộ nhớ thiết bị đã đầy, ảnh chưa lưu được, hãy xóa vài ảnh cũ rồi thử lại",
       emptyMsgQuery:"Không tìm thấy địa điểm phù hợp với “{q}”", emptyMsgFilterOnly:"Không có địa điểm nào khớp bộ lọc", emptyMsgClear:"Xóa bộ lọc",
@@ -809,7 +800,7 @@
   function savePack(){ localStorage.setItem(PACK_KEY, JSON.stringify(packState)); }
 
   var CHECKLIST_KEY = "hcmc-merged-checklist-v1";
-  var cl = { visited:{}, rating:{}, notes:{}, addedItems:{}, favorite:{}, photos:{} };
+  var cl = { visited:{}, rating:{}, notes:{}, addedItems:{}, favorite:{} };
   try{
     var loaded = JSON.parse(localStorage.getItem(CHECKLIST_KEY) || "null");
     if(loaded) cl = Object.assign(cl, loaded);
@@ -823,24 +814,6 @@
       return false;
     }
   }
-  function resizeImageToDataURL(file, maxDim, callback){
-    var img = new Image();
-    var reader = new FileReader();
-    reader.onload = function(){
-      img.onload = function(){
-        var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
-        var w = Math.round(img.width * scale), h = Math.round(img.height * scale);
-        var canvas = document.createElement("canvas");
-        canvas.width = w; canvas.height = h;
-        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-        callback(canvas.toDataURL("image/jpeg", 0.75));
-      };
-      img.onerror = function(){ callback(reader.result); };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  }
-
   function todayISO(){
     var d = new Date();
     return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
@@ -1148,35 +1121,6 @@
         var top = document.createElement("div");
         top.className = "card-top";
 
-        var photoSlot = document.createElement("label");
-        photoSlot.className = "card-photo";
-        photoSlot.setAttribute("aria-label", t("uploadPhoto") + item.name);
-        photoSlot.style.borderColor = areaColor(gi);
-        function paintPhotoSlot(){
-          if(cl.photos[id]){
-            photoSlot.style.backgroundImage = "url(" + cl.photos[id] + ")";
-            photoSlot.innerHTML = "";
-          }else{
-            photoSlot.style.backgroundImage = "";
-            photoSlot.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="14" height="10" rx="1.5"/><path d="M7 6l1.2-2h3.6L13 6"/><circle cx="10" cy="11" r="2.6"/></svg>';
-          }
-        }
-        paintPhotoSlot();
-        var photoInput = document.createElement("input");
-        photoInput.type = "file";
-        photoInput.accept = "image/*";
-        photoInput.addEventListener("change", function(){
-          var file = photoInput.files && photoInput.files[0];
-          if(!file) return;
-          resizeImageToDataURL(file, 480, function(dataUrl){
-            var prev = cl.photos[id];
-            cl.photos[id] = dataUrl;
-            if(saveCl()) paintPhotoSlot();
-            else cl.photos[id] = prev;
-          });
-        });
-        photoSlot.appendChild(photoInput);
-
         var check = document.createElement("button");
         check.className = "check";
         check.setAttribute("aria-label", t("markVisited") + item.name);
@@ -1310,7 +1254,6 @@
           detail.classList.toggle("open");
         });
 
-        top.appendChild(photoSlot);
         top.appendChild(check);
         top.appendChild(body);
         card.appendChild(top);
