@@ -182,7 +182,7 @@
   .area-head h2{font-size:1.1rem;margin:0;text-wrap:balance;color:var(--ink);font-weight:900;}
   .area-count{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:0.7rem;color:var(--done-ink);margin-left:auto;}
   .area-desc{font-size:0.76rem;color:var(--done-ink);margin:6px 0 12px;}
-  .card{position:relative;background:var(--paper-raised);border:none;border-radius:20px;padding:14px;margin-bottom:16px;box-shadow:0 2px 14px var(--shadow);transition:opacity .2s, transform .18s;}
+  .card{position:relative;background:var(--paper-raised);border:none;border-radius:20px;padding:14px;margin-bottom:16px;box-shadow:0 1px 8px var(--shadow);transition:opacity .2s, transform .18s;}
   .card:active{transform:scale(0.99);}
   .card.done{opacity:0.6;}
   .card.hide{display:none;}
@@ -192,11 +192,11 @@
   .card.done .check-ring{background:var(--red);}
   .card-body{flex:1;min-width:0;}
   .card-name-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
-  .card-name{font-size:1rem;font-weight:700;text-wrap:balance;}
+  .card-name{flex:1 1 100%;font-size:1rem;font-weight:700;text-wrap:balance;}
   .card.done .card-name{text-decoration:line-through;color:var(--done-ink);}
   .tag{font-size:0.68rem;padding:4px 10px;border-radius:100px;background:var(--paper-sunk);color:var(--done-ink);white-space:nowrap;font-weight:700;}
   .day-pill{font-size:0.66rem;padding:4px 10px;border-radius:100px;background:var(--navy);color:#fff;white-space:nowrap;font-weight:700;}
-  .card-note{font-size:0.82rem;margin-top:6px;color:var(--ink);opacity:0.85;text-wrap:balance;}
+  .card-note{font-size:0.88rem;margin-top:6px;color:var(--ink);opacity:0.85;text-wrap:balance;}
   .card-actions{margin-top:11px;display:flex;row-gap:14px;column-gap:8px;flex-wrap:wrap;align-items:center;}
   .maplink{display:inline-flex;align-items:center;gap:5px;font-size:0.76rem;padding:8px 14px;border:none;border-radius:100px;background:var(--navy);color:#fff;text-decoration:none;transition:transform .15s ease;font-weight:700;}
   .maplink:active{transform:scale(0.95);}
@@ -390,7 +390,7 @@
         </div>
         <div class="flight-info" id="flightInfo2">長榮航空 BR382・經濟艙・A330-300・含餐點</div>
         <a class="tnav" style="margin-top:10px;" href="https://www.google.com/maps/dir/?api=1&destination=10.8188,106.6520" target="_blank" rel="noopener noreferrer">
-          <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 2v13M10 15l-4-4M10 15l4-4"/><path d="M4 18h12"/></svg>
+          <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 14L14 6"/><path d="M8 6h6v6"/></svg>
           <span id="navAirportLabel">導航到新山一機場</span>
         </a>
       </div>
