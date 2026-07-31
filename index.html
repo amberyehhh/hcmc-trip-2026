@@ -62,16 +62,19 @@
   .daychips{display:flex;overflow-x:auto;gap:8px;margin:18px -16px -20px;padding:0 16px 20px;scrollbar-width:none;}
   .daychips::-webkit-scrollbar{display:none;}
   .daychip{
-    flex:0 0 auto;display:flex;align-items:center;gap:6px;
-    padding:9px 14px;border-radius:100px;background:var(--paper-sunk);
-    color:var(--ink);cursor:pointer;min-height:38px;
+    flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:8px 14px 9px;border-radius:16px;background:var(--paper-sunk);min-width:46px;
+    color:var(--ink);cursor:pointer;min-height:48px;justify-content:center;
     transition:transform .18s cubic-bezier(.34,1.56,.64,1), background .2s ease;
   }
-  .daychip .n{font-size:0.76rem;font-weight:700;}
-  .daychip .d{font-size:0.68rem;opacity:0.7;}
+  .daychip .n{font-size:0.64rem;font-weight:700;color:var(--done-ink);}
+  .daychip .d{font-size:0.9rem;font-weight:800;}
+  .daychip .dot{width:4px;height:4px;border-radius:50%;background:var(--red);opacity:0;margin-top:1px;}
   .daychip.wedding{background:var(--accent-soft);color:var(--red);}
+  .daychip.wedding .n{color:var(--red);opacity:0.8;}
   .daychip.today{background:var(--red);color:#fff;transform:scale(1.05);}
-  .daychip.today .d{opacity:0.85;}
+  .daychip.today .n{color:#fff;opacity:0.85;}
+  .daychip.today .dot{background:#fff;opacity:1;}
   .daychip.active{box-shadow:0 0 0 2px var(--red) inset;}
   .daychip:active{transform:scale(0.95);}
 
@@ -895,7 +898,8 @@
 
       var chip = document.createElement("button");
       chip.className = "daychip" + (day.wedding ? " wedding" : "") + (isToday ? " today" : "");
-      chip.innerHTML = '<span class="n">Day ' + day.num + '</span><span class="d">' + day.date.replace(/（.*/,"") + '</span>';
+      var dayOfMonth = String(parseInt(day.dateISO.split("-")[2], 10));
+      chip.innerHTML = '<span class="n">Day' + day.num + '</span><span class="d">' + dayOfMonth + '</span><span class="dot"></span>';
       chip.addEventListener("click", function(){
         activateView("days", true);
         document.getElementById("day-" + day.num).scrollIntoView({behavior:"auto", block:"start"});
