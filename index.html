@@ -140,7 +140,7 @@
   .pack-group{margin-bottom:18px;}
   .pack-group h3{font-weight:900;font-size:1rem;margin:0 0 8px;color:var(--red);}
   .pack-item{display:flex;align-items:center;gap:10px;padding:10px 4px;border-top:1px solid var(--line-soft);}
-  .shop-photo{width:52px;height:52px;border-radius:14px;object-fit:cover;flex:0 0 auto;background:var(--paper-sunk);}
+  .shop-photo{width:88px;height:88px;border-radius:16px;object-fit:cover;flex:0 0 auto;background:var(--paper-sunk);}
   .pack-item:first-child{border-top:none;}
   .pack-check{flex:0 0 auto;width:38px;height:38px;margin:-8px;border-radius:50%;border:none;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;}
   .pack-check-ring{width:20px;height:20px;border-radius:50%;border:2px solid var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.7rem;}
@@ -216,12 +216,14 @@
   .cute-pin{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 2px 5px rgba(36,31,23,0.3);display:flex;align-items:center;justify-content:center;}
   .cute-pin::after{content:"";width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.9);}
   .cute-pin.done{opacity:0.5;}
-  .leaflet-popup-content-wrapper{background:var(--paper-raised);color:var(--ink);border-radius:16px;border:none;box-shadow:0 4px 20px var(--shadow);}
+  .leaflet-popup-content-wrapper{background:var(--paper-raised);color:var(--ink);border-radius:18px;border:none;box-shadow:0 4px 20px var(--shadow);}
   .leaflet-popup-tip{background:var(--paper-raised);}
-  .leaflet-popup-content{font-size:0.82rem;margin:10px 22px 10px 12px;line-height:1.5;}
-  .popup-name{font-weight:700;font-size:0.92rem;display:block;margin-bottom:3px;}
-  .popup-note{color:var(--done-ink);font-size:0.78rem;margin-top:3px;}
-  .popup-link{color:var(--red);font-size:0.76rem;text-decoration:underline;display:inline-block;margin-top:5px;}
+  .leaflet-popup-content{font-size:0.82rem;margin:14px 16px;line-height:1.5;min-width:180px;}
+  .leaflet-popup-close-button{width:28px !important;height:28px !important;font-size:18px !important;top:6px !important;right:6px !important;}
+  .popup-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding-right:18px;}
+  .popup-name{font-weight:700;font-size:0.94rem;}
+  .popup-note{color:var(--done-ink);font-size:0.78rem;margin-top:6px;}
+  .popup-link{display:inline-flex;align-items:center;font-size:0.74rem;font-weight:700;color:#fff;background:var(--navy);border-radius:100px;padding:7px 13px;margin-top:10px;text-decoration:none;}
   .map-offline-note{font-size:0.74rem;color:var(--done-ink);text-align:center;margin-top:8px;}
   .map-legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:14px;}
   .legend-item{display:flex;align-items:center;gap:6px;font-size:0.74rem;color:var(--done-ink);}
@@ -1304,7 +1306,7 @@
     tileLayer = L.tileLayer(tileUrl(), {maxZoom: 19, attribution: CARTO_ATTR}).addTo(leafletMap);
   }
   function popupHtml(p){
-    var html = '<span class="popup-name">' + p.name + '</span>' + '<span class="tag">' + typeText(p) + '</span>';
+    var html = '<div class="popup-row"><span class="popup-name">' + p.name + '</span><span class="tag">' + typeText(p) + '</span></div>';
     var n = noteText(p);
     if(n) html += '<div class="popup-note">' + n + '</div>';
     html += '<a class="popup-link" href="' + p.link + '" target="_blank" rel="noopener noreferrer">' +
