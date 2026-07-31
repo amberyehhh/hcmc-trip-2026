@@ -1,0 +1,182 @@
+<meta charset="utf-8" />
+<title>三色互動預覽</title>
+<style>
+  *{box-sizing:border-box;}
+  :root{
+    --accent:#007AFF; --accent-soft:#E5F1FF; --ink:#1C1C1E; --sub:#8A8A8E; --line:#E5E5EA; --cardbg:#F2F2F7;
+    --pagebg:#EDEDF2; --appbg:#FFFFFF; --done-text:#FFFFFF;
+  }
+  body{margin:0; background:var(--pagebg); font-family:-apple-system,"PingFang TC",sans-serif; padding:0 0 40px; transition:background .25s;}
+  .picker{display:flex; gap:8px; padding:18px 20px 0; max-width:420px; margin:0 auto;}
+  .pbtn{flex:1; padding:11px 6px; border-radius:12px; border:2px solid transparent; background:#fff; font-size:0.76rem; font-weight:700; color:#2B2521; cursor:pointer; box-shadow:0 1px 6px rgba(0,0,0,0.06); text-align:center;}
+  .pbtn.active{border-color:var(--accent); color:var(--accent);}
+  .hint{max-width:420px; margin:8px auto 0; padding:0 20px; font-size:0.72rem; color:#B0AAA2; text-align:center;}
+
+  .app{max-width:420px; margin:16px auto 0; background:var(--appbg); border-radius:24px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.06); transition:background .25s;}
+
+  .hdr{padding:22px 20px 4px;}
+  .hdr-date{font-size:0.78rem; color:var(--sub);}
+  .hdr-title{font-size:1.3rem; font-weight:800; color:var(--ink); margin-top:2px;}
+
+  .days{display:flex; justify-content:space-between; margin:18px 0 4px; padding:0 20px;}
+  .day{display:flex; flex-direction:column; align-items:center; gap:6px; font-size:0.76rem; color:var(--sub); background:none; border:none; cursor:pointer; padding:4px;}
+  .day .num{font-weight:700; font-size:0.9rem; color:var(--ink);}
+  .day .dot{width:5px; height:5px; border-radius:50%; opacity:0; background:var(--accent);}
+  .day.active{color:var(--accent);}
+  .day.active .num{color:var(--accent);}
+  .day.active .dot{opacity:1;}
+
+  .timeline{padding:20px 20px 4px;}
+  .titem{display:flex; gap:14px; position:relative;}
+  .tline{width:2px; background:var(--line); position:absolute; left:9px; top:22px; bottom:-8px;}
+  .titem:last-child .tline{display:none;}
+  .tdot{width:20px; height:20px; border-radius:50%; border:2px solid var(--line); flex:0 0 auto; margin-top:2px; background:var(--appbg); z-index:1; transition:all .2s;}
+  .tcard{flex:1; padding:14px 16px; border-radius:16px; margin-bottom:16px; background:var(--cardbg); cursor:pointer; transition:all .2s; user-select:none;}
+  .tcard.done{background:var(--accent);}
+  .titem.done .tdot{border-color:var(--accent); background:var(--accent); box-shadow:0 0 0 4px var(--accent-soft);}
+  .tcard-top{display:flex; justify-content:space-between; align-items:baseline;}
+  .tcard-name{font-weight:700; font-size:0.9rem; color:var(--ink);}
+  .tcard.done .tcard-name, .tcard.done .tcard-time, .tcard.done .tcard-note{color:var(--done-text);}
+  .tcard-time{font-size:0.74rem; color:var(--sub); font-variant-numeric:tabular-nums;}
+  .tcard-note{font-size:0.76rem; color:var(--sub); margin-top:3px;}
+
+  .section-label{font-size:0.78rem; font-weight:700; color:var(--sub); padding:4px 20px 0;}
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:14px 20px 22px;}
+  .gcard{background:var(--appbg); border-radius:18px; box-shadow:0 2px 12px rgba(0,0,0,0.06); overflow:hidden; transition:background .25s;}
+  .gcard .img{height:80px;}
+  .gcard-body{padding:10px 12px 12px;}
+  .gcard-name{font-size:0.84rem; font-weight:700; color:var(--ink);}
+  .gcard-foot{display:flex; align-items:center; justify-content:space-between; margin-top:8px;}
+  .gtag{font-size:0.64rem; font-weight:700; padding:3px 9px; border-radius:100px; color:var(--accent); background:var(--accent-soft);}
+  .gfav{background:none; border:none; font-size:1rem; cursor:pointer; color:var(--line); padding:4px;}
+  .gfav.on{color:var(--accent);}
+</style>
+
+<div class="picker">
+  <button class="pbtn active" data-preset="blue">System Blue</button>
+  <button class="pbtn" data-preset="muji">無印卡其</button>
+  <button class="pbtn" data-preset="coffee">煉乳咖啡棕</button>
+</div>
+<p class="hint">點上面切換配色；點日期切換行程；點卡片打勾、點愛心收藏，都可以互動</p>
+
+<div class="app">
+  <div class="hdr">
+    <div class="hdr-date" id="hdrDate">2026/08/05（三）</div>
+    <div class="hdr-title" id="hdrTitle">Day 1・抵達</div>
+  </div>
+  <div class="days" id="days"></div>
+  <div class="timeline" id="timeline"></div>
+
+  <div class="section-label">踩點清單・咖啡廳</div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+  var DAYS = [
+    { label:"Day1", num:5, date:"2026/08/05（三）", title:"Day 1・抵達", items:[
+      {name:"桃園機場 T2 起飛", time:"19:35", note:"長榮 BR381"},
+      {name:"抵達新山一機場 T2", time:"22:00", note:"入境、提領行李"},
+      {name:"接機、返回親戚家", time:"22:30", note:"舅舅/舅媽接機"}
+    ]},
+    { label:"Day2", num:6, date:"2026/08/06（四）", title:"Day 2・在家遠距上班＋燙染頭髮", items:[
+      {name:"在家遠距上班", time:"上午", note:""},
+      {name:"燙染頭髮", time:"下午", note:""}
+    ]},
+    { label:"Day3", num:7, date:"2026/08/07（五）", title:"Day 3・兩間大學日", items:[
+      {name:"社科人文大學", time:"上午", note:"校園走走拍照"},
+      {name:"JUBIN Studio", time:"", note:"好看洋裝"},
+      {name:"孫德勝大學", time:"下午", note:"校園走走"}
+    ]}
+  ];
+  var GRID = [
+    {name:"ngâm CAFE", note:"可頌、抹茶牛奶", color:"#F0E4DD"},
+    {name:"Cà phê Linh", note:"鹽咖啡", color:"#E9EFE4"}
+  ];
+  var activeDay = 0;
+  var doneItems = {};
+  var favs = {};
+
+  function renderDays(){
+    var el = document.getElementById("days");
+    el.innerHTML = "";
+    DAYS.forEach(function(d, i){
+      var btn = document.createElement("button");
+      btn.className = "day" + (i === activeDay ? " active" : "");
+      btn.innerHTML = "<span>" + d.label + "</span><span class='num'>" + d.num + "</span><span class='dot'></span>";
+      btn.addEventListener("click", function(){ activeDay = i; render(); });
+      el.appendChild(btn);
+    });
+  }
+  function renderTimeline(){
+    document.getElementById("hdrDate").textContent = DAYS[activeDay].date;
+    document.getElementById("hdrTitle").textContent = DAYS[activeDay].title;
+    var el = document.getElementById("timeline");
+    el.innerHTML = "";
+    DAYS[activeDay].items.forEach(function(it, i){
+      var key = activeDay + "_" + i;
+      var isDone = !!doneItems[key];
+      var item = document.createElement("div");
+      item.className = "titem" + (isDone ? " done" : "");
+      item.innerHTML =
+        "<div style='position:relative;'><div class='tdot'></div><div class='tline'></div></div>" +
+        "<div class='tcard" + (isDone ? " done" : "") + "'>" +
+          "<div class='tcard-top'><span class='tcard-name'>" + it.name + "</span><span class='tcard-time'>" + it.time + "</span></div>" +
+          (it.note ? "<div class='tcard-note'>" + it.note + "</div>" : "") +
+        "</div>";
+      item.querySelector(".tcard").addEventListener("click", function(){
+        doneItems[key] = !doneItems[key];
+        renderTimeline();
+      });
+      el.appendChild(item);
+    });
+  }
+  function renderGrid(){
+    var el = document.getElementById("grid");
+    el.innerHTML = "";
+    GRID.forEach(function(g, i){
+      var card = document.createElement("div");
+      card.className = "gcard";
+      card.innerHTML =
+        "<div class='img' style='background:" + g.color + ";'></div>" +
+        "<div class='gcard-body'>" +
+          "<div class='gcard-name'>" + g.name + "</div>" +
+          "<div class='gcard-foot'><span class='gtag'>咖啡</span><button class='gfav" + (favs[i] ? " on" : "") + "'>" + (favs[i] ? "♥" : "♡") + "</button></div>" +
+        "</div>";
+      card.querySelector(".gfav").addEventListener("click", function(e){
+        e.stopPropagation();
+        favs[i] = !favs[i];
+        renderGrid();
+      });
+      el.appendChild(card);
+    });
+  }
+  function render(){ renderDays(); renderTimeline(); renderGrid(); }
+  render();
+
+  var PRESETS = {
+    blue:   { accent:"#007AFF", accentSoft:"#E5F1FF", ink:"#1C1C1E", sub:"#8A8A8E", line:"#E5E5EA", cardbg:"#F2F2F7", pagebg:"#EDEDF2", appbg:"#FFFFFF", doneText:"#FFFFFF" },
+    muji:   { accent:"#A9927D", accentSoft:"#EDE7DB", ink:"#3C3530", sub:"#A69B8D", line:"#E3DCD0", cardbg:"#F5F1EA", pagebg:"#EFE9DF", appbg:"#FBF9F5", doneText:"#3C3530" },
+    coffee: { accent:"#8B5A2B", accentSoft:"#F3E4CE", ink:"#4A3427", sub:"#B49A85", line:"#EDE0CE", cardbg:"#FBF3E7", pagebg:"#F6ECDD", appbg:"#FFFCF7", doneText:"#FFFFFF" }
+  };
+  function applyPreset(key){
+    var p = PRESETS[key];
+    var root = document.documentElement.style;
+    root.setProperty("--accent", p.accent);
+    root.setProperty("--accent-soft", p.accentSoft);
+    root.setProperty("--ink", p.ink);
+    root.setProperty("--sub", p.sub);
+    root.setProperty("--line", p.line);
+    root.setProperty("--cardbg", p.cardbg);
+    root.setProperty("--pagebg", p.pagebg);
+    root.setProperty("--appbg", p.appbg);
+    root.setProperty("--done-text", p.doneText);
+  }
+  document.querySelectorAll(".pbtn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll(".pbtn").forEach(function(b){ b.classList.remove("active"); });
+      btn.classList.add("active");
+      applyPreset(btn.dataset.preset);
+    });
+  });
+  applyPreset("blue");
+</script>
