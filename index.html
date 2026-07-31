@@ -7,7 +7,7 @@
 <style>
   :root{
     --ink:#2B2521; --paper:#FAFAF9; --paper-raised:#FFFFFF; --paper-sunk:#F1EEEA;
-    --red:#C1614F; --teal:#2FA39A; --mustard:#FFE9B8; --navy:#1C1B19; --teal-soft:#DFF4F1;
+    --red:#C1614F; --accent-soft:#FBE4DE; --navy:#1C1B19;
     --line:rgba(43,37,33,0.12); --line-strong:rgba(43,37,33,0.18); --line-soft:rgba(43,37,33,0.1);
     --done-ink:rgba(43,37,33,0.5); --shadow:rgba(43,37,33,0.08);
     --star-off:rgba(43,37,33,0.22); --star-on:#C1614F;
@@ -15,7 +15,7 @@
   @media (prefers-color-scheme: dark){
     :root{
       --ink:#F2ECE7; --paper:#18110E; --paper-raised:#241C18; --paper-sunk:#150F0C;
-      --red:#E8917E; --teal:#5FC2B8; --mustard:#4A3A22; --navy:#3A2E27; --teal-soft:#1E3A37;
+      --red:#E8917E; --accent-soft:#3A2620; --navy:#3A2E27;
       --line:rgba(242,236,231,0.14); --line-strong:rgba(242,236,231,0.2); --line-soft:rgba(242,236,231,0.1);
       --done-ink:rgba(242,236,231,0.55); --shadow:rgba(0,0,0,0.35);
       --star-off:rgba(242,236,231,0.25); --star-on:#E8917E;
@@ -23,14 +23,14 @@
   }
   :root[data-theme="dark"]{
     --ink:#F2ECE7; --paper:#18110E; --paper-raised:#241C18; --paper-sunk:#150F0C;
-    --red:#E8917E; --teal:#5FC2B8; --mustard:#4A3A22; --navy:#3A2E27; --teal-soft:#1E3A37;
+    --red:#E8917E; --accent-soft:#3A2620; --navy:#3A2E27;
     --line:rgba(242,236,231,0.14); --line-strong:rgba(242,236,231,0.2); --line-soft:rgba(242,236,231,0.1);
     --done-ink:rgba(242,236,231,0.55); --shadow:rgba(0,0,0,0.35);
     --star-off:rgba(242,236,231,0.25); --star-on:#E8917E;
   }
   :root[data-theme="light"]{
     --ink:#2B2521; --paper:#FAFAF9; --paper-raised:#FFFFFF; --paper-sunk:#F1EEEA;
-    --red:#C1614F; --teal:#2FA39A; --mustard:#FFE9B8; --navy:#1C1B19; --teal-soft:#DFF4F1;
+    --red:#C1614F; --accent-soft:#FBE4DE; --navy:#1C1B19;
     --line:rgba(43,37,33,0.12); --line-strong:rgba(43,37,33,0.18); --line-soft:rgba(43,37,33,0.1);
     --done-ink:rgba(43,37,33,0.5); --shadow:rgba(43,37,33,0.08);
     --star-off:rgba(43,37,33,0.22); --star-on:#C1614F;
@@ -88,7 +88,7 @@
   .day-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;color:var(--ink);padding:16px 16px 0;}
   .day-num{font-size:1.1rem;font-weight:900;}
   .day-date{font-size:0.76rem;color:var(--done-ink);}
-  .day-badge{margin-left:auto;font-size:0.66rem;letter-spacing:0.02em;padding:4px 11px;border-radius:100px;background:var(--mustard);color:#8B6A1D;white-space:nowrap;font-weight:700;}
+  .day-badge{margin-left:auto;font-size:0.66rem;letter-spacing:0.02em;padding:4px 11px;border-radius:100px;background:var(--accent-soft);color:var(--red);white-space:nowrap;font-weight:700;}
   .day-card.today .day-badge{background:var(--red);color:#fff;}
   .day-progress{font-size:0.7rem;color:var(--done-ink);white-space:nowrap;font-weight:700;}
   .day-title{font-size:0.82rem;color:var(--done-ink);padding:12px 16px 0;}
@@ -117,7 +117,7 @@
     width:38px;height:38px;border-radius:50%;background:var(--paper-sunk);color:var(--done-ink);
     font-size:0.8rem;cursor:pointer;
   }
-  .tadded-tag{font-size:0.66rem;padding:3px 10px;border-radius:100px;background:var(--mustard);color:#8B6A1D;white-space:nowrap;font-weight:700;display:inline-block;margin-top:4px;}
+  .tadded-tag{font-size:0.66rem;padding:3px 10px;border-radius:100px;background:var(--accent-soft);color:var(--red);white-space:nowrap;font-weight:700;display:inline-block;margin-top:4px;}
 
   /* ---- transport / stay / packing / budget (info view) ---- */
   .flight-card{position:relative;background:var(--paper-raised);border:none;border-radius:20px;padding:16px;margin-bottom:22px;box-shadow:0 2px 16px var(--shadow);}
@@ -130,7 +130,7 @@
   .flight-info{font-size:0.76rem;color:var(--done-ink);margin-top:6px;}
   .info-section{display:none;}
   .info-section.active{display:block;}
-  .section-h{display:inline-block;font-weight:900;font-size:0.78rem;letter-spacing:0.03em;margin:22px 0 10px;color:var(--red);background:var(--mustard);padding:6px 14px;border-radius:100px;}
+  .section-h{display:inline-block;font-weight:900;font-size:0.78rem;letter-spacing:0.03em;margin:22px 0 10px;color:var(--red);background:var(--accent-soft);padding:6px 14px;border-radius:100px;}
   .note-card{position:relative;background:var(--paper-sunk);border:none;border-radius:20px;padding:14px 16px;font-size:0.82rem;line-height:1.6;margin-bottom:12px;font-weight:500;color:var(--ink);}
   .note-card b{color:var(--red);}
   .info-card{background:var(--paper-raised);border:none;border-radius:20px;padding:16px;margin-bottom:22px;box-shadow:0 2px 16px var(--shadow);}
@@ -152,7 +152,7 @@
   .budget-table th{text-align:left;font-size:0.7rem;color:var(--red);text-transform:uppercase;letter-spacing:0.06em;padding:12px 14px 10px;background:var(--paper-sunk);}
   .budget-table td{padding:11px 14px;border-top:1px solid var(--line-soft);}
   .budget-table td:last-child,.budget-table th:last-child{text-align:right;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-variant-numeric:tabular-nums;white-space:nowrap;}
-  .budget-total{font-weight:700;background:var(--mustard);}
+  .budget-total{font-weight:700;background:var(--accent-soft);}
   .budget-total td{border-top:none;}
 
   /* ---- checklist (list view) ---- */
@@ -213,7 +213,7 @@
   #leafletMap{width:100%;height:60vh;min-height:420px;max-height:640px;border:none;border-radius:20px;overflow:hidden;margin-top:0;background:var(--paper-sunk);position:relative;isolation:isolate;z-index:0;}
   .leaflet-container{font-family:inherit;}
   .leaflet-control-zoom a{width:40px !important;height:40px !important;line-height:40px !important;font-size:1.1rem !important;}
-  .cute-pin{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 2px 5px rgba(36,31,23,0.3);display:flex;align-items:center;justify-content:center;}
+  .cute-pin{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 2px 5px rgba(43,37,33,0.3);display:flex;align-items:center;justify-content:center;}
   .cute-pin::after{content:"";width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.9);}
   .cute-pin.done{opacity:0.5;}
   .leaflet-popup-content-wrapper{background:var(--paper-raised);color:var(--ink);border-radius:18px;border:none;box-shadow:0 4px 20px var(--shadow);}
@@ -955,9 +955,8 @@
   var chiprowEl = document.getElementById("chiprow");
 
   var AREA_COLORS = [
-    ["#1F6F5C","#57C7A6"], ["#B9812C","#E4AC55"], ["#5B7FB9","#8FB2E8"],
-    ["#B9506B","#E48CA3"], ["#6B9A3C","#A3D172"], ["#8A5FB9","#BFA0E8"],
-    ["#4FA8A0","#7FDCD2"], ["#C1622C","#E8935F"], ["#7A6B4F","#B3A17E"]
+    ["#8B5E3C","#C9A177"], ["#A8583F","#D98F73"], ["#A8687A","#D9A0AF"],
+    ["#7C8A5C","#ACC08A"], ["#B8903E","#E6C078"]
   ];
   function isDark(){
     var root = document.documentElement;
