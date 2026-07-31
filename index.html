@@ -187,7 +187,7 @@
   .card.done{opacity:0.6;}
   .card.hide{display:none;}
   .card-top{display:flex;gap:12px;align-items:flex-start;}
-  .check{flex:0 0 auto;width:44px;height:44px;margin:-11px 0 0 -11px;border-radius:50%;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+  .check{flex:0 0 auto;width:36px;height:44px;margin:0;border-radius:0;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
   .check-ring{width:22px;height:22px;border-radius:6px;border:2px solid var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.85rem;line-height:1;}
   .card.done .check-ring{background:var(--red);}
   .card-body{flex:1;min-width:0;}
@@ -1278,22 +1278,6 @@
         mapA.rel = "noopener noreferrer";
         mapA.textContent = item.link.indexOf("maps.app.goo.gl") > -1 ? t("openMap") : t("officialSite");
         actions.appendChild(mapA);
-
-        if(item.lat != null && !item.otherCity){
-          var locateBtn = document.createElement("button");
-          locateBtn.className = "ghostbtn";
-          locateBtn.textContent = t("locateOnMap");
-          locateBtn.addEventListener("click", function(){
-            activateView("map", true);
-            setTimeout(function(){
-              if(item.marker){
-                leafletMap.setView([item.lat, item.lng], 17, {animate:true});
-                item.marker.openPopup();
-              }
-            }, 60);
-          });
-          actions.appendChild(locateBtn);
-        }
 
         var detailBtn = document.createElement("button");
         detailBtn.className = "ghostbtn";
