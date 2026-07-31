@@ -58,10 +58,6 @@
   .langbtn:active{transform:scale(0.94);}
   h1{font-weight:900;font-size:1.5rem;margin:8px 0 4px;text-wrap:balance;letter-spacing:0.005em;}
   .daterange{font-size:0.78rem;color:#fff;opacity:0.8;}
-  .tripmeta{display:flex;gap:14px;margin-top:10px;font-size:0.74rem;color:#fff;opacity:0.85;flex-wrap:wrap;align-items:center;}
-  .tripmeta span{display:inline-flex;align-items:center;gap:5px;}
-  .tripmeta b{color:#fff;opacity:1;}
-
   .daychips{display:flex;overflow-x:auto;gap:8px;margin:18px -16px -20px;padding:0 16px 20px;scrollbar-width:none;}
   .daychips::-webkit-scrollbar{display:none;}
   .daychip{
@@ -109,10 +105,11 @@
   .tplace{font-weight:700;font-size:0.9rem;text-wrap:balance;}
   .tnote{font-size:0.78rem;color:var(--done-ink);margin-top:2px;}
   .tnav{
-    display:inline-flex;align-items:center;gap:5px;margin-top:8px;margin-right:6px;
-    font-size:0.74rem;padding:9px 14px;border-radius:100px;background:var(--navy);color:#fff;
-    min-height:38px;font-weight:700;transition:transform .15s ease;
+    display:inline-flex;align-items:center;gap:4px;margin-top:6px;margin-right:6px;
+    font-size:0.7rem;padding:6px 12px;border-radius:100px;background:var(--navy);color:#fff;
+    min-height:30px;font-weight:700;transition:transform .15s ease;
   }
+  .tnav svg{width:13px;height:13px;}
   .tnav:active{transform:scale(0.95);}
   .tremove{
     display:inline-flex;align-items:center;justify-content:center;margin-top:8px;
@@ -302,11 +299,6 @@
   </div>
   <h1 id="pageTitle">胡志明市之旅</h1>
   <div class="daterange" id="dateRange">2026/08/05 – 2026/08/15・10 天 9 夜</div>
-  <div class="tripmeta">
-    <span><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12l16-6-4 16-3-6-6-3z"/></svg> <b>BR381 / BR382</b></span>
-    <span><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3l1.8 4.2L16 9l-4.2 1.8L10 15l-1.8-4.2L4 9l4.2-1.8z"/></svg> <b id="weddingMeta">8/9 妹妹婚禮</b></span>
-    <span><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l7-6 7 6"/><path d="M5 9v8h10V9"/></svg> <b id="stayMeta">住親戚家</b></span>
-  </div>
   <div class="daychips" id="dayChips"></div>
 </header>
 
@@ -1570,8 +1562,6 @@
   function applyStaticLang(){
     document.getElementById("pageTitle").textContent = t("pageTitle");
     document.getElementById("dateRange").textContent = t("dateRange");
-    document.getElementById("weddingMeta").textContent = t("weddingMeta");
-    document.getElementById("stayMeta").textContent = t("stayMeta");
     document.getElementById("outboundLabel").textContent = t("outboundLabel");
     document.getElementById("returnLabel").textContent = t("returnLabel");
     document.getElementById("flightInfo1").textContent = t("flightInfo1");
