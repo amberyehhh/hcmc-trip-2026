@@ -141,6 +141,8 @@
   .pack-group h3{font-weight:900;font-size:1rem;margin:0 0 8px;color:var(--red);}
   .pack-item{display:flex;align-items:center;gap:10px;padding:10px 4px;border-top:1px solid var(--line-soft);}
   .shop-photo{width:88px;height:88px;border-radius:16px;object-fit:cover;flex:0 0 auto;background:var(--paper-sunk);}
+  .shop-photo-placeholder{display:flex;align-items:center;justify-content:center;color:var(--done-ink);}
+  .shop-photo-placeholder svg{width:28px;height:28px;}
   .pack-item:first-child{border-top:none;}
   .pack-check{flex:0 0 auto;width:38px;height:38px;margin:-8px;border-radius:50%;border:none;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;}
   .pack-check-ring{width:20px;height:20px;border-radius:50%;border:2px solid var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.7rem;}
@@ -197,8 +199,12 @@
   .star.on{color:var(--star-on);}
   .notearea{width:100%;min-height:56px;resize:vertical;padding:10px 14px;border:none;border-radius:16px;background:var(--paper-sunk);color:var(--ink);font-size:0.84rem;font-family:inherit;outline:none;}
   .notearea:focus{box-shadow:0 0 0 2px var(--red);}
-  .empty-msg{display:none;text-align:center;padding:40px 0;color:var(--done-ink);font-size:0.9rem;}
-  .empty-msg.show{display:block;}
+  .empty-msg{display:none;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:48px 20px;color:var(--done-ink);font-size:0.9rem;}
+  .empty-msg.show{display:flex;}
+  .empty-msg svg{width:34px;height:34px;opacity:0.6;}
+  .empty-msg p{margin:0;line-height:1.6;}
+  .empty-msg #emptyMsgClear{display:none;}
+  .empty-msg.has-filter #emptyMsgClear{display:inline-flex;}
   .list-footer{margin-top:30px;padding-top:14px;border-top:1px solid var(--line-soft);font-size:0.7rem;color:var(--done-ink);text-align:center;}
 
   /* ---- real map view ---- */
@@ -319,7 +325,11 @@
     <div class="chiprow" id="statusChiprow"></div>
     <div class="chiprow" id="chiprow"></div>
     <div id="sections"></div>
-    <p class="empty-msg" id="emptyMsg">沒有符合的地點，換個關鍵字試試。</p>
+    <div class="empty-msg" id="emptyMsg">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="6.5"/><path d="M14 14l4 4"/></svg>
+      <p id="emptyMsgText">沒有符合的地點，換個關鍵字試試。</p>
+      <button id="emptyMsgClear" class="ghostbtn">清除篩選</button>
+    </div>
     <p class="list-footer"><span id="totalCount" class="mono">0</span><span id="footerText"> 個候選地點・可加入上面的每日行程・資料存在這台裝置的瀏覽器裡</span></p>
   </div>
 
@@ -682,7 +692,8 @@
       summaryTitle:"胡志明市之旅 — 踩點清單與行程",
       jumpToday:"回到今天", visitedProgress:"已踩點", favorite:"收藏：", uploadPhoto:"上傳照片：",
       statusFilter_all:"全部", statusFilter_favorite:"收藏", statusFilter_visited:"已去過", statusFilter_notvisited:"未去過",
-      storageFull:"這台裝置的儲存空間滿了，照片沒存成功，可以刪掉幾張舊照片再試一次"
+      storageFull:"這台裝置的儲存空間滿了，照片沒存成功，可以刪掉幾張舊照片再試一次",
+      emptyMsgQuery:"沒有符合「{q}」的地點", emptyMsgFilterOnly:"篩選條件下沒有地點", emptyMsgClear:"清除篩選"
     },
     vi:{
       pageTitle:"Chuyến đi TP. Hồ Chí Minh", dateRange:"2026/08/05 – 2026/08/15・10 ngày 9 đêm",
@@ -724,7 +735,8 @@
       summaryTitle:"Chuyến đi TP. Hồ Chí Minh — Danh sách & lịch trình",
       jumpToday:"Về hôm nay", visitedProgress:"Đã đi", favorite:"Yêu thích：", uploadPhoto:"Tải ảnh lên：",
       statusFilter_all:"Tất cả", statusFilter_favorite:"Yêu thích", statusFilter_visited:"Đã đi", statusFilter_notvisited:"Chưa đi",
-      storageFull:"Bộ nhớ thiết bị đã đầy, ảnh chưa lưu được, hãy xóa vài ảnh cũ rồi thử lại"
+      storageFull:"Bộ nhớ thiết bị đã đầy, ảnh chưa lưu được, hãy xóa vài ảnh cũ rồi thử lại",
+      emptyMsgQuery:"Không tìm thấy địa điểm phù hợp với “{q}”", emptyMsgFilterOnly:"Không có địa điểm nào khớp bộ lọc", emptyMsgClear:"Xóa bộ lọc"
     }
   };
   function t(key){ return UI[lang][key]; }
@@ -1301,9 +1313,25 @@
       if(visibleInSection) anyVisible = true;
     });
     emptyMsg.classList.toggle("show", !anyVisible);
+    if(!anyVisible){
+      var hasFilter = statusFilter !== "all";
+      var msgText;
+      if(q) msgText = t("emptyMsgQuery").replace("{q}", searchEl.value.trim());
+      else if(hasFilter) msgText = t("emptyMsgFilterOnly");
+      else msgText = t("emptyMsg");
+      document.getElementById("emptyMsgText").textContent = msgText;
+      emptyMsg.classList.toggle("has-filter", !!q || hasFilter);
+    }
     dimMarkers(q);
   }
   searchEl.addEventListener("input", applySearch);
+  document.getElementById("emptyMsgClear").addEventListener("click", function(){
+    searchEl.value = "";
+    statusFilter = "all";
+    localStorage.setItem(STATUS_FILTER_KEY, statusFilter);
+    renderStatusChips();
+    applySearch();
+  });
 
   /* ================= MAP ================= */
   var mapPlaces = PLACES.filter(function(p){ return p.lat != null && p.lng != null && !p.otherCity; });
@@ -1471,6 +1499,11 @@
         img.src = photo;
         img.alt = label;
         row.appendChild(img);
+      }else{
+        var placeholder = document.createElement("div");
+        placeholder.className = "shop-photo shop-photo-placeholder";
+        placeholder.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="12" height="10" rx="1.5"/><path d="M4 6l6-3 6 3"/></svg>';
+        row.appendChild(placeholder);
       }
       var lbl = document.createElement("span");
       lbl.className = "pack-label";
@@ -1590,7 +1623,8 @@
     document.getElementById("infoNavPack").textContent = t("infoNavPack");
     document.getElementById("infoNavBudget").textContent = t("infoNavBudget");
     document.getElementById("search").placeholder = t("searchPlaceholder");
-    document.getElementById("emptyMsg").textContent = t("emptyMsg");
+    document.getElementById("emptyMsgText").textContent = t("emptyMsg");
+    document.getElementById("emptyMsgClear").textContent = t("emptyMsgClear");
     document.getElementById("mapOfflineNote").textContent = t("mapOfflineNote");
     document.getElementById("footerText").textContent = t("footerText");
     document.getElementById("jumpTodayLabel").textContent = t("jumpToday");
