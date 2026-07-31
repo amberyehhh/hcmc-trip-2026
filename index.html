@@ -50,29 +50,29 @@
   .icon{width:16px;height:16px;flex:0 0 auto;display:inline-block;vertical-align:-3px;}
 
   header.top{
-    position:sticky;top:0;z-index:15;background:var(--red);color:#fff;
-    padding:20px 16px 16px;
+    position:sticky;top:0;z-index:15;background:var(--paper-raised);color:var(--ink);
+    padding:20px 16px 16px;box-shadow:0 1px 0 var(--line);
   }
   body.map-active header.top{position:relative;}
-  .eyebrow{font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;color:#fff;font-weight:700;opacity:0.85;}
+  .eyebrow{font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--done-ink);font-weight:700;}
   .langbtn{border:none;border-radius:100px;background:var(--navy);color:#fff;font-weight:700;font-size:0.72rem;letter-spacing:0.01em;padding:9px 14px;cursor:pointer;min-height:38px;display:inline-flex;align-items:center;gap:5px;transition:transform .15s ease;}
   .langbtn:active{transform:scale(0.94);}
-  h1{font-weight:900;font-size:1.5rem;margin:8px 0 4px;text-wrap:balance;letter-spacing:0.005em;}
-  .daterange{font-size:0.78rem;color:#fff;opacity:0.8;}
+  h1{font-weight:900;font-size:1.5rem;margin:8px 0 4px;text-wrap:balance;letter-spacing:0.005em;color:var(--ink);}
+  .daterange{font-size:0.78rem;color:var(--done-ink);}
   .daychips{display:flex;overflow-x:auto;gap:8px;margin:18px -16px -20px;padding:0 16px 20px;scrollbar-width:none;}
   .daychips::-webkit-scrollbar{display:none;}
   .daychip{
     flex:0 0 auto;display:flex;align-items:center;gap:6px;
-    padding:9px 14px;border-radius:100px;background:rgba(255,255,255,0.16);
-    color:#fff;cursor:pointer;min-height:38px;
+    padding:9px 14px;border-radius:100px;background:var(--paper-sunk);
+    color:var(--ink);cursor:pointer;min-height:38px;
     transition:transform .18s cubic-bezier(.34,1.56,.64,1), background .2s ease;
   }
   .daychip .n{font-size:0.76rem;font-weight:700;}
-  .daychip .d{font-size:0.68rem;opacity:0.8;}
-  .daychip.wedding{background:rgba(255,255,255,0.9);color:var(--red);}
-  .daychip.today{background:#fff;color:var(--red);transform:scale(1.05);}
+  .daychip .d{font-size:0.68rem;opacity:0.7;}
+  .daychip.wedding{background:var(--accent-soft);color:var(--red);}
+  .daychip.today{background:var(--red);color:#fff;transform:scale(1.05);}
   .daychip.today .d{opacity:0.85;}
-  .daychip.active{box-shadow:0 0 0 2px #fff inset;}
+  .daychip.active{box-shadow:0 0 0 2px var(--red) inset;}
   .daychip:active{transform:scale(0.95);}
 
   .wrap{max-width:640px;margin:0 auto;padding:14px 16px 24px;}
@@ -1673,8 +1673,8 @@
   function applyBigText(){
     document.documentElement.classList.toggle("big-text", bigText);
     bigTextBtn.setAttribute("aria-pressed", bigText ? "true" : "false");
-    bigTextBtn.style.background = bigText ? "#fff" : "var(--navy)";
-    bigTextBtn.style.color = bigText ? "var(--red)" : "#fff";
+    bigTextBtn.style.background = bigText ? "var(--red)" : "var(--navy)";
+    bigTextBtn.style.color = "#fff";
   }
   applyBigText();
   bigTextBtn.addEventListener("click", function(){
