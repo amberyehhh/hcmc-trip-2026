@@ -156,14 +156,6 @@
   .budget-total td{border-top:none;}
 
   /* ---- checklist (list view) ---- */
-  .sharebar{display:flex;gap:8px;margin-bottom:14px;}
-  .sharebtn{
-    flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
-    padding:11px 10px;border:none;border-radius:100px;
-    background:var(--paper-raised);color:var(--ink);font-size:0.78rem;cursor:pointer;font-weight:700;
-    box-shadow:0 1px 6px var(--shadow);transition:transform .15s ease;
-  }
-  .sharebtn:active{transform:scale(0.96);}
   .search-row{padding:0 0 10px;}
   .search{width:100%;padding:12px 16px;border:none;border-radius:100px;background:var(--paper-raised);color:var(--ink);font-size:0.95rem;outline:none;box-shadow:0 1px 6px var(--shadow);}
   .search:focus{box-shadow:0 0 0 2px var(--red);}
@@ -317,10 +309,6 @@
   </button>
 
   <div class="view" id="view-list">
-    <div class="sharebar">
-      <button class="sharebtn" id="copyTextBtn"><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="4" width="10" height="13" rx="1.5"/><rect x="7.5" y="2" width="5" height="3" rx="1"/></svg> <span id="copyTextLabel">複製地點清單文字</span></button>
-      <button class="sharebtn" id="exportBtn"><svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3v9"/><path d="M6 8l4 4 4-4"/><path d="M4 16h12"/></svg> <span id="exportLabel">匯出清單</span></button>
-    </div>
     <div class="list-progress">
       <span id="listProgressLabel" class="mono">0 / 0</span>
       <span class="bar"><span class="bar-fill" id="listProgressFill" style="width:0%"></span></span>
@@ -1483,44 +1471,6 @@
     document.getElementById("budgetTotal").textContent = t("budgetTotalVal");
   }
 
-  /* ================= SHARE (checklist export/copy) ================= */
-  function buildSummaryText(){
-    var lines = [t("summaryTitle"), ""];
-    DAYS.forEach(function(day){
-      lines.push("【Day " + day.num + " " + day.date + "】" + dayTitleText(day));
-      day.items.forEach(function(it){ lines.push("　- " + placeText(it)); });
-      (cl.addedItems[day.num]||[]).forEach(function(pid){
-        var place = placeById[pid];
-        if(!place) return;
-        var star = cl.rating[pid] ? " " + "★".repeat(cl.rating[pid]) : "";
-        lines.push("　- " + place.name + "（" + typeText(place) + "）" + star);
-      });
-      lines.push("");
-    });
-    var visitedList = PLACES.filter(function(p){ return cl.visited[p.id]; });
-    if(visitedList.length){
-      lines.push(t("summaryVisitedHeader"));
-      visitedList.forEach(function(p){ lines.push("　- " + p.name); });
-    }
-    return lines.join("\n");
-  }
-  document.getElementById("copyTextBtn").addEventListener("click", function(){
-    var text = buildSummaryText();
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(function(){ toast(t("copiedText")); }).catch(function(){ toast(t("copyFailed")); });
-    }else{ toast(t("noClipboard")); }
-  });
-  document.getElementById("exportBtn").addEventListener("click", function(){
-    var text = buildSummaryText();
-    var blob = new Blob([text], {type:"text/plain;charset=utf-8"});
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url; a.download = "hcmc-trip.txt";
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-    toast(t("exported"));
-  });
-
   /* ================= THEME REPAINT ================= */
   if(window.matchMedia){
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(){
@@ -1613,8 +1563,6 @@
     document.getElementById("infoNavStay").textContent = t("infoNavStay");
     document.getElementById("infoNavPack").textContent = t("infoNavPack");
     document.getElementById("infoNavBudget").textContent = t("infoNavBudget");
-    document.getElementById("copyTextLabel").textContent = t("copyText");
-    document.getElementById("exportLabel").textContent = t("exportBtn");
     document.getElementById("search").placeholder = t("searchPlaceholder");
     document.getElementById("emptyMsg").textContent = t("emptyMsg");
     document.getElementById("mapOfflineNote").textContent = t("mapOfflineNote");
