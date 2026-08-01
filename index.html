@@ -181,8 +181,8 @@
   .chiprow.segmented{background:var(--paper-sunk);border-radius:100px;padding:3px;gap:0;overflow:visible;margin-bottom:12px;}
   .chiprow.segmented .chip{box-shadow:none;background:transparent;padding:7px 12px;font-size:0.72rem;flex:1;text-align:center;}
   .chiprow.segmented .chip.active{background:var(--paper-raised);color:var(--red);box-shadow:0 1px 4px var(--shadow);}
-  .chiprow-wrap{position:relative;}
-  .chiprow-wrap::after{content:"";position:absolute;top:0;right:0;bottom:10px;width:28px;background:linear-gradient(to right, transparent, var(--paper));pointer-events:none;}
+  .chiprow-wrap{position:sticky;top:var(--header-h, 150px);z-index:14;background:var(--paper);padding-top:6px;margin-top:-6px;}
+  .chiprow-wrap::after{content:"";position:absolute;top:6px;right:0;bottom:10px;width:28px;background:linear-gradient(to right, transparent, var(--paper));pointer-events:none;}
   section.area{margin-top:28px;scroll-margin-top:150px;}
   .area-head{display:flex;align-items:baseline;gap:10px;padding-bottom:6px;margin-bottom:4px;}
   .area-head h2{font-size:1.1rem;margin:0;text-wrap:balance;color:var(--ink);font-weight:900;}
@@ -1636,6 +1636,14 @@
       activateInfoSection(chip.dataset.target);
     });
   });
+
+  /* ================= STICKY FILTER OFFSET ================= */
+  var headerEl = document.querySelector("header.top");
+  if(window.ResizeObserver){
+    new ResizeObserver(function(){
+      document.documentElement.style.setProperty("--header-h", headerEl.offsetHeight + "px");
+    }).observe(headerEl);
+  }
 
   /* ================= LANG TOGGLE ================= */
   var langBtn = document.getElementById("langBtn");
