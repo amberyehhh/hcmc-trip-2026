@@ -441,14 +441,19 @@
     <div class="info-section" id="info-stay">
       <div class="info-card">
         <h3 id="stayTitle">住宿</h3>
-        <p id="stayP1">整趟旅程住在親戚家,沒有另外訂飯店。</p>
-        <p><span id="addressLabel">地址：</span><span class="fill-in" id="addressFillIn">（請自行填入親戚家地址，方便跟司機/計程車說）</span></p>
+        <p id="stayP1">整趟旅程住在親戚家，沒有另外訂飯店。</p>
+        <p><span id="addressLabel">地址：</span><span id="addressFillIn">不公開於網站</span></p>
       </div>
       <div class="info-card">
-        <h3 id="usefulInfoTitle">實用資訊</h3>
-        <p><b id="visaLabel">簽證</b><span id="visaText">：台灣護照無免簽,需事先申請電子簽證(e-Visa)，evisa.gov.vn</span></p>
-        <p><b id="voltageLabel">電壓</b><span id="voltageText">：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意</span></p>
-        <p><b id="emergencyLabel">緊急聯絡</b><span id="emergencyText">：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用</span></p>
+        <h3 id="usefulInfoTitle">重點筆記</h3>
+        <p><b id="visaLabel">入境文件</b><span id="visaText">：已持有越南五年免簽證明，出發前確認一下護照效期就好</span></p>
+        <p><b id="voltageLabel">電力</b><span id="voltageText">：220V／50Hz，iPhone、MacBook Air、Fujifilm X-T30 II 原廠充電器都能直接用，帶顆萬國轉接頭就好</span></p>
+        <p><b id="transportLabel">市內交通</b><span id="transportText">：全程 Grab 叫車，方便又不用比價</span></p>
+        <p><b id="currencyLabel">貨幣</b><span id="currencyText">：越南盾為主，小吃、市場記得備一些現金</span></p>
+        <p><b id="networkLabel">網路</b><span id="networkText">：建議用 eSIM，導航、叫車、聯絡都方便</span></p>
+        <p><b id="weatherLabel">天氣</b><span id="weatherText">：8月是雨季，午後常有陣雨，帶把折疊傘</span></p>
+        <p><b id="timezoneLabel">時差</b><span id="timezoneText">：比台灣慢一小時</span></p>
+        <p><b id="emergencyLabel">緊急聯絡</b><span id="emergencyText">：重要聯絡資訊都存在手機裡了</span></p>
       </div>
     </div>
 
@@ -648,8 +653,8 @@
   /* ================= PACKING ================= */
   var PACKING = [
     { group:"證件與金錢", groupVi:"Giấy tờ và tiền bạc",
-      items:["護照正本＋e-Visa 證明（紙本＋電子備份）","信用卡","少量美金／越南盾現金"],
-      itemsVi:["Hộ chiếu gốc + minh chứng e-Visa (bản giấy + bản điện tử)","Thẻ tín dụng","Một ít tiền mặt USD／VND"] },
+      items:["護照正本＋越南免簽證明（紙本＋電子備份）","信用卡","少量越南盾現金"],
+      itemsVi:["Hộ chiếu gốc + giấy miễn thị thực Việt Nam (bản giấy + bản điện tử)","Thẻ tín dụng","Một ít tiền mặt VND"] },
     { group:"衣物", groupVi:"Quần áo",
       items:["輕便透氣衣物（8月胡志明市 28–35°C）","雨具（雨季）","婚禮正式服裝＋鞋","防曬、遮陽帽"],
       itemsVi:["Quần áo nhẹ thoáng khí (tháng 8 ở TP.HCM 28–35°C)","Đồ đi mưa (mùa mưa)","Trang phục dự tiệc cưới + giày","Kem chống nắng, nón che nắng"] },
@@ -752,14 +757,19 @@
       flightInfo1:"長榮航空 BR381・經濟艙・A330-300・含餐點",
       flightInfo2:"長榮航空 BR382・經濟艙・A330-300・含餐點",
       navAirportLabel:"導航到新山一機場",
-      stayTitle:"住宿", stayP1:"整趟旅程住在親戚家,沒有另外訂飯店。",
-      addressLabel:"地址：", addressFillIn:"（請自行填入親戚家地址，方便跟司機/計程車說）",
-      usefulInfoTitle:"實用資訊",
-      visaLabel:"簽證", visaText:"：已辦好電子簽證（藍色簽證本）",
-      voltageLabel:"電壓", voltageText:"：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意",
-      emergencyLabel:"緊急聯絡", emergencyText:"：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用",
+      stayTitle:"住宿", stayP1:"整趟旅程住在親戚家，沒有另外訂飯店。",
+      addressLabel:"地址：", addressFillIn:"不公開於網站",
+      usefulInfoTitle:"重點筆記",
+      visaLabel:"入境文件", visaText:"：已持有越南五年免簽證明，出發前確認一下護照效期就好",
+      voltageLabel:"電力", voltageText:"：220V／50Hz，iPhone、MacBook Air、Fujifilm X-T30 II 原廠充電器都能直接用，帶顆萬國轉接頭就好",
+      transportLabel:"市內交通", transportText:"：全程 Grab 叫車，方便又不用比價",
+      currencyLabel:"貨幣", currencyText:"：越南盾為主，小吃、市場記得備一些現金",
+      networkLabel:"網路", networkText:"：建議用 eSIM，導航、叫車、聯絡都方便",
+      weatherLabel:"天氣", weatherText:"：8月是雨季，午後常有陣雨，帶把折疊傘",
+      timezoneLabel:"時差", timezoneText:"：比台灣慢一小時",
+      emergencyLabel:"緊急聯絡", emergencyText:"：重要聯絡資訊都存在手機裡了",
       packed:"已打包", packLabel:"行李清單", shoppingLabel:"代購清單", infoNavShopping:"代購清單",
-      navDays:"每日行程", navList:"踩點清單", navMap:"地圖", navInfo:"資訊",
+      navDays:"每日行程", navList:"踩點清單", navMap:"地圖", navInfo:"筆記",
       infoNavTransport:"交通", infoNavStay:"住宿", infoNavPack:"行李",
       copyText:"複製地點清單文字", exportBtn:"匯出清單", places:" 處",
       searchPlaceholder:"搜尋地點、類型或筆記…", emptyMsg:"沒有符合的地點，換個關鍵字試試。",
@@ -790,13 +800,18 @@
       flightInfo2:"EVA Air BR382・Hạng phổ thông・A330-300・Có suất ăn",
       navAirportLabel:"Chỉ đường đến sân bay Tân Sơn Nhất",
       stayTitle:"Chỗ ở", stayP1:"Cả chuyến đi ở nhà người thân, không đặt khách sạn.",
-      addressLabel:"Địa chỉ：", addressFillIn:"（Vui lòng tự điền địa chỉ nhà người thân để tiện nói với tài xế/taxi）",
-      usefulInfoTitle:"Thông tin hữu ích",
-      visaLabel:"Visa", visaText:"：Đã xin xong e-Visa (sổ visa màu xanh)",
-      voltageLabel:"Điện áp", voltageText:"：Việt Nam chủ yếu dùng ổ A/C 220V, sạc thường tương thích đa điện áp, thiết bị lớn cần lưu ý",
-      emergencyLabel:"Liên hệ khẩn cấp", emergencyText:"：Văn phòng Kinh tế Văn hóa Đài Bắc tại TP.HCM, nên tra số điện thoại mới nhất trước khi đi",
+      addressLabel:"Địa chỉ：", addressFillIn:"Không công khai trên trang web",
+      usefulInfoTitle:"Ghi chú nhanh",
+      visaLabel:"Giấy tờ nhập cảnh", visaText:"：Đã có giấy miễn thị thực 5 năm cho Việt Nam, chỉ cần kiểm tra hạn hộ chiếu trước khi đi",
+      voltageLabel:"Điện", voltageText:"：220V／50Hz, sạc gốc của iPhone, MacBook Air, Fujifilm X-T30 II đều dùng được luôn, mang theo cục chuyển đổi đa năng là đủ",
+      transportLabel:"Di chuyển trong thành phố", transportText:"：Dùng Grab là chính, tiện mà khỏi so giá",
+      currencyLabel:"Tiền tệ", currencyText:"：Chủ yếu dùng VND, nên mang ít tiền mặt khi ăn vặt, đi chợ",
+      networkLabel:"Mạng", networkText:"：Nên dùng eSIM, tiện cho việc chỉ đường, gọi xe, liên lạc",
+      weatherLabel:"Thời tiết", weatherText:"：Tháng 8 là mùa mưa, chiều hay có mưa rào, mang theo ô gấp",
+      timezoneLabel:"Múi giờ", timezoneText:"：Chậm hơn Đài Loan 1 tiếng",
+      emergencyLabel:"Liên hệ khẩn cấp", emergencyText:"：Các số quan trọng đã lưu sẵn trong điện thoại",
       packed:"đã đóng gói", packLabel:"Danh sách hành lý", shoppingLabel:"Nhờ mua hộ", infoNavShopping:"Nhờ mua hộ",
-      navDays:"Lịch trình", navList:"Danh sách", navMap:"Bản đồ", navInfo:"Thông tin",
+      navDays:"Lịch trình", navList:"Danh sách", navMap:"Bản đồ", navInfo:"Ghi chú",
       infoNavTransport:"Di chuyển", infoNavStay:"Chỗ ở", infoNavPack:"Hành lý",
       copyText:"Sao chép danh sách địa điểm", exportBtn:"Xuất danh sách", places:" địa điểm",
       searchPlaceholder:"Tìm địa điểm, loại hình hoặc ghi chú…", emptyMsg:"Không tìm thấy địa điểm phù hợp, thử từ khóa khác.",
@@ -1757,6 +1772,16 @@
     document.getElementById("visaText").textContent = t("visaText");
     document.getElementById("voltageLabel").textContent = t("voltageLabel");
     document.getElementById("voltageText").textContent = t("voltageText");
+    document.getElementById("transportLabel").textContent = t("transportLabel");
+    document.getElementById("transportText").textContent = t("transportText");
+    document.getElementById("currencyLabel").textContent = t("currencyLabel");
+    document.getElementById("currencyText").textContent = t("currencyText");
+    document.getElementById("networkLabel").textContent = t("networkLabel");
+    document.getElementById("networkText").textContent = t("networkText");
+    document.getElementById("weatherLabel").textContent = t("weatherLabel");
+    document.getElementById("weatherText").textContent = t("weatherText");
+    document.getElementById("timezoneLabel").textContent = t("timezoneLabel");
+    document.getElementById("timezoneText").textContent = t("timezoneText");
     document.getElementById("emergencyLabel").textContent = t("emergencyLabel");
     document.getElementById("emergencyText").textContent = t("emergencyText");
     document.getElementById("packLabel").textContent = t("packLabel");
