@@ -276,6 +276,26 @@
   .legend-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
   .map-note{font-size:0.74rem;color:var(--done-ink);margin-top:14px;line-height:1.6;}
 
+  /* ---- 每日行程：可展開的子清單（例如鞋款） ---- */
+  .shoe-toggle{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:0.76rem;font-weight:700;color:var(--red);background:var(--accent-soft);border:none;border-radius:8px;padding:7px 12px;cursor:pointer;}
+  .shoe-toggle svg{width:11px;height:11px;transition:transform .2s ease;}
+  .shoe-toggle.open svg{transform:rotate(180deg);}
+  .titem.done .shoe-toggle{background:rgba(255,255,255,0.25);color:#fff;}
+  .shoe-list{display:flex;flex-direction:column;}
+  .shoe-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line-soft);}
+  .shoe-row:first-child{border-top:none;}
+  .shoe-photo{width:48px;height:48px;border-radius:12px;object-fit:cover;flex:0 0 auto;background:var(--paper-sunk);cursor:zoom-in;}
+  .shoe-info{flex:1;min-width:0;text-decoration:none;color:inherit;display:block;}
+  .shoe-name{font-size:0.86rem;font-weight:700;}
+  .shoe-note{font-size:0.76rem;color:var(--done-ink);margin-top:2px;}
+  .titem.done .shoe-note{color:rgba(255,255,255,0.75);}
+
+  /* ---- 圖片放大檢視 ---- */
+  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:60;padding:28px;}
+  .lightbox.show{display:flex;}
+  .lightbox img{max-width:100%;max-height:100%;border-radius:16px;display:block;}
+  .lightbox-close{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.15);color:#fff;border:none;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
   .toast{
     position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(8px);
     background:var(--ink);color:var(--paper);font-size:0.82rem;padding:10px 18px;border:none;border-radius:100px;
@@ -467,6 +487,11 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="關閉">✕</button>
+  <img id="lightboxImg" src="" alt="" />
+</div>
+
 <nav class="bottom">
   <button class="navbtn active" data-view="days">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
@@ -491,6 +516,21 @@
   function nav(lat, lng){ return "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng; }
   function navQ(q){ return "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(q); }
 
+  /* ================= 圖片放大檢視 ================= */
+  var lightboxEl = document.getElementById("lightbox");
+  var lightboxImgEl = document.getElementById("lightboxImg");
+  function openLightbox(src, alt){
+    lightboxImgEl.src = src;
+    lightboxImgEl.alt = alt || "";
+    lightboxEl.classList.add("show");
+  }
+  function closeLightbox(){
+    lightboxEl.classList.remove("show");
+    lightboxImgEl.src = "";
+  }
+  document.getElementById("lightboxClose").addEventListener("click", closeLightbox);
+  lightboxEl.addEventListener("click", function(e){ if(e.target === lightboxEl) closeLightbox(); });
+
   /* ================= DAYS (real itinerary, 10 days) ================= */
   var DAYS = [
     { num:1, date:"8/5（三）", dateISO:"2026-08-05", title:"抵達", titleVi:"Đến nơi", items:[
@@ -505,7 +545,14 @@
     { num:3, date:"8/7（五）", dateISO:"2026-08-07", title:"兩間大學日", titleVi:"Ngày hai trường đại học", items:[
       {time:"上午", place:"胡志明市國家大學社會科學與人文大學", placeVi:"Đại học Khoa học Xã hội và Nhân văn TP.HCM", note:"校園走走拍照", noteVi:"Dạo quanh khuôn viên, chụp ảnh", link:nav(10.7858607,106.7027086)},
       {time:"", place:"JUBIN Studio", note:"好看洋裝，離大學很近", noteVi:"Váy đầm đẹp, gần trường đại học", link:nav(10.7898032,106.6997679)},
-      {time:"", place:"NAGASHOES 鞋店", placeVi:"Cửa hàng giày NAGASHOES", note:"官網先選好，現場試穿買鞋：NAD397 夾腳拖 299k／NAD398 方頭雙帶涼鞋 280k／NAC296 蝴蝶結高跟4cm 379k／NAB96 娃娃鞋 389k／NAC334 尖頭露踝高跟7cm 389k／NAC26 尖頭低跟3cm 300k（版型偏小；官網圖多為系列合照，到店請店員核對款號）", noteVi:"Đã chọn trên web, mua trực tiếp tại cửa hàng: NAD397 dép xỏ ngón 299k／NAD398 dép quai ngang 280k／NAC296 cao gót nơ 4cm 379k／NAB96 giày búp bê 389k／NAC334 cao gót nhọn 7cm 389k／NAC26 cao gót thấp 3cm 300k (form nhỏ hơn size thường)", link:nav(10.7903766,106.6780239)},
+      {time:"", place:"NAGASHOES 鞋店", placeVi:"Cửa hàng giày NAGASHOES", note:"官網先選好，現場試穿買鞋（官網圖多為系列合照，到店請店員核對款號）", noteVi:"Đã chọn trên web, mua trực tiếp tại cửa hàng (ảnh web là ảnh chụp chung cả bộ, đến cửa hàng nhờ nhân viên đối chiếu mã)", link:nav(10.7903766,106.6780239), shoes:[
+        {name:"NAD397 夾腳拖", nameVi:"NAD397 Dép xỏ ngón", note:"299k", storeLink:"https://nagashoes.com/products/1p-nad397", photo:"https://cdn.hstatic.net/products/1000378787/z7842651094911_9eb129480e67469035068e8e88ed1287_ac02ae105f6e4e44a2747d29b02ea083_grande.jpg"},
+        {name:"NAD398 方頭雙帶涼鞋", nameVi:"NAD398 Dép quai ngang mũi vuông", note:"280k", storeLink:"https://nagashoes.com/products/1p-nad398?variant=1168748350", photo:"https://cdn.hstatic.net/products/1000378787/z7842651085848_40c0b6dc28abfc1a459dd8b3bc9a7dbe_a240febc404741999f38579bdfb384c1_grande.jpg"},
+        {name:"NAC296 蝴蝶結高跟 4cm", nameVi:"NAC296 Cao gót nơ 4cm", note:"379k", storeLink:"https://nagashoes.com/products/4p-nac296", photo:"https://cdn.hstatic.net/products/1000378787/560395604_18420402193109775_2652446038014767809_n_7134421a03ef4b948d747fa299a36cda_grande.jpg"},
+        {name:"NAB96 娃娃鞋", nameVi:"NAB96 Giày búp bê", note:"389k", storeLink:"https://nagashoes.com/products/2p-nab96", photo:"https://cdn.hstatic.net/products/1000378787/b96_dd222c0976884c29b3dcb79efdb9d9c2_grande.jpg"},
+        {name:"NAC334 尖頭露踝高跟 7cm", nameVi:"NAC334 Cao gót nhọn hở gót 7cm", note:"389k", storeLink:"https://nagashoes.com/products/7p-nac334", photo:"https://cdn.hstatic.net/products/1000378787/z6919802533495_19e890691de157ab0bcb92d7cd06dcca_e6b66c4a560d4166b6aa3acc6586c5d1_grande.jpg"},
+        {name:"NAC26 尖頭低跟 3cm（版型偏小）", nameVi:"NAC26 Cao gót nhọn thấp 3cm (form nhỏ hơn size thường)", note:"300k", storeLink:"https://nagashoes.com/products/cao-got-thap-mui-nhon-cao-3p-nac26?variant=1041192893", photo:"https://product.hstatic.net/1000378787/product/c26_ee7af9e635ae481d95495a6291fb3a28_grande.jpg"}
+      ]},
       {time:"下午", place:"孫德勝大學", placeVi:"Đại học Tôn Đức Thắng", note:"校園走走，位置較南", noteVi:"Dạo quanh khuôn viên, ở xa hơn về phía nam", link:nav(10.7319314,106.6993418)}
     ]},
     { num:4, date:"8/8（六）", dateISO:"2026-08-08", title:"美甲＋放鬆", titleVi:"Làm nail + Thư giãn", items:[
@@ -754,7 +801,7 @@
       statusFilter_all:"全部", statusFilter_favorite:"收藏", statusFilter_visited:"已去過", statusFilter_notvisited:"未去過",
       storageFull:"這台裝置的儲存空間滿了，照片沒存成功，可以刪掉幾張舊照片再試一次",
       emptyMsgQuery:"沒有符合「{q}」的地點", emptyMsgFilterOnly:"篩選條件下沒有地點", emptyMsgClear:"清除篩選",
-      mapLoadingText:"載入地圖中…"
+      mapLoadingText:"載入地圖中…", viewShoeList:"查看 {n} 款鞋＋連結"
     },
     vi:{
       pageTitle:"Chuyến đi TP. Hồ Chí Minh", dateRange:"2026/08/05 – 2026/08/15・10 ngày 9 đêm",
@@ -798,7 +845,7 @@
       statusFilter_all:"Tất cả", statusFilter_favorite:"Yêu thích", statusFilter_visited:"Đã đi", statusFilter_notvisited:"Chưa đi",
       storageFull:"Bộ nhớ thiết bị đã đầy, ảnh chưa lưu được, hãy xóa vài ảnh cũ rồi thử lại",
       emptyMsgQuery:"Không tìm thấy địa điểm phù hợp với “{q}”", emptyMsgFilterOnly:"Không có địa điểm nào khớp bộ lọc", emptyMsgClear:"Xóa bộ lọc",
-      mapLoadingText:"Đang tải bản đồ…"
+      mapLoadingText:"Đang tải bản đồ…", viewShoeList:"Xem {n} mẫu giày + link"
     }
   };
   function t(key){ return UI[lang][key]; }
@@ -922,7 +969,7 @@
 
       day.items.forEach(function(it, idx){
         var itemId = "d" + day.num + "_" + idx;
-        var row = buildTimelineRow(itemId, timeText(it), placeText(it), noteText2(it), it.link, null);
+        var row = buildTimelineRow(itemId, timeText(it), placeText(it), noteText2(it), it.link, null, it.shoes);
         tl.appendChild(row);
       });
 
@@ -953,7 +1000,7 @@
     });
   }
 
-  function buildTimelineRow(itemId, timeLabel, placeLabel, noteLabel, link, addedPlaceId){
+  function buildTimelineRow(itemId, timeLabel, placeLabel, noteLabel, link, addedPlaceId, shoes){
     var row = document.createElement("div");
     row.className = "titem" + (itemState[itemId] ? " done" : "");
 
@@ -1012,6 +1059,49 @@
       nt.className = "tnote";
       nt.textContent = noteLabel;
       card.appendChild(nt);
+    }
+    if(shoes && shoes.length){
+      var shoeToggle = document.createElement("button");
+      shoeToggle.type = "button";
+      shoeToggle.className = "shoe-toggle";
+      shoeToggle.innerHTML = '<span>' + t("viewShoeList").replace("{n}", shoes.length) + '</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"/></svg>';
+      var shoeDetail = document.createElement("div");
+      shoeDetail.className = "detail";
+      var shoeList = document.createElement("div");
+      shoeList.className = "shoe-list";
+      shoes.forEach(function(s){
+        var srow = document.createElement("div");
+        srow.className = "shoe-row";
+        var simg = document.createElement("img");
+        simg.className = "shoe-photo";
+        simg.loading = "lazy";
+        simg.src = s.photo;
+        simg.alt = s.name;
+        simg.addEventListener("click", function(){ openLightbox(s.photo, s.name); });
+        var sa = document.createElement("a");
+        sa.className = "shoe-info";
+        sa.href = s.storeLink;
+        sa.target = "_blank";
+        sa.rel = "noopener noreferrer";
+        var sn = document.createElement("div");
+        sn.className = "shoe-name";
+        sn.textContent = lang === "vi" ? (s.nameVi || s.name) : s.name;
+        var snote = document.createElement("div");
+        snote.className = "shoe-note";
+        snote.textContent = s.note || "";
+        sa.appendChild(sn);
+        sa.appendChild(snote);
+        srow.appendChild(simg);
+        srow.appendChild(sa);
+        shoeList.appendChild(srow);
+      });
+      shoeDetail.appendChild(shoeList);
+      shoeToggle.addEventListener("click", function(){
+        var isOpen = shoeDetail.classList.toggle("open");
+        shoeToggle.classList.toggle("open", isOpen);
+      });
+      card.appendChild(shoeToggle);
+      card.appendChild(shoeDetail);
     }
     if(addedPlaceId){
       var rm = document.createElement("button");
@@ -1556,6 +1646,9 @@
         img.className = "shop-photo";
         img.src = photo;
         img.alt = item.name;
+        img.loading = "lazy";
+        img.style.cursor = "zoom-in";
+        img.addEventListener("click", function(){ openLightbox(photo, item.name); });
         row.appendChild(img);
       }else{
         var placeholder = document.createElement("div");
