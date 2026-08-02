@@ -140,6 +140,8 @@
   .tplace-icon{flex:0 0 auto;color:var(--red);}
   .tplace-icon svg{width:13px;height:13px;display:block;}
   .tnote{font-size:0.9rem;color:var(--done-ink);margin-top:5px;line-height:1.5;}
+  .tlink{display:inline-block;font-size:0.78rem;font-weight:700;color:var(--red);text-decoration:underline;margin-top:6px;}
+  .titem.done .tcard-row .tlink{color:#fff;}
   .tremove{
     display:inline-flex;align-items:center;justify-content:center;margin-top:8px;
     width:30px;height:30px;border-radius:50%;background:var(--paper-raised);color:var(--done-ink);
@@ -536,11 +538,12 @@
       {time:"下午", place:"孫德勝大學", placeVi:"Đại học Tôn Đức Thắng", note:"校園走走，位置較南", noteVi:"Dạo quanh khuôn viên, ở xa hơn về phía nam", link:nav(10.7319314,106.6993418)}
     ]},
     { num:4, date:"8/8（六）", dateISO:"2026-08-08", title:"美甲＋放鬆", titleVi:"Làm nail + Thư giãn", items:[
-      {time:"17:00", place:"Lan Nail Nè", note:"美甲店，496/8 Tỉnh Lộ 10, P Bình Trị Đông, Q Bình Tân", noteVi:"Tiệm nail, 496/8 Tỉnh Lộ 10, P Bình Trị Đông, Q Bình Tân", link:navQ("496/8 Tỉnh Lộ 10, Phường Bình Trị Đông, Quận Bình Tân, Ho Chi Minh City")},
+      {time:"17:00", place:"Lan Nail Nè", note:"美甲店，496/8 Tỉnh Lộ 10, P Bình Trị Đông, Q Bình Tân", noteVi:"Tiệm nail, 496/8 Tỉnh Lộ 10, P Bình Trị Đông, Q Bình Tân", link:navQ("496/8 Tỉnh Lộ 10, Phường Bình Trị Đông, Quận Bình Tân, Ho Chi Minh City"), fb:"https://www.facebook.com/profile.php?id=61592256411489"},
       {time:"下午", place:"Beanthere Cafe – Hồ Hảo Hớn", note:"老洋樓咖啡廳，放鬆", noteVi:"Quán cà phê biệt thự cổ, thư giãn", link:nav(10.7620124,106.6923935)},
       {time:"晚上", place:"早點回家休息", placeVi:"Về nhà nghỉ sớm", note:"明天婚禮，準備服裝", noteVi:"Ngày mai đám cưới, chuẩn bị trang phục", link:null}
     ]},
     { num:5, date:"8/9（日）", dateISO:"2026-08-09", title:"妹妹婚禮", titleVi:"Đám cưới em gái", wedding:true, items:[
+      {time:"07:00", place:"在外婆家化妝", placeVi:"Trang điểm tại nhà ngoại", note:"化妝師：Hương Giang Nguyễn", noteVi:"Chuyên viên trang điểm: Hương Giang Nguyễn", link:null, fb:"https://www.facebook.com/nguyen.thi.huong.giang.550738"},
       {time:"全天", place:"婚禮相關行程", placeVi:"Các hoạt động đám cưới", note:"依實際流程調整", noteVi:"Điều chỉnh theo thực tế", link:null}
     ]},
     { num:6, date:"8/10（一）", dateISO:"2026-08-10", title:"Bình Thạnh + Phú Nhuận／Đặng Tất", items:[
@@ -933,7 +936,7 @@
 
       day.items.forEach(function(it, idx){
         var itemId = "d" + day.num + "_" + idx;
-        var row = buildTimelineRow(itemId, timeText(it), placeText(it), noteText2(it), it.link, null, it.shoes);
+        var row = buildTimelineRow(itemId, timeText(it), placeText(it), noteText2(it), it.link, null, it.shoes, it.fb ? {label:"Facebook", url:it.fb} : null);
         tl.appendChild(row);
       });
 
@@ -964,7 +967,7 @@
     });
   }
 
-  function buildTimelineRow(itemId, timeLabel, placeLabel, noteLabel, link, addedPlaceId, shoes){
+  function buildTimelineRow(itemId, timeLabel, placeLabel, noteLabel, link, addedPlaceId, shoes, extraLink){
     var row = document.createElement("div");
     row.className = "titem" + (itemState[itemId] ? " done" : "");
 
@@ -1023,6 +1026,15 @@
       nt.className = "tnote";
       nt.textContent = noteLabel;
       card.appendChild(nt);
+    }
+    if(extraLink){
+      var el = document.createElement("a");
+      el.className = "tlink";
+      el.href = extraLink.url;
+      el.target = "_blank";
+      el.rel = "noopener noreferrer";
+      el.textContent = extraLink.label;
+      card.appendChild(el);
     }
     if(shoes && shoes.length){
       var shoeToggle = document.createElement("button");
