@@ -408,7 +408,6 @@
       <button class="chip" data-target="info-transport" id="infoNavTransport">交通</button>
       <button class="chip" data-target="info-stay" id="infoNavStay">住宿</button>
       <button class="chip" data-target="info-pack" id="infoNavPack">行李</button>
-      <button class="chip" data-target="info-budget" id="infoNavBudget">預算</button>
       <button class="chip" data-target="info-shopping" id="infoNavShopping">代購清單</button>
     </div>
 
@@ -435,11 +434,6 @@
           <span id="navAirportLabel">導航到新山一機場</span>
         </a>
       </div>
-      <div class="section-h" id="cityTransportLabel">市區交通</div>
-      <div class="note-card" id="cityTransportNote">
-        這趟主要靠 <b>舅舅開車</b> 或 <b>舅媽騎車</b> 接送,沒有另外抓大眾運輸或包車費用。<br>
-        每天出發前記得跟舅舅／舅媽對一下當天路線,尖峰時段(約 7–9 點、17–19 點)車流較多,抓寬鬆一點的時間。
-      </div>
     </div>
 
     <div class="info-section" id="info-stay">
@@ -451,8 +445,6 @@
       <div class="info-card">
         <h3 id="usefulInfoTitle">實用資訊</h3>
         <p><b id="visaLabel">簽證</b><span id="visaText">：台灣護照無免簽,需事先申請電子簽證(e-Visa)，evisa.gov.vn</span></p>
-        <p><b id="wifiLabel">網路</b><span id="wifiText">：機場或當地購買 eSIM／SIM 卡，或開通台灣電信漫遊</span></p>
-        <p><b id="exchangeLabel">換匯</b><span id="exchangeText">：機場匯率較差，市區金飾店匯率通常較好，也可提款卡直接領越南盾</span></p>
         <p><b id="voltageLabel">電壓</b><span id="voltageText">：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意</span></p>
         <p><b id="emergencyLabel">緊急聯絡</b><span id="emergencyText">：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用</span></p>
       </div>
@@ -462,18 +454,6 @@
       <div class="section-h" id="packLabel">行李清單</div>
       <div class="pack-progress" id="packProgress">0 / 0</div>
       <div id="packContainer"></div>
-    </div>
-
-    <div class="info-section" id="info-budget">
-      <div class="section-h" id="budgetLabel">預算</div>
-      <table class="budget-table">
-        <thead><tr><th id="budgetColItem">項目</th><th id="budgetColEst">估計（VND）</th></tr></thead>
-        <tbody id="budgetBody"></tbody>
-        <tfoot><tr class="budget-total"><td id="budgetTotalLabel">總計（不含禮金）</td><td id="budgetTotal"></td></tr></tfoot>
-      </table>
-      <div class="note-card" id="budgetNote">
-        沒有設定預算上限，以上金額僅供抓花費節奏參考。婚禮禮金依習俗另計，機票已購買不列入。
-      </div>
     </div>
 
     <div class="info-section" id="info-shopping">
@@ -705,12 +685,6 @@
   };
 
   /* ================= BUDGET ================= */
-  var BUDGET = [
-    { item:"每日餐飲＋咖啡＋購物（9天）", itemVi:"Ăn uống + cà phê + mua sắm mỗi ngày (9 ngày)", est:"3,500,000 – 6,500,000" },
-    { item:"婚禮禮金", itemVi:"Tiền mừng cưới", est:"依習俗，另計", estVi:"Theo phong tục, tính riêng" },
-    { item:"eSIM／保險等雜支", itemVi:"eSIM／bảo hiểm và chi phí lặt vặt khác", est:"500,000 – 1,000,000" }
-  ];
-
   /* ================= I18N ================= */
   var LANG_KEY = "hcmc-trip-lang";
   var lang = localStorage.getItem(LANG_KEY) || "zh";
@@ -771,22 +745,15 @@
       flightInfo1:"長榮航空 BR381・經濟艙・A330-300・含餐點",
       flightInfo2:"長榮航空 BR382・經濟艙・A330-300・含餐點",
       navAirportLabel:"導航到新山一機場",
-      cityTransportLabel:"市區交通",
-      cityTransportNote:"這趟主要靠 <b>舅舅開車</b> 或 <b>舅媽騎車</b> 接送,沒有另外抓大眾運輸或包車費用。<br>每天出發前記得跟舅舅／舅媽對一下當天路線,尖峰時段(約 7–9 點、17–19 點)車流較多,抓寬鬆一點的時間。",
       stayTitle:"住宿", stayP1:"整趟旅程住在親戚家,沒有另外訂飯店。",
       addressLabel:"地址：", addressFillIn:"（請自行填入親戚家地址，方便跟司機/計程車說）",
       usefulInfoTitle:"實用資訊",
       visaLabel:"簽證", visaText:"：已辦好電子簽證（藍色簽證本）",
-      wifiLabel:"網路", wifiText:"：媽媽會處理",
-      exchangeLabel:"換匯", exchangeText:"：機場匯率較差，市區金飾店匯率通常較好，也可提款卡直接領越南盾",
       voltageLabel:"電壓", voltageText:"：越南多為 A/C 型 220V，充電器多為通用電壓，大型電器需留意",
       emergencyLabel:"緊急聯絡", emergencyText:"：駐胡志明市台北經濟文化辦事處，出發前查好最新電話備用",
-      packed:"已打包", packLabel:"行李清單", budgetLabel:"預算", shoppingLabel:"代購清單", infoNavShopping:"代購清單",
-      budgetColItem:"項目", budgetColEst:"估計（VND）", budgetTotalLabel:"總計（不含禮金）",
-      budgetNote:"沒有設定預算上限，以上金額僅供抓花費節奏參考。婚禮禮金依習俗另計，機票已購買不列入。",
-      budgetTotalVal:"約 4,000,000 – 7,500,000",
+      packed:"已打包", packLabel:"行李清單", shoppingLabel:"代購清單", infoNavShopping:"代購清單",
       navDays:"每日行程", navList:"踩點清單", navMap:"地圖", navInfo:"資訊",
-      infoNavTransport:"交通", infoNavStay:"住宿", infoNavPack:"行李", infoNavBudget:"預算",
+      infoNavTransport:"交通", infoNavStay:"住宿", infoNavPack:"行李",
       copyText:"複製地點清單文字", exportBtn:"匯出清單", places:" 處",
       searchPlaceholder:"搜尋地點、類型或筆記…", emptyMsg:"沒有符合的地點，換個關鍵字試試。",
       mapOfflineNote:"地圖需要網路連線讀取街道圖磚（OpenStreetMap），離線時會是空白",
@@ -815,22 +782,15 @@
       flightInfo1:"EVA Air BR381・Hạng phổ thông・A330-300・Có suất ăn",
       flightInfo2:"EVA Air BR382・Hạng phổ thông・A330-300・Có suất ăn",
       navAirportLabel:"Chỉ đường đến sân bay Tân Sơn Nhất",
-      cityTransportLabel:"Di chuyển trong thành phố",
-      cityTransportNote:"Chuyến này chủ yếu nhờ <b>cậu lái xe</b> hoặc <b>mợ chở xe máy</b>, không tính chi phí xe công cộng hay thuê xe riêng.<br>Trước khi đi mỗi ngày nhớ trao đổi lộ trình với cậu／mợ, giờ cao điểm (khoảng 7–9h, 17–19h) đông xe hơn, nên chừa thêm thời gian.",
       stayTitle:"Chỗ ở", stayP1:"Cả chuyến đi ở nhà người thân, không đặt khách sạn.",
       addressLabel:"Địa chỉ：", addressFillIn:"（Vui lòng tự điền địa chỉ nhà người thân để tiện nói với tài xế/taxi）",
       usefulInfoTitle:"Thông tin hữu ích",
       visaLabel:"Visa", visaText:"：Đã xin xong e-Visa (sổ visa màu xanh)",
-      wifiLabel:"Mạng", wifiText:"：Mẹ sẽ lo việc này",
-      exchangeLabel:"Đổi tiền", exchangeText:"：Tỷ giá ở sân bay kém hơn, tiệm vàng trong thành phố thường tốt hơn, cũng có thể rút VND bằng thẻ ATM",
       voltageLabel:"Điện áp", voltageText:"：Việt Nam chủ yếu dùng ổ A/C 220V, sạc thường tương thích đa điện áp, thiết bị lớn cần lưu ý",
       emergencyLabel:"Liên hệ khẩn cấp", emergencyText:"：Văn phòng Kinh tế Văn hóa Đài Bắc tại TP.HCM, nên tra số điện thoại mới nhất trước khi đi",
-      packed:"đã đóng gói", packLabel:"Danh sách hành lý", budgetLabel:"Ngân sách", shoppingLabel:"Nhờ mua hộ", infoNavShopping:"Nhờ mua hộ",
-      budgetColItem:"Hạng mục", budgetColEst:"Ước tính (VND)", budgetTotalLabel:"Tổng cộng (chưa gồm tiền mừng cưới)",
-      budgetNote:"Không đặt giới hạn ngân sách, số tiền trên chỉ để tham khảo nhịp độ chi tiêu. Tiền mừng cưới tính riêng theo phong tục, vé máy bay đã mua không tính vào đây.",
-      budgetTotalVal:"Khoảng 4.000.000 – 7.500.000",
+      packed:"đã đóng gói", packLabel:"Danh sách hành lý", shoppingLabel:"Nhờ mua hộ", infoNavShopping:"Nhờ mua hộ",
       navDays:"Lịch trình", navList:"Danh sách", navMap:"Bản đồ", navInfo:"Thông tin",
-      infoNavTransport:"Di chuyển", infoNavStay:"Chỗ ở", infoNavPack:"Hành lý", infoNavBudget:"Ngân sách",
+      infoNavTransport:"Di chuyển", infoNavStay:"Chỗ ở", infoNavPack:"Hành lý",
       copyText:"Sao chép danh sách địa điểm", exportBtn:"Xuất danh sách", places:" địa điểm",
       searchPlaceholder:"Tìm địa điểm, loại hình hoặc ghi chú…", emptyMsg:"Không tìm thấy địa điểm phù hợp, thử từ khóa khác.",
       mapOfflineNote:"Bản đồ cần kết nối mạng để tải (OpenStreetMap), sẽ trống khi offline",
@@ -1690,19 +1650,6 @@
   }
 
   /* ================= BUDGET RENDER ================= */
-  var budgetBody = document.getElementById("budgetBody");
-  function renderBudget(){
-    budgetBody.innerHTML = "";
-    BUDGET.forEach(function(row){
-      var itemLabel = lang === "vi" ? row.itemVi : row.item;
-      var estLabel = lang === "vi" ? (row.estVi || row.est) : row.est;
-      var tr = document.createElement("tr");
-      tr.innerHTML = "<td>" + itemLabel + "</td><td>" + estLabel + "</td>";
-      budgetBody.appendChild(tr);
-    });
-    document.getElementById("budgetTotal").textContent = t("budgetTotalVal");
-  }
-
   /* ================= THEME REPAINT ================= */
   if(window.matchMedia){
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(){
@@ -1785,8 +1732,6 @@
     document.getElementById("flightInfo1").textContent = t("flightInfo1");
     document.getElementById("flightInfo2").textContent = t("flightInfo2");
     document.getElementById("navAirportLabel").textContent = t("navAirportLabel");
-    document.getElementById("cityTransportLabel").textContent = t("cityTransportLabel");
-    document.getElementById("cityTransportNote").innerHTML = t("cityTransportNote");
     document.getElementById("stayTitle").textContent = t("stayTitle");
     document.getElementById("stayP1").textContent = t("stayP1");
     document.getElementById("addressLabel").textContent = t("addressLabel");
@@ -1794,22 +1739,13 @@
     document.getElementById("usefulInfoTitle").textContent = t("usefulInfoTitle");
     document.getElementById("visaLabel").textContent = t("visaLabel");
     document.getElementById("visaText").textContent = t("visaText");
-    document.getElementById("wifiLabel").textContent = t("wifiLabel");
-    document.getElementById("wifiText").textContent = t("wifiText");
-    document.getElementById("exchangeLabel").textContent = t("exchangeLabel");
-    document.getElementById("exchangeText").textContent = t("exchangeText");
     document.getElementById("voltageLabel").textContent = t("voltageLabel");
     document.getElementById("voltageText").textContent = t("voltageText");
     document.getElementById("emergencyLabel").textContent = t("emergencyLabel");
     document.getElementById("emergencyText").textContent = t("emergencyText");
     document.getElementById("packLabel").textContent = t("packLabel");
-    document.getElementById("budgetLabel").textContent = t("budgetLabel");
     document.getElementById("shoppingLabel").textContent = t("shoppingLabel");
     document.getElementById("infoNavShopping").textContent = t("infoNavShopping");
-    document.getElementById("budgetColItem").textContent = t("budgetColItem");
-    document.getElementById("budgetColEst").textContent = t("budgetColEst");
-    document.getElementById("budgetTotalLabel").textContent = t("budgetTotalLabel");
-    document.getElementById("budgetNote").textContent = t("budgetNote");
     document.getElementById("navDays").textContent = t("navDays");
     document.getElementById("navList").textContent = t("navList");
     document.getElementById("navMap").textContent = t("navMap");
@@ -1817,7 +1753,6 @@
     document.getElementById("infoNavTransport").textContent = t("infoNavTransport");
     document.getElementById("infoNavStay").textContent = t("infoNavStay");
     document.getElementById("infoNavPack").textContent = t("infoNavPack");
-    document.getElementById("infoNavBudget").textContent = t("infoNavBudget");
     document.getElementById("search").placeholder = t("searchPlaceholder");
     document.getElementById("emptyMsgText").textContent = t("emptyMsg");
     document.getElementById("emptyMsgClear").textContent = t("emptyMsgClear");
@@ -1838,7 +1773,6 @@
     renderList();
     renderPacking();
     renderShopping();
-    renderBudget();
     if(leafletMap){
       mapPlaces.forEach(function(p){ if(p.marker) p.marker.setPopupContent(popupHtml(p)); });
       renderMapChrome();
@@ -1861,7 +1795,6 @@
   renderList();
   renderPacking();
   renderShopping();
-  renderBudget();
 
   updateJumpTodayVisibility("days");
 
