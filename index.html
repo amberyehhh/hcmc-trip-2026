@@ -2,9 +2,12 @@
 <title>胡志明市之旅 8/5–8/15</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <meta name="robots" content="noindex, nofollow">
 <style>
   :root{
@@ -76,7 +79,16 @@
   .daychip.today .dot{opacity:1;}
   .daychip.active .n,.daychip.active .d{color:var(--red);}
   .daychip:active{opacity:0.55;}
-  .daychips{-webkit-mask-image:linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);mask-image:linear-gradient(to right, #000 calc(100% - 28px), transparent 100%);}
+  .daychips-wrap{position:relative;}
+  .daychips-wrap .daychips{-webkit-mask-image:linear-gradient(to right, #000 calc(100% - 36px), transparent 100%);mask-image:linear-gradient(to right, #000 calc(100% - 36px), transparent 100%);}
+  .daychips-more{
+    position:absolute;right:-2px;bottom:14px;width:26px;height:26px;border-radius:50%;
+    background:var(--paper-raised);color:var(--red);box-shadow:0 1px 6px var(--shadow);
+    display:flex;align-items:center;justify-content:center;pointer-events:none;
+    opacity:0;transition:opacity .2s ease;
+  }
+  .daychips-more.show{opacity:1;}
+  .daychips-more svg{width:14px;height:14px;}
 
   /* ---- header：依分頁精簡＋捲動收合 ---- */
   header.top{transition:padding .25s ease;}
@@ -110,7 +122,9 @@
   .day-num{font-size:1.7rem;font-weight:700;letter-spacing:-0.015em;}
   .day-date{font-size:0.76rem;color:var(--done-ink);}
   .day-badge{margin-left:auto;font-size:0.66rem;letter-spacing:0.02em;padding:4px 11px;border-radius:8px;background:var(--accent-soft);color:var(--red);white-space:nowrap;font-weight:700;}
-  .day-card.today .day-badge{background:var(--red);color:#fff;}
+  .day-badge.work{background:var(--paper-sunk);color:var(--done-ink);}
+  .day-badge + .day-badge.work{margin-left:8px;}
+  .day-card.today .day-badge:not(.work){background:var(--red);color:#fff;}
   .day-progress{font-size:0.7rem;color:var(--done-ink);white-space:nowrap;font-weight:700;}
   .day-title{font-size:1.55rem;font-weight:700;color:var(--ink);padding:14px 20px 0;line-height:1.3;letter-spacing:0.01em;}
 
@@ -167,6 +181,7 @@
   .info-card h3{font-weight:900;margin:0 0 6px;font-size:1.05rem;color:var(--red);}
   .info-card p{font-size:0.84rem;color:var(--done-ink);margin:4px 0;line-height:1.6;}
   .fill-in{border-bottom:2px dashed var(--red);color:var(--red);}
+  .backup-actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
   .pack-group{margin-bottom:18px;}
   .pack-group h3{font-weight:900;font-size:1rem;margin:0 0 8px;color:var(--red);}
   .pack-item{display:flex;align-items:center;gap:10px;padding:10px 4px;border-top:1px solid var(--line-soft);}
@@ -298,6 +313,15 @@
   .lightbox img{max-width:100%;max-height:100%;border-radius:16px;display:block;}
   .lightbox-close{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.15);color:#fff;border:none;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 
+  .note-sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:flex-end;justify-content:center;z-index:60;}
+  .note-sheet-backdrop.show{display:flex;}
+  .note-sheet{width:100%;max-width:520px;max-height:70vh;overflow:auto;background:var(--paper-raised);border-radius:20px 20px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));}
+  .note-sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:12px;}
+  .note-sheet-head span{font-weight:800;font-size:1rem;color:var(--ink);}
+  .note-sheet-head button{width:32px;height:32px;border-radius:50%;border:none;background:var(--paper-sunk);color:var(--ink);font-size:0.9rem;cursor:pointer;flex:0 0 auto;}
+  .note-sheet .stars{display:flex;margin:0 -9px 8px -9px;}
+  .note-sheet .notearea{min-height:96px;}
+
   .toast{
     position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(8px);
     background:var(--ink);color:var(--paper);font-size:0.82rem;padding:10px 18px;border:none;border-radius:100px;
@@ -361,7 +385,12 @@
   </div>
   <h1 id="pageTitle">胡志明市之旅</h1>
   <div class="daterange" id="dateRange">2026/08/05 – 2026/08/15・10 天 9 夜</div>
-  <div class="daychips" id="dayChips"></div>
+  <div class="daychips-wrap">
+    <div class="daychips" id="dayChips"></div>
+    <span class="daychips-more" id="dayChipsMore" aria-hidden="true">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4l6 6-6 6"/></svg>
+    </span>
+  </div>
 </header>
 
 <div class="wrap">
@@ -452,8 +481,17 @@
         <p><b id="currencyLabel">貨幣</b><span id="currencyText">：越南盾為主，小吃、市場記得備一些現金</span></p>
         <p><b id="networkLabel">網路</b><span id="networkText">：建議用 eSIM，導航、叫車、聯絡都方便</span></p>
         <p><b id="weatherLabel">天氣</b><span id="weatherText">：8月是雨季，午後常有陣雨，帶把折疊傘</span></p>
-        <p><b id="timezoneLabel">時差</b><span id="timezoneText">：比台灣慢一小時</span></p>
+        <p><b id="timezoneLabel">時差</b><span id="timezoneText">：比台灣慢一小時，遠距上班時間對應當地 7:30–17:00</span></p>
         <p><b id="emergencyLabel">緊急聯絡</b><span id="emergencyText">：重要聯絡資訊都存在手機裡了</span></p>
+      </div>
+      <div class="info-card">
+        <h3 id="backupTitle">資料備份</h3>
+        <p id="backupNote">已去過、收藏、筆記、評分、行李勾選都只存在這台裝置的瀏覽器裡，換裝置或清瀏覽器資料會全部消失，建議偶爾匯出備份一份。</p>
+        <div class="backup-actions">
+          <button type="button" class="ghostbtn" id="backupExportBtn">匯出備份</button>
+          <button type="button" class="ghostbtn" id="backupImportBtn">匯入備份</button>
+          <input type="file" id="backupImportInput" accept="application/json" style="display:none;" />
+        </div>
       </div>
     </div>
 
@@ -477,6 +515,17 @@
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lightboxClose" aria-label="關閉">✕</button>
   <img id="lightboxImg" src="" alt="" />
+</div>
+
+<div class="note-sheet-backdrop" id="noteSheetBackdrop">
+  <div class="note-sheet">
+    <div class="note-sheet-head">
+      <span id="noteSheetTitle"></span>
+      <button type="button" id="noteSheetClose" aria-label="關閉">✕</button>
+    </div>
+    <div class="stars" id="noteSheetStars"></div>
+    <textarea class="notearea" id="noteSheetText"></textarea>
+  </div>
 </div>
 
 <nav class="bottom">
@@ -520,19 +569,18 @@
 
   /* ================= DAYS (real itinerary, 10 days) ================= */
   var DAYS = [
-    { num:1, date:"8/5（三）", dateISO:"2026-08-05", title:"抵達", titleVi:"Đến nơi", items:[
+    { num:1, date:"8/5（三）", dateISO:"2026-08-05", title:"抵達", titleVi:"Đến nơi", work:"遠距上班", workVi:"Làm việc từ xa", items:[
       {time:"19:35", place:"桃園機場 T2 起飛", placeVi:"Khởi hành sân bay Đào Viên T2", note:"長榮 BR381", noteVi:"EVA Air BR381", link:null},
       {time:"22:00", place:"抵達新山一機場 T2", placeVi:"Đến sân bay Tân Sơn Nhất T2", note:"入境、提領行李", noteVi:"Nhập cảnh, lấy hành lý", link:nav(10.8188,106.6520)},
       {time:"22:30", place:"接機、返回親戚家", placeVi:"Đón sân bay, về nhà người thân", note:"舅舅/舅媽接機", noteVi:"Cậu/mợ đón sân bay", link:null}
     ]},
-    { num:2, date:"8/6（四）", dateISO:"2026-08-06", title:"在家遠距上班＋燙染頭髮", titleVi:"Làm việc từ xa + Uốn nhuộm tóc", items:[
+    { num:2, date:"8/6（四）", dateISO:"2026-08-06", title:"在家遠距上班＋燙染頭髮", titleVi:"Làm việc từ xa + Uốn nhuộm tóc", work:"遠距上班", workVi:"Làm việc từ xa", items:[
       {time:"上午", place:"在家遠距上班", placeVi:"Làm việc từ xa tại nhà", note:"", link:null},
       {time:"下午", place:"燙染頭髮", placeVi:"Uốn nhuộm tóc", note:"", link:null}
     ]},
-    { num:3, date:"8/7（五）", dateISO:"2026-08-07", title:"兩間大學日", titleVi:"Ngày hai trường đại học", items:[
-      {time:"上午", place:"胡志明市國家大學社會科學與人文大學", placeVi:"Đại học Khoa học Xã hội và Nhân văn TP.HCM", note:"校園走走拍照", noteVi:"Dạo quanh khuôn viên, chụp ảnh", link:nav(10.7858607,106.7027086)},
-      {time:"", place:"JUBIN Studio", note:"好看洋裝，離大學很近", noteVi:"Váy đầm đẹp, gần trường đại học", link:nav(10.7898032,106.6997679)},
-      {time:"", place:"NAGASHOES 鞋店", placeVi:"Cửa hàng giày NAGASHOES", note:"官網先選好，現場試穿買鞋（官網圖多為系列合照，到店請店員核對款號）", noteVi:"Đã chọn trên web, mua trực tiếp tại cửa hàng (ảnh web là ảnh chụp chung cả bộ, đến cửa hàng nhờ nhân viên đối chiếu mã)", link:nav(10.7903766,106.6780239), shoes:[
+    { num:3, date:"8/7（五）", dateISO:"2026-08-07", title:"兩間大學日", titleVi:"Ngày hai trường đại học", work:"遠距上班", workVi:"Làm việc từ xa", items:[
+      {time:"09:00", place:"胡志明市國家大學社會科學與人文大學", placeVi:"Đại học Khoa học Xã hội và Nhân văn TP.HCM", note:"先看看環境，之後要來上越語課（公開校園，無營業時間限制）", noteVi:"Xem trước môi trường, sau này sẽ đến học tiếng Việt ở đây (khuôn viên công cộng, không giới hạn giờ)", link:nav(10.7858607,106.7027086)},
+      {time:"10:30", place:"NAGASHOES 鞋店", placeVi:"Cửa hàng giày NAGASHOES", note:"官網先選好，現場試穿買鞋（營業 10:00–21:00）", noteVi:"Đã chọn trên web, mua trực tiếp tại cửa hàng (mở cửa 10:00–21:00)", link:nav(10.7903766,106.6780239), shoes:[
         {name:"NAD397 夾腳拖", nameVi:"NAD397 Dép xỏ ngón", note:"299k", storeLink:"https://nagashoes.com/products/1p-nad397", photo:"https://cdn.hstatic.net/products/1000378787/z7842651094911_9eb129480e67469035068e8e88ed1287_ac02ae105f6e4e44a2747d29b02ea083_grande.jpg"},
         {name:"NAD398 方頭雙帶涼鞋", nameVi:"NAD398 Dép quai ngang mũi vuông", note:"280k", storeLink:"https://nagashoes.com/products/1p-nad398?variant=1168748350", photo:"https://cdn.hstatic.net/products/1000378787/z7842651085848_40c0b6dc28abfc1a459dd8b3bc9a7dbe_a240febc404741999f38579bdfb384c1_grande.jpg"},
         {name:"NAC308 素面尖頭包鞋跟 9cm", nameVi:"NAC308 Cao gót nhọn bít mũi trơn 9cm", note:"339k", storeLink:"https://nagashoes.com/products/9p-nac308", photo:"https://product.hstatic.net/1000378787/product/z6146934261511_957c52a846bf2630f4cc19bd0e81cc66_e0e071d96a3f49989d75b33dadb4b49b_grande.jpg"},
@@ -540,48 +588,63 @@
         {name:"NAC334 尖頭露踝高跟 7cm", nameVi:"NAC334 Cao gót nhọn hở gót 7cm", note:"389k", storeLink:"https://nagashoes.com/products/7p-nac334", photo:"https://cdn.hstatic.net/products/1000378787/z6919802533495_19e890691de157ab0bcb92d7cd06dcca_e6b66c4a560d4166b6aa3acc6586c5d1_grande.jpg"},
         {name:"NAC26 尖頭低跟 3cm（版型偏小）", nameVi:"NAC26 Cao gót nhọn thấp 3cm (form nhỏ hơn size thường)", note:"300k", storeLink:"https://nagashoes.com/products/cao-got-thap-mui-nhon-cao-3p-nac26?variant=1041192893", photo:"https://product.hstatic.net/1000378787/product/c26_ee7af9e635ae481d95495a6291fb3a28_grande.jpg"}
       ]},
-      {time:"下午", place:"孫德勝大學", placeVi:"Đại học Tôn Đức Thắng", note:"校園走走，位置較南", noteVi:"Dạo quanh khuôn viên, ở xa hơn về phía nam", link:nav(10.7319314,106.6993418)}
+      {time:"12:00", place:"Star Kitchen（高島屋內）", placeVi:"Star Kitchen (trong Takashimaya)", note:"伴手禮、蛋糕禮品店（營業 09:30–21:30）", noteVi:"Cửa hàng quà tặng, bánh ngọt (mở cửa 09:30–21:30)", link:nav(10.7731747,106.7004448)},
+      {time:"12:30", place:"Hokkaido Baked Cheese Tart（高島屋內）", placeVi:"Hokkaido Baked Cheese Tart (trong Takashimaya)", note:"起司塔（營業 10:00–23:00）", noteVi:"Tart phô mai (mở cửa 10:00–23:00)", link:nav(10.7737592,106.7009779)},
+      {time:"14:00", place:"孫德勝大學", placeVi:"Đại học Tôn Đức Thắng", note:"也先看看環境，位置較南（公開校園，無營業時間限制）", noteVi:"Cũng xem trước môi trường, ở xa hơn về phía nam (khuôn viên công cộng, không giới hạn giờ)", link:nav(10.7319314,106.6993418)},
+      {time:"15:30", place:"Maztermind", note:"遊戲，只開到 18:00，跟 Tick And Pick 同一個點", noteVi:"Khu vui chơi, chỉ mở đến 18:00, cùng vị trí với Tick And Pick", link:nav(10.7709614,106.6925465)},
+      {time:"16:00", place:"Tick And Pick", note:"文創，就在 Maztermind 旁邊（營業時間未查到，建議現場確認）", noteVi:"Đồ sáng tạo, ngay cạnh Maztermind (chưa xác nhận giờ mở cửa, nên kiểm tra tại chỗ)", link:nav(10.7709614,106.6925465)},
+      {time:"16:20", place:"The 350F", note:"提拉米蘇，走路就到（營業 09:00–22:00）", noteVi:"Tiramisu, đi bộ là tới (mở cửa 09:00–22:00)", link:nav(10.7707123,106.6925886)},
+      {time:"16:50", place:"Vesta Lifestyle & Gifts", note:"Bến Thành 老城，走路就到（週五營業至 21:00）", noteVi:"Phố cổ Bến Thành, đi bộ là tới (Thứ 6 mở đến 21:00)", link:nav(10.7701036,106.6918728)},
+      {time:"18:00", place:"Morra Perfume Experience Center", note:"客製香水，可刻字送禮，這段要開車移動約 1 公里，抓 30 分鐘找車位（營業 09:00–21:00，建議先訂位）", noteVi:"Nước hoa theo yêu cầu, khắc chữ làm quà, đoạn này cần lái xe khoảng 1km, nên để 30 phút tìm chỗ đậu (mở cửa 09:00–21:00, nên đặt trước)", link:navQ("Morra Perfume Experience Center Ho Chi Minh")}
     ]},
-    { num:4, date:"8/8（六）", dateISO:"2026-08-08", title:"美甲＋放鬆", titleVi:"Làm nail + Thư giãn", items:[
-      {time:"17:00", place:"Lan Nail Nè", note:"美甲店，496/8 Tỉnh Lộ 10, P Bình Trị Đông, Q Bình Tân", noteVi:"Tiệm nail, 496/8 Tỉnh Lộ 10, P Bình Trị Đông, Q Bình Tân", link:navQ("496/8 Tỉnh Lộ 10, Phường Bình Trị Đông, Quận Bình Tân, Ho Chi Minh City"), fb:"https://www.facebook.com/profile.php?id=61592256411489"},
-      {time:"下午", place:"Beanthere Cafe – Hồ Hảo Hớn", note:"老洋樓咖啡廳，放鬆", noteVi:"Quán cà phê biệt thự cổ, thư giãn", link:nav(10.7620124,106.6923935)},
+    { num:4, date:"8/8（六）", dateISO:"2026-08-08", title:"逛街＋美甲放鬆", titleVi:"Mua sắm + Làm nail thư giãn", items:[
+      {time:"09:00", place:"Breadventure", note:"奶油法國麵包，只有週五~週日營業（營業 09:00–18:00）", noteVi:"Bánh mì Pháp bơ, chỉ mở Thứ 6 - Chủ nhật (mở cửa 09:00–18:00)", link:nav(10.803713,106.728971)},
+      {time:"10:00", place:"THE MERX I", note:"好看襯衫（營業時間未查到，建議現場確認）", noteVi:"Áo sơ mi đẹp (chưa xác nhận giờ mở cửa, nên kiểm tra tại chỗ)", link:nav(10.7782744,106.7009935)},
+      {time:"10:30", place:"GIA STUDIOS HCM", note:"簡約女裝（座標已核對無誤，營業時間未查到）", noteVi:"Thời trang nữ tối giản (đã xác nhận đúng tọa độ, chưa xác nhận giờ mở cửa)", link:nav(10.780597,106.7004583)},
+      {time:"11:00", place:"Saigon Eco Craft", note:"好看湯匙、偏貴、只收現金（營業 08:00–22:00）", noteVi:"Muỗng đẹp, hơi đắt, chỉ nhận tiền mặt (mở cửa 08:00–22:00)", link:nav(10.7743518,106.7005356)},
+      {time:"11:30", place:"em.G clothé", note:"高級簡約風格（營業 10:00–21:30）", noteVi:"Phong cách tối giản cao cấp (mở cửa 10:00–21:30)", link:nav(10.7781625,106.7010533)},
+      {time:"12:00", place:"HUONG Boutique – Union Square", note:"簡約長期主義女裝、禮服（隨商場開閉，約 10:00–21:00）", noteVi:"Thời trang nữ tối giản bền vững, váy dạ hội (theo giờ trung tâm thương mại, khoảng 10:00–21:00)", link:nav(10.7764233,106.7019916)},
+      {time:"12:30", place:"Phở Việt Nam", note:"河粉，米其林推薦（營業 06:00–隔日 03:00）", noteVi:"Phở, được Michelin đề xuất (mở cửa 06:00–03:00 hôm sau)", link:nav(10.771386,106.6961339)},
+      {time:"14:00", place:"PSYCHE SAIGON", note:"文創選物（營業 09:00–18:00，週二公休）", noteVi:"Đồ sáng tạo (mở cửa 09:00–18:00, nghỉ Thứ 3)", link:nav(10.7688211,106.6967985)},
+      {time:"15:00", place:"Beanthere Cafe – Hồ Hảo Hớn", note:"老洋樓咖啡廳，放鬆，這裡離美甲店約 9 公里，建議 16:00 前離開叫車（營業 08:00–22:00）", noteVi:"Quán cà phê biệt thự cổ, thư giãn, cách tiệm nail khoảng 9km, nên rời đi trước 16:00 để gọi xe (mở cửa 08:00–22:00)", link:nav(10.7620124,106.6923935)},
+      {time:"17:00", place:"Lan Nail Nè", note:"美甲店，496/8 Tỉnh Lộ 10, P Bình Trị Đông, Q Bình Tân（營業時間未查到，預約制，Grab 車程約 30–45 分鐘視路況）", noteVi:"Tiệm nail, 496/8 Tỉnh Lộ 10, P Bình Trị Đông, Q Bình Tân (chưa xác nhận giờ, theo lịch hẹn, đi Grab khoảng 30–45 phút tùy giao thông)", link:navQ("496/8 Tỉnh Lộ 10, Phường Bình Trị Đông, Quận Bình Tân, Ho Chi Minh City"), fb:"https://www.facebook.com/profile.php?id=61592256411489"},
       {time:"晚上", place:"早點回家休息", placeVi:"Về nhà nghỉ sớm", note:"明天婚禮，準備服裝", noteVi:"Ngày mai đám cưới, chuẩn bị trang phục", link:null}
     ]},
     { num:5, date:"8/9（日）", dateISO:"2026-08-09", title:"妹妹婚禮", titleVi:"Đám cưới em gái", wedding:true, items:[
       {time:"07:00", place:"在外婆家化妝", placeVi:"Trang điểm tại nhà ngoại", note:"化妝師：Hương Giang Nguyễn", noteVi:"Chuyên viên trang điểm: Hương Giang Nguyễn", link:null, fb:"https://www.facebook.com/nguyen.thi.huong.giang.550738"},
       {time:"全天", place:"婚禮相關行程", placeVi:"Các hoạt động đám cưới", note:"依實際流程調整", noteVi:"Điều chỉnh theo thực tế", link:null}
     ]},
-    { num:6, date:"8/10（一）", dateISO:"2026-08-10", title:"Bình Thạnh + Phú Nhuận／Đặng Tất", items:[
-      {time:"上午", place:"Nhâm Coffee", note:"法棍配奶油＋越南咖啡牛奶", noteVi:"Bánh mì bơ + cà phê sữa đá", link:nav(10.8007538,106.7067888)},
-      {time:"下午", place:"L'ESPOIR", note:"簡約長期主義女裝、禮服", noteVi:"Thời trang nữ tối giản bền vững, váy dạ hội", link:nav(10.7911752,106.6698677)},
-      {time:"", place:"Veene Land", note:"手作店", noteVi:"Đồ thủ công", link:nav(10.7929366,106.6880189)}
+    { num:6, date:"8/10（一）", dateISO:"2026-08-10", title:"Bình Thạnh + Phú Nhuận／Đặng Tất", work:"遠距上班", workVi:"Làm việc từ xa", items:[
+      {time:"09:00", place:"Nhâm Coffee", note:"法棍配奶油＋越南咖啡牛奶，可以在這邊帶筆電辦公（營業約 07:00–22:00）", noteVi:"Bánh mì bơ + cà phê sữa đá, có thể ngồi làm việc từ xa ở đây (mở cửa khoảng 07:00–22:00)", link:nav(10.8007538,106.7067888)},
+      {time:"14:00", place:"L'ESPOIR", note:"簡約長期主義女裝、禮服（營業時間眾說紛紜，約 10:00–21:00，建議先確認）", noteVi:"Thời trang nữ tối giản bền vững, váy dạ hội (giờ mở cửa chưa rõ ràng, khoảng 10:00–21:00, nên xác nhận trước)", link:nav(10.7911752,106.6698677)},
+      {time:"19:00", place:"Cục Gạch Quán", note:"晚餐，Đặng Tất 老宅越南家常菜（營業 09:00–23:30）", noteVi:"Ăn tối, cơm nhà Việt trong biệt thự cổ trên đường Đặng Tất (mở cửa 09:00–23:30)", link:nav(10.7929066,106.6886718)}
     ]},
-    { num:7, date:"8/11（二）", dateISO:"2026-08-11", title:"Thảo Điền 麵包甜點日", titleVi:"Ngày bánh ngọt Thảo Điền", items:[
-      {time:"上午", place:"L'ESPOIR 旗艦店", placeVi:"L'ESPOIR Flagship", note:"服飾門市", noteVi:"Cửa hàng thời trang", link:navQ("L'ESPOIR flagship store Thao Dien Ho Chi Minh")},
-      {time:"", place:"Banan Patisserie", note:"布丁", noteVi:"Bánh flan", link:nav(10.8042109,106.7344061)},
-      {time:"下午", place:"Micro Boulangerie", note:"紅豆奶油法國麵包", noteVi:"Bánh mì Pháp đậu đỏ bơ", link:nav(10.8054795,106.729937)},
-      {time:"", place:"Breadventure", note:"奶油法國麵包", noteVi:"Bánh mì Pháp bơ", link:nav(10.803713,106.728971)}
+    { num:7, date:"8/11（二）", dateISO:"2026-08-11", title:"Thảo Điền 麵包甜點日", titleVi:"Ngày bánh ngọt Thảo Điền", work:"遠距上班", workVi:"Làm việc từ xa", items:[
+      {time:"09:30", place:"Micro Boulangerie", note:"紅豆奶油法國麵包，可以帶筆電在這邊辦公，只開到 15:00", noteVi:"Bánh mì Pháp đậu đỏ bơ, có thể mang laptop làm việc ở đây, chỉ mở đến 15:00", link:nav(10.8054795,106.729937)},
+      {time:"14:00", place:"Banan Patisserie", note:"布丁（營業 10:00–21:30）", noteVi:"Bánh flan (mở cửa 10:00–21:30)", link:nav(10.8042109,106.7344061)},
+      {time:"19:00", place:"Trạm Hầm Thảo Điền", note:"晚餐，越式炭烤燒烤，只做晚上（營業 17:00–23:00）", noteVi:"Ăn tối, BBQ than kiểu Việt, chỉ mở buổi tối (mở cửa 17:00–23:00)", link:nav(10.8066551,106.7319403)}
     ]},
-    { num:8, date:"8/12（三）", dateISO:"2026-08-12", title:"ThiBa Space 一帶 + Bến Thành／Q1 老城", titleVi:"Khu vực ThiBa Space + Bến Thành／Phố cổ Quận 1", items:[
-      {time:"上午", place:"Saigon Eco Craft / em.G clothé / HUONG Boutique", note:"逛街", noteVi:"Đi mua sắm", link:nav(10.7764233,106.7019916)},
-      {time:"中午", place:"Hoa Túc Saigon", note:"蛋炸蝦春捲、蟹肉炒飯", noteVi:"Chả giò tôm trứng, cơm chiên cua", link:nav(10.7785004,106.7037745)},
-      {time:"下午", place:"Bánh Canh Cua Út Thảo / Nicotin Cafe II", note:"小吃、日式老屋咖啡", noteVi:"Món ăn vặt, cà phê nhà cổ kiểu Nhật", link:nav(10.774102,106.7040848)},
-      {time:"傍晚", place:"Vesta Lifestyle & Gifts / Little HaNoi Egg Coffee", note:"Bến Thành 老城，雞蛋咖啡", noteVi:"Phố cổ Bến Thành, cà phê trứng", link:nav(10.7694043,106.6960112)},
-      {time:"晚上", place:"Morra Perfume Experience Center", note:"客製香水，可刻字送禮", noteVi:"Nước hoa theo yêu cầu, khắc chữ làm quà", link:navQ("Morra Perfume Experience Center Ho Chi Minh")}
+    { num:8, date:"8/12（三）", dateISO:"2026-08-12", title:"ThiBa Space 一帶 + Bến Thành／Q1 老城", titleVi:"Khu vực ThiBa Space + Bến Thành／Phố cổ Quận 1", work:"請假", workVi:"Nghỉ phép", items:[
+      {time:"12:00", place:"Hoa Túc Saigon", note:"蛋炸蝦春捲、蟹肉炒飯（營業 11:00–22:00）", noteVi:"Chả giò tôm trứng, cơm chiên cua (mở cửa 11:00–22:00)", link:nav(10.7785004,106.7037745)},
+      {time:"14:00", place:"Bánh Canh Cua Út Thảo", note:"蟹粉（營業 08:00–22:00）", noteVi:"Bánh canh cua (mở cửa 08:00–22:00)", link:nav(10.7737701,106.6987734)},
+      {time:"15:00", place:"Nicotin Cafe II", note:"日式老屋咖啡廳（營業時間未查到，建議現場確認）", noteVi:"Quán cà phê nhà cổ kiểu Nhật (chưa xác nhận giờ, nên kiểm tra tại chỗ)", link:nav(10.774102,106.7040848)},
+      {time:"17:00", place:"Little HaNoi Egg Coffee (Yersin)", note:"雞蛋麵包、芒果吐司、蛋咖啡（營業約 07:00–21:00）", noteVi:"Bánh mì trứng, bánh mì xoài, cà phê trứng (mở cửa khoảng 07:00–21:00)", link:nav(10.7694043,106.6960112)},
+      {time:"17:30", place:"Bánh Bèo Huế O Trinh", note:"順路吃點心（營業 07:30–20:00）", noteVi:"Tiện đường ăn nhẹ (mở cửa 07:30–20:00)", link:nav(10.769713,106.688075)},
+      {time:"19:00", place:"Bếp Cuốn Sài Gòn", note:"春捲、蛋酥，需訂位（營業 10:30–21:00）", noteVi:"Chả giò, bánh trứng giòn, cần đặt bàn trước (mở cửa 10:30–21:00)", link:nav(10.7765904,106.6900581)}
     ]},
-    { num:9, date:"8/13（四）", dateISO:"2026-08-13", title:"補逛 Xuân Hòa + Phạm Ngũ Lão", titleVi:"Ghé lại Xuân Hòa + Phạm Ngũ Lão", items:[
-      {time:"上午", place:"OHQUAO – The Local Edit", note:"選物店", noteVi:"Cửa hàng đồ tuyển chọn", link:navQ("OHQUAO The Local Edit Ho Chi Minh")},
-      {time:"", place:"Kisserine House", note:"禮服店", noteVi:"Tiệm váy dạ hội", link:nav(10.7842992,106.6929711)},
-      {time:"", place:"ngâm CAFE", note:"咖啡，可頌好吃、可頌抹茶牛奶", noteVi:"Cà phê, croissant ngon, croissant matcha sữa ngon", link:nav(10.7864405,106.6861926)},
-      {time:"中午", place:"Nhà Tú – Việt Nam Restaurant", note:"越南料理午餐", noteVi:"Ăn trưa món Việt", link:navQ("Nha Tu Viet Nam Restaurant Ho Chi Minh")},
-      {time:"下午", place:"The 350F", note:"提拉米蘇", noteVi:"Tiramisu", link:nav(10.7707123,106.6925886)},
-      {time:"", place:"Ka's clothing / Maztermind / Tick And Pick", note:"逛街", noteVi:"Đi mua sắm", link:nav(10.7714774,106.6942158)},
-      {time:"", place:"Bánh Mì Huynh Hoa", note:"法棍老店，買著走", noteVi:"Tiệm bánh mì lâu đời, mua mang đi", link:nav(10.7715226,106.6923968)},
-      {time:"傍晚", place:"Cà phê Linh", note:"鹽咖啡", noteVi:"Cà phê muối", link:nav(10.7713482,106.6964333)},
-      {time:"晚上", place:"LIBÉ（如順路）", placeVi:"LIBÉ (nếu tiện đường)", note:"只有官網 libeworkshop.com，沒查到門市地址", noteVi:"Chỉ có trang web libeworkshop.com, chưa rõ địa chỉ cửa hàng", link:null}
+    { num:9, date:"8/13（四）", dateISO:"2026-08-13", title:"補逛 Xuân Hòa + Phạm Ngũ Lão", titleVi:"Ghé lại Xuân Hòa + Phạm Ngũ Lão", work:"請假", workVi:"Nghỉ phép", items:[
+      {time:"09:30", place:"OHQUAO – The Local Edit", note:"選物店（營業 09:00–20:00）", noteVi:"Cửa hàng đồ tuyển chọn (mở cửa 09:00–20:00)", link:navQ("OHQUAO The Local Edit Ho Chi Minh")},
+      {time:"10:00", place:"Kisserine House", note:"禮服店（營業 09:00–22:00）", noteVi:"Tiệm váy dạ hội (mở cửa 09:00–22:00)", link:nav(10.7842992,106.6929711)},
+      {time:"10:30", place:"ngâm CAFE", note:"咖啡，可頌好吃、可頌抹茶牛奶（24 小時營業）", noteVi:"Cà phê, croissant ngon, croissant matcha sữa ngon (mở cửa 24 giờ)", link:nav(10.7864405,106.6861926)},
+      {time:"12:00", place:"Nhà Tú – Việt Nam Restaurant", note:"越南料理午餐（營業 09:00–15:00、16:30–22:00，中間午休）", noteVi:"Ăn trưa món Việt (mở cửa 09:00–15:00, 16:30–22:00, nghỉ trưa giữa giờ)", link:navQ("Nha Tu Viet Nam Restaurant Ho Chi Minh")},
+      {time:"14:00", place:"Ka's clothing", note:"好看韓系服飾（營業時間未查到，建議現場確認）", noteVi:"Thời trang phong cách Hàn đẹp (chưa xác nhận giờ, nên kiểm tra tại chỗ)", link:nav(10.7714774,106.6942158)},
+      {time:"14:30", place:"Bánh Mì Huynh Hoa", note:"法棍老店，買著走（約下午 14:00 才開始營業）", noteVi:"Tiệm bánh mì lâu đời, mua mang đi (thường mở từ khoảng 14:00)", link:nav(10.7715226,106.6923968)},
+      {time:"17:00", place:"Cà phê Linh", note:"鹽咖啡，就在這天逛的這幾間店中間，很順路", noteVi:"Cà phê muối, nằm ngay giữa các cửa hàng hôm nay ghé, rất tiện đường", link:nav(10.7713482,106.6964333)},
+      {time:"19:00", place:"LIBÉ（如順路）", placeVi:"LIBÉ (nếu tiện đường)", note:"服飾門市（平日營業至 21:30）", noteVi:"Cửa hàng thời trang (ngày thường mở đến 21:30)", link:nav(10.7707923,106.6922642)}
     ]},
-    { num:10, date:"8/14（五）", dateISO:"2026-08-14", title:"最後一天＋前往機場", titleVi:"Ngày cuối + Ra sân bay", items:[
-      {time:"白天", place:"收拾行李、最後採買、跟親戚道別", placeVi:"Thu dọn hành lý, mua sắm lần cuối, chào tạm biệt người thân", note:"", link:null},
+    { num:10, date:"8/14（五）", dateISO:"2026-08-14", title:"遠距上班＋收拾行李", titleVi:"Làm việc từ xa + Thu dọn hành lý", work:"遠距上班", workVi:"Làm việc từ xa", items:[
+      {time:"上午", place:"在家遠距上班", placeVi:"Làm việc từ xa tại nhà", note:"", link:null},
+      {time:"下午", place:"收拾行李、最後採買、跟親戚道別", placeVi:"Thu dọn hành lý, mua sắm lần cuối, chào tạm biệt người thân", note:"", link:null},
       {time:"22:30", place:"前往新山一機場", placeVi:"Ra sân bay Tân Sơn Nhất", note:"國際線建議提早 3 小時", noteVi:"Chuyến quốc tế nên đến sớm 3 tiếng", link:nav(10.8188,106.6520)},
       {time:"8/15 01:50", place:"BR382 起飛", placeVi:"BR382 khởi hành", note:"", link:null},
       {time:"8/15 06:15", place:"抵達桃園機場 T2", placeVi:"Đến sân bay Đào Viên T2", note:"", link:null}
@@ -603,8 +666,9 @@
     },
     { area:"美食", color:1, desc:"",
       items:[
-        {name:"Nhà Tú – Việt Nam Restaurant", type:"越南料理", note:"", link:"https://maps.app.goo.gl/bYXHQwz7542Gg3AU7", lat:null, lng:null},
-        {name:"Bếp Cuốn Sài Gòn", type:"越南料理", note:"春捲、蛋酥", link:"https://maps.app.goo.gl/p9rKzQRUUGVZ1WMt9", lat:10.7765904, lng:106.6900581},
+        {name:"Nhà Tú – Việt Nam Restaurant", type:"越南料理", note:"", link:"https://maps.app.goo.gl/AGebctcqCDi3794g6", lat:10.7751517, lng:106.6895494},
+        {name:"Bếp Cuốn Sài Gòn", type:"越南料理", note:"春捲、蛋酥，需訂位", link:"https://maps.app.goo.gl/p9rKzQRUUGVZ1WMt9", lat:10.7765904, lng:106.6900581},
+        {name:"Bánh Bèo Huế O Trinh", type:"越南料理", note:"", link:"https://maps.app.goo.gl/rm9Sx2X8ogP81dWi7", lat:10.769713, lng:106.688075},
         {name:"The 350F – Nguyễn Trãi", type:"甜點店", note:"提拉米蘇", link:"https://maps.app.goo.gl/BZdPBDic93zvtxgs5", lat:10.7707123, lng:106.6925886},
         {name:"Bánh Mì Huynh Hoa", type:"越南麵包", note:"法棍老店", link:"https://maps.app.goo.gl/Dy29ypprL2XpUpHr6", lat:10.7715226, lng:106.6923968},
         {name:"Phở Việt Nam", type:"河粉", note:"米其林推薦", link:"https://maps.app.goo.gl/y1bDcMC3K4Mvy2Mv7", lat:10.771386, lng:106.6961339},
@@ -612,7 +676,9 @@
         {name:"Bánh Canh Cua Út Thảo", type:"小吃", note:"蟹粉", link:"https://maps.app.goo.gl/4jE8i9iL5TeQQ7Bp6", lat:10.7737701, lng:106.6987734},
         {name:"Banan Patisserie Ngo Quang Huy", type:"甜點", note:"布丁", link:"https://maps.app.goo.gl/6mfXwpiAcayw2MS38", lat:10.8042109, lng:106.7344061},
         {name:"Micro Boulangerie", type:"麵包店", note:"紅豆奶油法國麵包", link:"https://maps.app.goo.gl/yKzwSLBXNrYLbg8S9", lat:10.8054795, lng:106.729937},
-        {name:"Breadventure", type:"麵包店", note:"奶油法國麵包", link:"https://maps.app.goo.gl/8hKrpPsQBE3vA2Wb9", lat:10.803713, lng:106.728971}
+        {name:"Breadventure", type:"麵包店", note:"奶油法國麵包", link:"https://maps.app.goo.gl/8hKrpPsQBE3vA2Wb9", lat:10.803713, lng:106.728971},
+        {name:"Cục Gạch Quán", type:"越南料理", note:"Đặng Tất 老宅越南家常菜", link:nav(10.7929066,106.6886718), lat:10.7929066, lng:106.6886718},
+        {name:"Trạm Hầm Thảo Điền", type:"越南料理", note:"越式炭烤燒烤，只做晚上", link:nav(10.8066551,106.7319403), lat:10.8066551, lng:106.7319403}
       ]
     },
     { area:"服飾配件", color:2, desc:"",
@@ -625,27 +691,33 @@
         {name:"GIA STUDIOS HCM", type:"服飾", note:"簡約女裝", link:"https://maps.app.goo.gl/kG14g4yiCitech6A6", lat:10.780597, lng:106.7004583},
         {name:"JUBIN Studio ｜ Château JUBIN", type:"女裝", note:"好看洋裝", link:"https://maps.app.goo.gl/Nh76gunG5iPTmU5U9", lat:10.7898032, lng:106.6997679},
         {name:"L'ESPOIR", type:"服飾品牌", note:"簡約長期主義女裝、禮服", link:"https://maps.app.goo.gl/tCxo7X7aFvZRrjxVA", lat:10.7911752, lng:106.6698677},
-        {name:"L'ESPOIR 旗艦店", type:"服飾門市", note:"", link:"https://maps.app.goo.gl/U5JoseDh4yFAwp329", lat:null, lng:null},
-        {name:"LIBÉ", type:"服飾品牌", note:"只有官網，門市地址待查", link:"https://libeworkshop.com", lat:null, lng:null},
+        {name:"L'ESPOIR 旗艦店", type:"服飾門市", note:"和上面的 L'ESPOIR 是同一個地點", link:"https://maps.app.goo.gl/jE7H521Fum5DfGKN9", lat:10.7911752, lng:106.6698677},
+        {name:"LIBÉ", type:"服飾品牌", note:"", link:"https://maps.app.goo.gl/6efsnqvE5rm2JT739", lat:10.7707923, lng:106.6922642},
         {name:"Nagashoes - 95 Trần Quang Diệu", type:"鞋店", note:"婚禮鞋子", link:"https://maps.app.goo.gl/B5hs1ujhQ1Pdwwuk7", lat:10.7903766, lng:106.6780239}
       ]
     },
     { area:"文創選物", color:3, desc:"",
       items:[
-        {name:"OHQUAO – The Local Edit", type:"選物店", note:"", link:"https://maps.app.goo.gl/dY2dK6Kz6N17PXPz6", lat:null, lng:null},
+        {name:"OHQUAO – The Local Edit", type:"選物店", note:"", link:"https://maps.app.goo.gl/quVhRXeYSDdKLmP3A", lat:10.7863726, lng:106.6927354},
         {name:"Tick And Pick", type:"文創", note:"", link:"https://maps.app.goo.gl/veQAACFFTaDvwQ5N8", lat:10.7709614, lng:106.6925465},
         {name:"PSYCHE SAIGON", type:"文創", note:"", link:"https://maps.app.goo.gl/ZnJAXJ5Tbu9zuy3ZA", lat:10.7688211, lng:106.6967985},
         {name:"Saigon Eco Craft", type:"禮品店", note:"好看湯匙、偏貴、只收現金", link:"https://maps.app.goo.gl/4ijdiFPTHa4P1xZ57", lat:10.7743518, lng:106.7005356},
-        {name:"Vesta Lifestyle & Gifts", type:"生活風格禮品", note:"", link:"https://maps.app.goo.gl/yjwMF7oVwmtg7wgZ7", lat:null, lng:null},
-        {name:"Veene Land", type:"手作店", note:"", link:"https://maps.app.goo.gl/xvS7VoPocnUyYxXj6", lat:10.7929366, lng:106.6880189}
+        {name:"Vesta Lifestyle & Gifts", type:"生活風格禮品", note:"", link:"https://maps.app.goo.gl/BCQnkXihFVX7ZJ5t8", lat:10.7701036, lng:106.6918728},
+        {name:"Veene Land", type:"手作店", note:"已搬新址：50 Nguyễn Văn Mai, Xuân Hòa（8/7 起營業）；這次沒排進行程，下次回越南再去", link:"https://maps.app.goo.gl/xvS7VoPocnUyYxXj6", lat:10.790351, lng:106.6880221}
       ]
     },
     { area:"其他體驗", color:4, desc:"",
       items:[
-        {name:"ThiBa Space", type:"coworking space", note:"", link:"https://maps.app.goo.gl/8oxook6deuVtZHwNA", lat:10.7921337, lng:106.7013149},
+        {name:"ThiBa Space", type:"coworking space", note:"還沒排進每日行程", link:"https://maps.app.goo.gl/8oxook6deuVtZHwNA", lat:10.7921337, lng:106.7013149},
         {name:"Maztermind", type:"遊戲", note:"", link:"https://maps.app.goo.gl/nhnnQHBMknnjzXQ2A", lat:10.7709614, lng:106.6925465},
-        {name:"Morra Perfume Experience Center", type:"香水體驗店", note:"客製刻字/照片/星座/簽名；推 No.33 木質菸草、No.42 芝麻白麝香、No.43 柑橘萬用款", link:"https://maps.app.goo.gl/CachYFLeAPU4133Z7", lat:null, lng:null},
-        {name:"Analog Cafe", type:"底片店", note:"要買的底片：Proimage 100×2、Cinestill 800T×3、Reflx Lab 640T×2、Cyberpunk 400D×3", link:"https://maps.app.goo.gl/rYJc4UMyQJifP6Eq8", lat:10.7632421, lng:106.6778319}
+        {name:"Morra Perfume Experience Center", type:"香水體驗店", note:"客製刻字/照片/星座/簽名；推 No.33 木質菸草、No.42 芝麻白麝香、No.43 柑橘萬用款", link:"https://maps.app.goo.gl/CHf9AutF1PdHLvEE8", lat:10.7796355, lng:106.6952411},
+        {name:"Analog Cafe", type:"底片店", note:"請舅舅代買底片：Proimage 100×2、Cinestill 800T×3、Reflx Lab 640T×2、Cyberpunk 400D×3，不用親自去", link:"https://maps.app.goo.gl/rYJc4UMyQJifP6Eq8", lat:10.7632421, lng:106.6778319}
+      ]
+    },
+    { area:"學校踩點", color:5, desc:"",
+      items:[
+        {name:"胡志明市國家大學社會科學與人文大學", type:"大學校園", note:"先看看環境，之後要來上越語課", link:nav(10.7858607,106.7027086), lat:10.7858607, lng:106.7027086},
+        {name:"孫德勝大學", type:"大學校園", note:"也先看看環境，位置較南", link:nav(10.7319314,106.6993418), lat:10.7319314, lng:106.6993418}
       ]
     }
   ];
@@ -656,11 +728,14 @@
       items:["護照正本＋越南免簽證明（紙本＋電子備份）","信用卡","少量越南盾現金"],
       itemsVi:["Hộ chiếu gốc + giấy miễn thị thực Việt Nam (bản giấy + bản điện tử)","Thẻ tín dụng","Một ít tiền mặt VND"] },
     { group:"衣物", groupVi:"Quần áo",
-      items:["輕便透氣衣物（8月胡志明市 28–35°C）","雨具（雨季）","婚禮正式服裝＋鞋","防曬、遮陽帽"],
-      itemsVi:["Quần áo nhẹ thoáng khí (tháng 8 ở TP.HCM 28–35°C)","Đồ đi mưa (mùa mưa)","Trang phục dự tiệc cưới + giày","Kem chống nắng, nón che nắng"] },
+      items:["輕便透氣衣物（8月胡志明市 28–35°C）","婚禮正式服裝＋鞋"],
+      itemsVi:["Quần áo nhẹ thoáng khí (tháng 8 ở TP.HCM 28–35°C)","Trang phục dự tiệc cưới + giày"] },
     { group:"個人用品", groupVi:"Đồ dùng cá nhân",
-      items:["防蚊液","常備藥","個人保養品","轉接頭／充電線","eSIM 或當地 SIM 卡"],
-      itemsVi:["Thuốc chống muỗi","Thuốc thông dụng","Đồ chăm sóc cá nhân","Cục chuyển đổi/dây sạc","eSIM hoặc SIM địa phương"] },
+      items:["常備藥","個人保養品","SIM 卡*2","後背包","隨身小包","護手霜","化妝品","髮油","眼鏡","腸胃藥","保冰袋","筆電","筆電充電器","行動電源","手機充電器","相機充電器"],
+      itemsVi:["Thuốc thông dụng","Đồ chăm sóc cá nhân","SIM x2","Balo","Túi đeo nhỏ","Kem dưỡng tay","Đồ trang điểm","Dầu dưỡng tóc","Kính mắt","Thuốc dạ dày","Túi giữ lạnh","Laptop","Sạc laptop","Pin sạc dự phòng","Sạc điện thoại","Sạc máy ảnh"] },
+    { group:"攝影器材", groupVi:"Thiết bị chụp ảnh",
+      items:["SQ1","Fuji Instax Square*50","Fuji Instax Square Sunset*10","Yashika","Olympus","Kodak 400*4","Fuji 200*1","Fuji 400*3","Fuji 200*1","樂凱 200*1","Phoenix II 200*1","Agfa 400*1","相機電池*2","Olympus CR123*1","SQ1 CR2*2","Yashika 電池*2","記憶卡*3"],
+      itemsVi:["SQ1","Fuji Instax Square*50","Fuji Instax Square Sunset*10","Yashika","Olympus","Kodak 400*4","Fuji 200*1","Fuji 400*3","Fuji 200*1","Lucky 200*1","Phoenix II 200*1","Agfa 400*1","Pin máy ảnh*2","Olympus CR123*1","SQ1 CR2*2","Pin Yashika*2","Thẻ nhớ*3"] },
     { group:"其他", groupVi:"Khác",
       items:["空行李袋空間（伴手禮、購物戰利品）","旅平險保單／證明"],
       itemsVi:["Chừa chỗ trống trong vali (quà, đồ mua sắm)","Hợp đồng/giấy chứng nhận bảo hiểm du lịch"] }
@@ -708,13 +783,19 @@
     "禮品店":"Cửa hàng quà tặng", "生活風格禮品":"Quà tặng phong cách sống", "小吃":"Món ăn vặt",
     "香水體驗店":"Trải nghiệm nước hoa", "女裝":"Thời trang nữ", "手作店":"Đồ thủ công",
     "甜點":"Bánh ngọt", "麵包店":"Tiệm bánh mì", "服飾品牌":"Thương hiệu thời trang", "服飾門市":"Cửa hàng thời trang",
-    "鞋店":"Cửa hàng giày", "底片店":"Cửa hàng phim máy ảnh"
+    "鞋店":"Cửa hàng giày", "底片店":"Cửa hàng phim máy ảnh", "大學校園":"Khuôn viên đại học"
   };
   var VI_NOTE = {
     "Nagashoes - 95 Trần Quang Diệu":"Giày cưới",
-    "Analog Cafe":"Phim cần mua: Proimage 100 x2, Cinestill 800T x3, Reflx Lab 640T x2, Cyberpunk 400D x3",
+    "ThiBa Space":"Chưa xếp vào lịch trình hằng ngày",
+    "Cục Gạch Quán":"Cơm nhà Việt trong biệt thự cổ trên đường Đặng Tất",
+    "Trạm Hầm Thảo Điền":"BBQ than kiểu Việt, chỉ mở buổi tối",
+    "Analog Cafe":"Nhờ cậu mua giúp phim: Proimage 100 x2, Cinestill 800T x3, Reflx Lab 640T x2, Cyberpunk 400D x3, không cần tự đi",
     "ngâm CAFE":"Croissant ngon, croissant matcha sữa ngon",
-    "Bếp Cuốn Sài Gòn":"Chả giò, bánh trứng giòn",
+    "Bếp Cuốn Sài Gòn":"Chả giò, bánh trứng giòn, cần đặt bàn trước",
+    "Veene Land":"Đã chuyển địa chỉ mới: 50 Nguyễn Văn Mai, Xuân Hòa (mở cửa từ 7/8); lần này chưa xếp vào lịch trình, lần sau về Việt Nam sẽ ghé",
+    "胡志明市國家大學社會科學與人文大學":"Xem trước môi trường, sau này sẽ đến học tiếng Việt ở đây",
+    "孫德勝大學":"Cũng xem trước môi trường, ở xa hơn về phía nam",
     "The 350F – Nguyễn Trãi":"Tiramisu",
     "Ka's clothing":"Thời trang phong cách Hàn đẹp",
     "Bánh Mì Huynh Hoa":"Tiệm bánh mì lâu đời",
@@ -737,7 +818,6 @@
     "Banan Patisserie Ngo Quang Huy":"Bánh flan",
     "Micro Boulangerie":"Bánh mì Pháp đậu đỏ bơ",
     "Breadventure":"Bánh mì Pháp bơ",
-    "LIBÉ":"Chỉ có trang web, chưa rõ địa chỉ cửa hàng",
     "Oliu Sourdough – Coffee":"Quán cà phê đẹp (ở Hà Nội, không phải TP.HCM)"
   };
   var VI_AREA = {
@@ -745,7 +825,8 @@
     "美食": {name:"Ẩm thực", desc:""},
     "服飾配件": {name:"Thời trang & phụ kiện", desc:""},
     "文創選物": {name:"Đồ sáng tạo & tuyển chọn", desc:""},
-    "其他體驗": {name:"Trải nghiệm khác", desc:""}
+    "其他體驗": {name:"Trải nghiệm khác", desc:""},
+    "學校踩點": {name:"Trường học", desc:""}
   };
 
   var UI = {
@@ -766,8 +847,11 @@
       currencyLabel:"貨幣", currencyText:"：越南盾為主，小吃、市場記得備一些現金",
       networkLabel:"網路", networkText:"：建議用 eSIM，導航、叫車、聯絡都方便",
       weatherLabel:"天氣", weatherText:"：8月是雨季，午後常有陣雨，帶把折疊傘",
-      timezoneLabel:"時差", timezoneText:"：比台灣慢一小時",
+      timezoneLabel:"時差", timezoneText:"：比台灣慢一小時，遠距上班時間對應當地 7:30–17:00",
       emergencyLabel:"緊急聯絡", emergencyText:"：重要聯絡資訊都存在手機裡了",
+      backupTitle:"資料備份", backupNote:"已去過、收藏、筆記、評分、行李勾選都只存在這台裝置的瀏覽器裡，換裝置或清瀏覽器資料會全部消失，建議偶爾匯出備份一份。",
+      backupExportBtn:"匯出備份", backupImportBtn:"匯入備份",
+      backupExported:"備份已下載", backupImported:"備份已還原，重新整理套用", backupImportFailed:"這個檔案格式看起來不對，匯入失敗",
       packed:"已打包", packLabel:"行李清單", shoppingLabel:"代購清單", infoNavShopping:"代購清單",
       navDays:"每日行程", navList:"踩點清單", navMap:"地圖", navInfo:"筆記",
       infoNavTransport:"交通", infoNavStay:"住宿", infoNavPack:"行李",
@@ -808,8 +892,11 @@
       currencyLabel:"Tiền tệ", currencyText:"：Chủ yếu dùng VND, nên mang ít tiền mặt khi ăn vặt, đi chợ",
       networkLabel:"Mạng", networkText:"：Nên dùng eSIM, tiện cho việc chỉ đường, gọi xe, liên lạc",
       weatherLabel:"Thời tiết", weatherText:"：Tháng 8 là mùa mưa, chiều hay có mưa rào, mang theo ô gấp",
-      timezoneLabel:"Múi giờ", timezoneText:"：Chậm hơn Đài Loan 1 tiếng",
+      timezoneLabel:"Múi giờ", timezoneText:"：Chậm hơn Đài Loan 1 tiếng, giờ làm việc từ xa tương ứng 7:30–17:00 giờ địa phương",
       emergencyLabel:"Liên hệ khẩn cấp", emergencyText:"：Các số quan trọng đã lưu sẵn trong điện thoại",
+      backupTitle:"Sao lưu dữ liệu", backupNote:"Đã đi, yêu thích, ghi chú, đánh giá, danh sách hành lý đều chỉ lưu trên trình duyệt của thiết bị này, đổi thiết bị hoặc xóa dữ liệu trình duyệt sẽ mất hết, nên thỉnh thoảng xuất một bản sao lưu.",
+      backupExportBtn:"Xuất bản sao lưu", backupImportBtn:"Nhập bản sao lưu",
+      backupExported:"Đã tải bản sao lưu", backupImported:"Đã khôi phục, tải lại trang để áp dụng", backupImportFailed:"File này có vẻ không đúng định dạng, nhập thất bại",
       packed:"đã đóng gói", packLabel:"Danh sách hành lý", shoppingLabel:"Nhờ mua hộ", infoNavShopping:"Nhờ mua hộ",
       navDays:"Lịch trình", navList:"Danh sách", navMap:"Bản đồ", navInfo:"Ghi chú",
       infoNavTransport:"Di chuyển", infoNavStay:"Chỗ ở", infoNavPack:"Hành lý",
@@ -874,6 +961,36 @@
       return false;
     }
   }
+  var BACKUP_KEYS = ["hcmc-trip-items-v1", "hcmc-trip-packing-v1", "hcmc-merged-checklist-v1", "hcmc-trip-lang", "hcmc-trip-status-filter", "hcmc-trip-bigtext"];
+  function exportBackup(){
+    var data = {};
+    BACKUP_KEYS.forEach(function(k){ data[k] = localStorage.getItem(k); });
+    var blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "hcmc-trip-backup-" + todayISO() + ".json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast(t("backupExported"));
+  }
+  function importBackup(file){
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var data = JSON.parse(reader.result);
+        BACKUP_KEYS.forEach(function(k){
+          if(data[k] != null) localStorage.setItem(k, data[k]);
+        });
+        toast(t("backupImported"));
+      }catch(e){
+        toast(t("backupImportFailed"));
+      }
+    };
+    reader.readAsText(file);
+  }
   function todayISO(){
     var d = new Date();
     return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
@@ -921,7 +1038,7 @@
     var totalCount = day.items.length + addedCount;
     var doneFixed = day.items.filter(function(it, i){ return itemState["d" + day.num + "_" + i]; }).length;
     var doneAdded = (cl.addedItems[day.num]||[]).filter(function(pid){ return itemState["d" + day.num + "_added_" + pid]; }).length;
-    if(dayProgressEls[day.num]) dayProgressEls[day.num].textContent = (doneFixed + doneAdded) + "/" + totalCount;
+    if(dayProgressEls[day.num]) dayProgressEls[day.num].textContent = "✓ " + (doneFixed + doneAdded) + "/" + totalCount;
   }
 
   function renderDays(){
@@ -939,7 +1056,8 @@
       head.innerHTML =
         '<span class="day-num">Day ' + day.num + '</span>' +
         '<span class="day-date">' + day.date + '</span>' +
-        (day.wedding ? '<span class="day-badge wedding">' + t("wedding") + '</span>' : (isToday ? '<span class="day-badge">' + t("today") + '</span>' : ''));
+        (day.wedding ? '<span class="day-badge wedding">' + t("wedding") + '</span>' : (isToday ? '<span class="day-badge">' + t("today") + '</span>' : '')) +
+        (day.work ? '<span class="day-badge work">' + (lang === "vi" ? (day.workVi || day.work) : day.work) + '</span>' : '');
       var progress = document.createElement("span");
       progress.className = "day-progress";
       head.appendChild(progress);
@@ -984,7 +1102,18 @@
       });
       dayChipsEl.appendChild(chip);
     });
+    updateDayChipsScrollHint();
+    var activeChip = dayChipsEl.querySelector(".daychip.active");
+    if(activeChip) activeChip.scrollIntoView({inline:"nearest", block:"nearest"});
   }
+
+  var dayChipsMoreEl = document.getElementById("dayChipsMore");
+  function updateDayChipsScrollHint(){
+    var hasMore = dayChipsEl.scrollWidth - dayChipsEl.clientWidth - dayChipsEl.scrollLeft > 4;
+    dayChipsMoreEl.classList.toggle("show", hasMore);
+  }
+  dayChipsEl.addEventListener("scroll", updateDayChipsScrollHint);
+  window.addEventListener("resize", updateDayChipsScrollHint);
 
   function buildTimelineRow(itemId, timeLabel, placeLabel, noteLabel, link, addedPlaceId, shoes, extraLink){
     var row = document.createElement("div");
@@ -1098,6 +1227,21 @@
       card.appendChild(shoeToggle);
       card.appendChild(shoeDetail);
     }
+    var noteId = addedPlaceId || itemId;
+    var detailBtn = document.createElement("button");
+    detailBtn.type = "button";
+    detailBtn.className = "ghostbtn tnotes-toggle";
+    function refreshNoteBtn(){
+      var hasContent = cl.rating[noteId] || (cl.notes[noteId] && cl.notes[noteId].trim());
+      detailBtn.textContent = (hasContent ? "★ " : "") + t("notesRating");
+    }
+    refreshNoteBtn();
+    card.appendChild(detailBtn);
+
+    detailBtn.addEventListener("click", function(){
+      openNoteSheet(noteId, placeLabel, refreshNoteBtn);
+    });
+
     if(addedPlaceId){
       var rm = document.createElement("button");
       rm.className = "tremove";
@@ -1123,7 +1267,7 @@
 
   var AREA_COLORS = [
     ["#30B0C7","#40C8E0"], ["#5856D6","#7D7AFF"], ["#FF9500","#FF9F0A"],
-    ["#FF2D55","#FF375F"], ["#34C759","#30D158"]
+    ["#FF2D55","#FF375F"], ["#34C759","#30D158"], ["#AF52DE","#BF5AF2"]
   ];
   function isDark(){
     var root = document.documentElement;
@@ -1132,7 +1276,7 @@
     return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   }
   function areaColor(i){ return AREA_COLORS[i % AREA_COLORS.length][isDark()?1:0]; }
-  var AREA_ICONS = ["☕","🍜","👗","🎁","✨"];
+  var AREA_ICONS = ["☕","🍜","👗","🎁","✨","🎓"];
   function areaIcon(i){ return AREA_ICONS[i % AREA_ICONS.length]; }
   function tileXYZ(lat, lng, z){
     var latRad = lat * Math.PI / 180;
@@ -1172,6 +1316,33 @@
       })(i);
     }
   }
+
+  var noteSheetBackdrop = document.getElementById("noteSheetBackdrop");
+  var noteSheetTitle = document.getElementById("noteSheetTitle");
+  var noteSheetStars = document.getElementById("noteSheetStars");
+  var noteSheetText = document.getElementById("noteSheetText");
+  var noteSheetCloseBtn = document.getElementById("noteSheetClose");
+  var noteSheetOnClose = null;
+  function openNoteSheet(noteId, label, onClose){
+    noteSheetOnClose = onClose || null;
+    noteSheetTitle.textContent = label;
+    renderStars(noteId, noteSheetStars);
+    noteSheetText.value = cl.notes[noteId] || "";
+    noteSheetText.oninput = function(){
+      cl.notes[noteId] = noteSheetText.value;
+      saveCl();
+    };
+    noteSheetBackdrop.classList.add("show");
+  }
+  function closeNoteSheet(){
+    noteSheetBackdrop.classList.remove("show");
+    if(noteSheetOnClose) noteSheetOnClose();
+    noteSheetOnClose = null;
+  }
+  noteSheetCloseBtn.addEventListener("click", closeNoteSheet);
+  noteSheetBackdrop.addEventListener("click", function(e){
+    if(e.target === noteSheetBackdrop) closeNoteSheet();
+  });
 
   function buildDaySelect(placeId){
     var sel = document.createElement("select");
@@ -1345,38 +1516,24 @@
         mapA.href = item.link;
         mapA.target = "_blank";
         mapA.rel = "noopener noreferrer";
-        mapA.textContent = item.link.indexOf("maps.app.goo.gl") > -1 ? t("openMap") : t("officialSite");
+        mapA.textContent = /maps\.app\.goo\.gl|google\.com\/maps/.test(item.link) ? t("openMap") : t("officialSite");
         actions.appendChild(mapA);
 
         var detailBtn = document.createElement("button");
         detailBtn.className = "ghostbtn";
-        var hasContent = cl.rating[id] || (cl.notes[id] && cl.notes[id].trim());
-        detailBtn.textContent = (hasContent ? "★ " : "") + t("notesRating");
+        function refreshNoteBtn(){
+          var hasContent = cl.rating[id] || (cl.notes[id] && cl.notes[id].trim());
+          detailBtn.textContent = (hasContent ? "★ " : "") + t("notesRating");
+        }
+        refreshNoteBtn();
         actions.appendChild(detailBtn);
 
         actions.appendChild(buildDaySelect(id));
 
         body.appendChild(actions);
 
-        var detail = document.createElement("div");
-        detail.className = "detail";
-        var starsWrap = document.createElement("div");
-        starsWrap.className = "stars";
-        renderStars(id, starsWrap);
-        detail.appendChild(starsWrap);
-        var textarea = document.createElement("textarea");
-        textarea.className = "notearea";
-        textarea.placeholder = t("notePlaceholder");
-        textarea.value = cl.notes[id] || "";
-        textarea.addEventListener("input", function(){
-          cl.notes[id] = textarea.value;
-          saveCl();
-        });
-        detail.appendChild(textarea);
-        body.appendChild(detail);
-
         detailBtn.addEventListener("click", function(){
-          detail.classList.toggle("open");
+          openNoteSheet(id, item.name, refreshNoteBtn);
         });
 
         top.appendChild(check);
@@ -1405,7 +1562,7 @@
   function updateListProgress(){
     var visitedCount = PLACES.filter(function(p){ return cl.visited[p.id]; }).length;
     var total = PLACES.length;
-    document.getElementById("listProgressLabel").textContent = visitedCount + "/" + total;
+    document.getElementById("listProgressLabel").textContent = t("visitedProgress") + " " + visitedCount + "/" + total;
     document.getElementById("listProgressFill").style.width = (total ? (visitedCount / total * 100) : 0) + "%";
   }
 
@@ -1475,6 +1632,7 @@
   /* ================= MAP ================= */
   var mapPlaces = PLACES.filter(function(p){ return p.lat != null && p.lng != null && !p.otherCity; });
   var leafletMap = null;
+  var markerCluster = null;
   var tileLayer = null;
   var CARTO_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>';
   function tileUrl(){
@@ -1490,7 +1648,7 @@
     var n = noteText(p);
     if(n) html += '<div class="popup-note">' + n + '</div>';
     html += '<a class="popup-link" href="' + p.link + '" target="_blank" rel="noopener noreferrer">' +
-      (p.link.indexOf("maps.app.goo.gl") > -1 ? t("openMap") : t("officialSite")) + '</a>';
+      (/maps\.app\.goo\.gl|google\.com\/maps/.test(p.link) ? t("openMap") : t("officialSite")) + '</a>';
     return html;
   }
   function renderMapChrome(){
@@ -1529,14 +1687,17 @@
       }
       var bounds = L.latLngBounds(mapPlaces.map(function(p){ return [p.lat, p.lng]; }));
       leafletMap.fitBounds(bounds, {padding:[24,24]});
+      markerCluster = (window.L && L.markerClusterGroup) ? L.markerClusterGroup({maxClusterRadius:40, spiderfyOnEveryZoom:false}) : null;
       mapPlaces.forEach(function(p){
-        var marker = L.marker([p.lat, p.lng], { icon: pinIcon(areaColor(p.groupIndex), !!cl.visited[p.id]) }).addTo(leafletMap);
+        var marker = L.marker([p.lat, p.lng], { icon: pinIcon(areaColor(p.groupIndex), !!cl.visited[p.id]) });
         marker.bindPopup(popupHtml(p), {minWidth:180, maxWidth:240});
         marker.on("click", function(){
           leafletMap.setView([p.lat, p.lng], Math.max(leafletMap.getZoom(), 17), {animate:true});
         });
+        if(markerCluster){ markerCluster.addLayer(marker); } else { marker.addTo(leafletMap); }
         p.marker = marker;
       });
+      if(markerCluster) leafletMap.addLayer(markerCluster);
       renderMapChrome();
     }
     setTimeout(function(){ leafletMap.invalidateSize(); }, 50);
@@ -1784,6 +1945,10 @@
     document.getElementById("timezoneText").textContent = t("timezoneText");
     document.getElementById("emergencyLabel").textContent = t("emergencyLabel");
     document.getElementById("emergencyText").textContent = t("emergencyText");
+    document.getElementById("backupTitle").textContent = t("backupTitle");
+    document.getElementById("backupNote").textContent = t("backupNote");
+    document.getElementById("backupExportBtn").textContent = t("backupExportBtn");
+    document.getElementById("backupImportBtn").textContent = t("backupImportBtn");
     document.getElementById("packLabel").textContent = t("packLabel");
     document.getElementById("shoppingLabel").textContent = t("shoppingLabel");
     document.getElementById("infoNavShopping").textContent = t("infoNavShopping");
@@ -1856,6 +2021,16 @@
     bigText = !bigText;
     localStorage.setItem(BIGTEXT_KEY, bigText ? "1" : "0");
     applyBigText();
+  });
+
+  document.getElementById("backupExportBtn").addEventListener("click", exportBackup);
+  var backupImportInput = document.getElementById("backupImportInput");
+  document.getElementById("backupImportBtn").addEventListener("click", function(){
+    backupImportInput.click();
+  });
+  backupImportInput.addEventListener("change", function(){
+    if(backupImportInput.files && backupImportInput.files[0]) importBackup(backupImportInput.files[0]);
+    backupImportInput.value = "";
   });
 })();
 </script>
